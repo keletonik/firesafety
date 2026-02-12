@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fire Safety Compliance Platform</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Fire Safety</h2>
+    <small>Compliance Platform</small>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-item active" data-page="dashboard"><span class="nav-icon">&#9632;</span> Dashboard</div>
+    <div class="nav-item" data-page="stations"><span class="nav-icon">&#9962;</span> Stations</div>
+    <div class="nav-item" data-page="tenants"><span class="nav-icon">&#9997;</span> Tenants</div>
+    <div class="nav-item" data-page="afss"><span class="nav-icon">&#128197;</span> AFSS Schedule</div>
+    <div class="nav-item" data-page="defects"><span class="nav-icon">&#9888;</span> Defects</div>
+    <div class="nav-item" data-page="analytics"><span class="nav-icon">&#128200;</span> Analytics</div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="flex items-center gap-2">
+      <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+      <h1 id="pageTitle">Dashboard</h1>
+    </div>
+    <div class="search-box">
+      <input type="text" id="globalSearch" placeholder="Search stations, tenants, defects..." onkeyup="if(event.key==='Enter')doGlobalSearch()">
+    </div>
+  </div>
+  <div class="content" id="content">
+    <div class="loading-overlay"><div class="spinner"></div> Loading...</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Edit</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

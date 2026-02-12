@@ -29,6 +29,20 @@ MONTH_NAMES = {
     9: "September", 10: "October", 11: "November", 12: "December"
 }
 
+# Station name normalization map for known spelling variants
+STATION_NAME_ALIASES = {
+    'mt colah': 'Mount Colah',
+    'mt kuring-gai': 'Mount Kuring-Gai',
+    'mount kuring-gai': 'Mount Kuring-Gai',
+    'mt victoria': 'Mount Victoria',
+    'mt. victoria': 'Mount Victoria',
+    'nth strathfield': 'North Strathfield',
+    'nth wollongong': 'North Wollongong',
+    'circular key': 'Circular Quay',
+    'wentworth faills': 'Wentworth Falls',
+    'minmamurra': 'Minnamurra',
+}
+
 
 def clean(val):
     if pd.isna(val) or val is None:
@@ -39,13 +53,43 @@ def clean(val):
     return s
 
 
+def clean_lease_id(val):
+    """Clean lease ID to integer string (remove .0 suffix)."""
+    if pd.isna(val) or val is None:
+        return None
+    s = str(val).strip()
+    if s in ('', 'nan', 'NaN', 'None', '0', '0.0'):
+        return None
+    try:
+        return str(int(float(s)))
+    except (ValueError, TypeError):
+        return s
+
+
 def clean_station_name(name):
     if not name:
         return None
     name = str(name).strip()
-    # Remove trailing whitespace and standardize
     name = ' '.join(name.split())
+    if name.lower() in ('nan', 'none', '', 'test site'):
+        return None
     return name
+
+
+def normalize_station_key(name):
+    """Normalize station name for deduplication."""
+    if not name:
+        return None
+    key = name.lower().strip()
+    # Reject bogus entries
+    if key in ('nan', 'none', '', 'test site', 'test'):
+        return None
+    # Apply known aliases
+    if key in STATION_NAME_ALIASES:
+        return STATION_NAME_ALIASES[key].lower()
+    # Remove common suffixes that create duplicates
+    key = re.sub(r'\s+(corridor|precinct|station)$', '', key)
+    return key
 
 
 def read_icomply_raw(path):
@@ -111,7 +155,6 @@ def load_icomply_data():
     for row in rows[1:]:  # skip header
         name = row.get('A', '').strip()
         if name:
-            # Extract station name (remove lease ID suffix like " - 121738")
             base_name = re.sub(r'\s*-\s*\d+$', '', name)
             base_name = base_name.replace(' Station', '').strip()
             if base_name not in icomply_data:
@@ -132,8 +175,11 @@ def load_defects():
     if os.path.exists(DEFECTS_FILE):
         df = pd.read_excel(DEFECTS_FILE, sheet_name='Sheet1')
         for _, row in df.iterrows():
+            site = clean(row.get('Site Name'))
+            if site:
+                site = re.sub(r'\s*-\s*\d+$', '', site).strip()
             defects.append({
-                'site_name': clean(row.get('Site Name')),
+                'site_name': site,
                 'audit_type': clean(row.get('Audit Type')),
                 'audit_date': str(row.get('Audit Date', ''))[:10] if pd.notna(row.get('Audit Date')) else None,
                 'financial_year': clean(row.get('Financial Year')),
@@ -165,6 +211,53 @@ def load_defects():
             })
 
     return defects
+
+
+def load_cq_observations():
+    """Load Circular Quay & City Circle fire safety observations."""
+    if not os.path.exists(CQ_FILE):
+        return []
+
+    df = pd.read_excel(CQ_FILE, header=None, skiprows=2)
+    cols = ['Tenant_Name', 'Lease_ID', 'Fire_Equip_Service_Date', 'Fire_Equip_Service_Due',
+            'Exit_Lighting', 'Evacuation_Diagrams', 'Emergency_Pathway', 'Possible_AFSS_Issues',
+            'Comments_To_Staff']
+    # Add inspection date columns for remaining
+    for i in range(len(cols), len(df.columns)):
+        cols.append(f'Inspection_Date_{i - len(cols) + 1}')
+    df.columns = cols[:len(df.columns)]
+
+    observations = []
+    for idx, row in df.iterrows():
+        tenant_name = clean(row.iloc[0])
+        if not tenant_name or tenant_name == 'Tenant Name':
+            continue
+
+        lid = clean_lease_id(row.iloc[1])
+
+        # Collect inspection dates from columns 9 onwards
+        inspection_dates = []
+        for i in range(9, len(row)):
+            val = row.iloc[i]
+            if pd.notna(val) and str(val).strip() not in ('', 'x', 'X', 'nan'):
+                inspection_dates.append(str(val)[:10])
+
+        last_inspection = inspection_dates[-1] if inspection_dates else None
+
+        observations.append({
+            'tenant_name': tenant_name,
+            'lease_id': lid,
+            'fire_equipment_service_date': str(row.iloc[2])[:10] if pd.notna(row.iloc[2]) else None,
+            'fire_equipment_service_due': str(row.iloc[3])[:10] if pd.notna(row.iloc[3]) else None,
+            'exit_lighting': clean(row.iloc[4]),
+            'evacuation_diagrams': clean(row.iloc[5]),
+            'emergency_pathway': clean(row.iloc[6]),
+            'possible_afss_issues': clean(row.iloc[7]),
+            'comments_to_site_staff': clean(row.iloc[8]),
+            'last_inspection_date': last_inspection,
+        })
+
+    return observations
 
 
 def calculate_priority(tenant_data):
@@ -215,14 +308,19 @@ def import_all():
     defects_data = load_defects()
     print(f"  Found {len(defects_data)} defect records")
 
-    # Build station registry from all sources
+    # Step 6: Load CQ observations
+    print("Loading Circular Quay observations...")
+    cq_observations = load_cq_observations()
+    print(f"  Found {len(cq_observations)} CQ observation records")
+
+    # Build station registry from primary sources only (AFSS, TAM, ENM)
     print("\nBuilding station registry...")
     station_map = {}
 
     # From AFSS schedule (primary source for station names)
     for station_name, afss_info in afss_schedule.items():
-        key = station_name.lower().strip()
-        if key not in station_map:
+        key = normalize_station_key(station_name)
+        if key and key not in station_map:
             station_map[key] = {
                 'name': station_name,
                 'code': afss_info['code'],
@@ -237,43 +335,40 @@ def import_all():
     for _, row in tam_df.iterrows():
         zone = clean_station_name(str(row.get('Zone', '')))
         if zone:
-            key = zone.lower().strip()
-            if key not in station_map:
-                station_map[key] = {'name': zone}
-            station_map[key]['region'] = clean(row.get('Region'))
-            station_map[key]['building_name'] = clean(row.get('Building Name'))
-            station_map[key]['mri_bld_id'] = clean(row.get('MRI Bld ID'))
-            station_map[key]['council'] = clean(row.get('Council'))
+            key = normalize_station_key(zone)
+            if key and key not in station_map:
+                station_map[key] = {'name': STATION_NAME_ALIASES.get(zone.lower(), zone)}
+            if key:
+                station_map[key]['region'] = clean(row.get('Region'))
+                station_map[key]['building_name'] = clean(row.get('Building Name'))
+                station_map[key]['mri_bld_id'] = clean(row.get('MRI Bld ID'))
+                station_map[key]['council'] = clean(row.get('Council'))
 
     # From ENM
     for _, row in enm_eax.iterrows():
         zone = clean_station_name(str(row.get('Zone', '')))
         if zone:
-            key = zone.lower().strip()
-            if key not in station_map:
-                station_map[key] = {'name': zone}
-            if not station_map[key].get('region'):
-                station_map[key]['region'] = clean(row.get('Region'))
-            if not station_map[key].get('building_name'):
-                station_map[key]['building_name'] = clean(row.get('Building Name'))
+            key = normalize_station_key(zone)
+            if key and key not in station_map:
+                station_map[key] = {'name': STATION_NAME_ALIASES.get(zone.lower(), zone)}
+            if key:
+                if not station_map[key].get('region'):
+                    station_map[key]['region'] = clean(row.get('Region'))
+                if not station_map[key].get('building_name'):
+                    station_map[key]['building_name'] = clean(row.get('Building Name'))
 
-    # From ICOMPLY
+    # From ICOMPLY (only enrich existing stations, don't create new ones unless truly new)
     for name, data in icomply_data.items():
-        key = name.lower().strip()
-        if key not in station_map:
+        key = normalize_station_key(name)
+        if key and key not in station_map:
             station_map[key] = {'name': name}
-        station_map[key]['icomply_contact'] = data.get('contact')
-        station_map[key]['address'] = data.get('address')
-        station_map[key]['city'] = data.get('city')
+        if key:
+            station_map[key]['icomply_contact'] = data.get('contact')
+            station_map[key]['address'] = data.get('address')
+            station_map[key]['city'] = data.get('city')
 
-    # From defects
-    for d in defects_data:
-        site = d.get('site_name')
-        if site:
-            site_clean = re.sub(r'\s+Station$', '', site).strip()
-            key = site_clean.lower().strip()
-            if key not in station_map:
-                station_map[key] = {'name': site_clean}
+    # From defects - only link to existing stations, don't create new ones
+    # (defect site names often have suffixes that create duplicates)
 
     print(f"  Total unique stations: {len(station_map)}")
 
@@ -310,7 +405,7 @@ def import_all():
     print("Building ENM contact lookup...")
     enm_contacts = {}
     for _, row in enm_eax.iterrows():
-        lid = clean(row.get('Lease ID'))
+        lid = clean_lease_id(row.get('Lease ID'))
         if lid:
             enm_contacts[lid] = {
                 'contact_name': clean(row.get('contname')),
@@ -330,6 +425,22 @@ def import_all():
             }
     print(f"  Found {len(enm_contacts)} ENM contacts")
 
+    # Helper to find station ID with normalized key
+    def find_station_id(zone_name):
+        if not zone_name:
+            return None, None
+        key = normalize_station_key(zone_name)
+        if key:
+            sid = station_db_map.get(key)
+            if sid:
+                return sid, key
+        # Fallback: try raw lowercase
+        raw_key = zone_name.lower().strip()
+        sid = station_db_map.get(raw_key)
+        if sid:
+            return sid, raw_key
+        return None, key
+
     # Create tenant records from TAM
     print("Creating tenant records from TAM...")
     tenant_count = 0
@@ -337,8 +448,8 @@ def import_all():
         zone = clean_station_name(str(row.get('Zone', '')))
         if not zone:
             continue
-        key = zone.lower().strip()
-        station_id = station_db_map.get(key)
+
+        station_id, key = find_station_id(zone)
         if not station_id:
             continue
 
@@ -346,11 +457,9 @@ def import_all():
         if not tenant_name:
             continue
 
-        lid = clean(row.get('Lease ID'))
-        contacts = enm_contacts.get(str(int(float(lid))) if lid else '', {})
+        lid = clean_lease_id(row.get('Lease ID'))
+        contacts = enm_contacts.get(lid, {}) if lid else {}
 
-        # Get AFSS month from station
-        afss_month = None
         station_info = station_map.get(key, {})
         fsc_due_month = station_info.get('tenant_fsc_due_month')
 
@@ -409,15 +518,14 @@ def import_all():
         existing_lease_ids.add(t[0])
 
     for _, row in enm_eax.iterrows():
-        lid = clean(row.get('Lease ID'))
+        lid = clean_lease_id(row.get('Lease ID'))
         if lid and lid in existing_lease_ids:
             continue
 
         zone = clean_station_name(str(row.get('Zone', '')))
         if not zone:
             continue
-        key = zone.lower().strip()
-        station_id = station_db_map.get(key)
+        station_id, key = find_station_id(zone)
         if not station_id:
             continue
 
@@ -458,6 +566,38 @@ def import_all():
     db.commit()
     print(f"  Added {enm_only_count} ENM-only tenants")
 
+    # Import CQ observations - match to existing tenants by lease ID
+    print("Importing Circular Quay observations...")
+    cq_count = 0
+    for obs in cq_observations:
+        lid = obs.get('lease_id')
+        tenant = None
+        if lid:
+            tenant = db.query(Tenant).filter(Tenant.lease_id == lid).first()
+
+        if not tenant:
+            # Try matching by tenant name at Circular Quay station
+            cq_station_id, _ = find_station_id('Circular Quay')
+            if cq_station_id:
+                tenant = db.query(Tenant).filter(
+                    Tenant.station_id == cq_station_id,
+                    Tenant.tenant_name.ilike(f'%{obs["tenant_name"]}%')
+                ).first()
+
+        if tenant:
+            tenant.exit_lighting = obs.get('exit_lighting')
+            tenant.evacuation_diagrams = obs.get('evacuation_diagrams')
+            tenant.emergency_pathway = obs.get('emergency_pathway')
+            tenant.possible_afss_issues = obs.get('possible_afss_issues')
+            tenant.comments_to_site_staff = obs.get('comments_to_site_staff')
+            tenant.fire_equipment_service_date = obs.get('fire_equipment_service_date')
+            tenant.fire_equipment_service_due = obs.get('fire_equipment_service_due')
+            tenant.last_inspection_date = obs.get('last_inspection_date')
+            cq_count += 1
+
+    db.commit()
+    print(f"  Updated {cq_count} tenants with CQ observations")
+
     # Import defects
     print("Importing defects...")
     defect_count = 0
@@ -466,15 +606,15 @@ def import_all():
         if not site:
             continue
 
-        # Find station
+        # Find station using normalized key
         site_clean = re.sub(r'\s+Station$', '', site).strip()
-        key = site_clean.lower().strip()
-        station_id = station_db_map.get(key)
+        station_id, _ = find_station_id(site_clean)
 
-        # Try without " Station" suffix
+        # Fuzzy fallback
         if not station_id:
+            site_key = site_clean.lower().strip()
             for sk, sid in station_db_map.items():
-                if sk in key or key in sk:
+                if sk in site_key or site_key in sk:
                     station_id = sid
                     break
 
@@ -521,14 +661,16 @@ def import_all():
     total_tenants = db.query(Tenant).count()
     total_defects = db.query(Defect).count()
     afss_stations = db.query(Station).filter(Station.afss_due_month.isnot(None)).count()
+    cq_observed = db.query(Tenant).filter(Tenant.exit_lighting.isnot(None)).count()
 
     print(f"\n{'='*60}")
     print(f"IMPORT COMPLETE")
     print(f"{'='*60}")
-    print(f"  Stations:       {total_stations}")
-    print(f"  Tenants:        {total_tenants}")
-    print(f"  Defects:        {total_defects}")
-    print(f"  AFSS Stations:  {afss_stations}")
+    print(f"  Stations:            {total_stations}")
+    print(f"  Tenants:             {total_tenants}")
+    print(f"  Defects:             {total_defects}")
+    print(f"  AFSS Stations:       {afss_stations}")
+    print(f"  CQ Observations:     {cq_observed}")
     print(f"{'='*60}")
 
     db.close()
