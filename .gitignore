@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.bin
+.agent_state_*
+.latest.json
+repl_state.bin
+*.cpython-*.pyc
+uploads/
