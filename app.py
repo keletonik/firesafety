@@ -1022,6 +1022,14 @@ def get_filter_options():
         db.close()
 
 
+@app.route('/download/zip')
+def download_zip():
+    zip_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'firesafety_platform.zip')
+    if os.path.exists(zip_path):
+        return send_file(zip_path, download_name='firesafety_platform.zip', as_attachment=True)
+    return jsonify({'error': 'Zip file not found. Run the packaging script first.'}), 404
+
+
 if __name__ == '__main__':
     init_db()
     app.run(host='0.0.0.0', port=5000, debug=False)
