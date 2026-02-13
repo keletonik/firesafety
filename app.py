@@ -4,10 +4,14 @@ import os
 import json
 import uuid
 import shutil
+import io
+import csv
 from datetime import datetime
+from contextlib import contextmanager
 from flask import Flask, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
-from sqlalchemy import func, or_, and_, desc
+from sqlalchemy import func, or_, and_, desc, case
+from sqlalchemy.orm import joinedload
 from models import (
     init_db, get_db, SessionLocal,
     Station, Tenant, Defect, Document, Note, Communication, Activity
@@ -25,6 +29,32 @@ MONTH_NAMES = {
     5: "May", 6: "June", 7: "July", 8: "August",
     9: "September", 10: "October", 11: "November", 12: "December"
 }
+
+DOCUMENT_CATEGORIES = [
+    'Fire Safety Schedule (FSS)',
+    'Annual Fire Safety Statement (AFSS)',
+    'Fire Safety Certificate (FSC)',
+    'Inspection Certificate',
+    'Compliance Report',
+    'Defect Photo',
+    'Defect Report',
+    'Correspondence',
+    'General',
+]
+
+
+@contextmanager
+def db_session():
+    """Context manager for database sessions with proper cleanup."""
+    db = SessionLocal()
+    try:
+        yield db
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    finally:
+        db.close()
 
 
 def station_to_dict(s, include_tenants=False):
@@ -202,6 +232,10 @@ def get_dashboard():
         total_tenants = db.query(Tenant).count()
         afss_stations = db.query(Station).filter(Station.afss_due_month.isnot(None)).count()
 
+        # Fire Safety Schedule stats
+        fss_stations = db.query(Station).filter(Station.has_fire_safety_schedule == True).count()
+        fss_tenants = db.query(Tenant).filter(Tenant.has_fire_safety_schedule == True).count()
+
         critical = db.query(Tenant).filter(Tenant.priority == 'Critical').count()
         high = db.query(Tenant).filter(Tenant.priority == 'High').count()
         medium = db.query(Tenant).filter(Tenant.priority == 'Medium').count()
@@ -247,14 +281,20 @@ def get_dashboard():
         ).count()
         compliance_rate = round((fsc_received + fsc_compliant) / max(active_tenants, 1) * 100, 1)
 
+        # FSC percentage
+        total_for_fsc = fsc_received + fsc_compliant + fsc_pending + fsc_outstanding
+        fsc_pct = round((fsc_received + fsc_compliant) / max(total_for_fsc, 1) * 100, 1)
+
         return jsonify({
             'total_stations': total_stations,
             'total_tenants': total_tenants,
             'afss_stations': afss_stations,
+            'fss_stations': fss_stations,
+            'fss_tenants': fss_tenants,
             'critical': critical, 'high': high, 'medium': medium, 'low': low,
             'fsc_received': fsc_received, 'fsc_compliant': fsc_compliant,
             'fsc_pending': fsc_pending, 'fsc_outstanding': fsc_outstanding,
-            'fsc_na': fsc_na,
+            'fsc_na': fsc_na, 'fsc_pct': fsc_pct,
             'total_defects': total_defects, 'open_defects': open_defects,
             'major_defects': major_defects, 'minor_defects': minor_defects,
             'completed_defects': completed_defects,
@@ -286,6 +326,7 @@ def get_stations():
         search = request.args.get('search', '').strip()
         region = request.args.get('region', '')
         has_afss = request.args.get('has_afss', '')
+        has_fss = request.args.get('has_fss', '')
 
         q = db.query(Station)
         if search:
@@ -293,26 +334,34 @@ def get_stations():
                 Station.name.ilike(f'%{search}%'),
                 Station.code.ilike(f'%{search}%'),
                 Station.council.ilike(f'%{search}%'),
+                Station.building_name.ilike(f'%{search}%'),
             ))
         if region:
             q = q.filter(Station.region == region)
         if has_afss == 'true':
             q = q.filter(Station.afss_due_month.isnot(None))
+        if has_fss == 'true':
+            q = q.filter(Station.has_fire_safety_schedule == True)
+        elif has_fss == 'false':
+            q = q.filter(or_(Station.has_fire_safety_schedule == False, Station.has_fire_safety_schedule.is_(None)))
 
         stations = q.order_by(Station.name).all()
 
         result = []
         for s in stations:
             d = station_to_dict(s)
-            # Add computed stats
             tenants = db.query(Tenant).filter(Tenant.station_id == s.id).all()
             d['tenant_count'] = len(tenants)
             d['critical_count'] = sum(1 for t in tenants if t.priority == 'Critical')
             d['high_count'] = sum(1 for t in tenants if t.priority == 'High')
-            d['open_defects'] = sum(t.open_defects for t in tenants)
-            d['major_defects'] = sum(t.major_defects for t in tenants)
-            d['fsc_received'] = sum(1 for t in tenants if t.fsc_status in ('Received', 'Compliant'))
-            d['fsc_outstanding'] = sum(1 for t in tenants if t.fsc_status in ('Outstanding', 'Pending'))
+            d['open_defects'] = sum(t.open_defects or 0 for t in tenants)
+            d['major_defects'] = sum(t.major_defects or 0 for t in tenants)
+            active = [t for t in tenants if t.lease_status in ('Current', 'Holdover', 'Leased')]
+            d['fsc_received'] = sum(1 for t in active if t.fsc_status in ('Received', 'Compliant'))
+            d['fsc_outstanding'] = sum(1 for t in active if t.fsc_status in ('Outstanding', 'Pending'))
+            d['active_tenants'] = len(active)
+            d['compliance_rate'] = round(d['fsc_received'] / max(len(active), 1) * 100, 1)
+            d['doc_count'] = db.query(Document).filter(Document.station_id == s.id).count()
             result.append(d)
 
         return jsonify(result)
@@ -335,10 +384,22 @@ def get_station(station_id):
         d['activities'] = [activity_to_dict(a) for a in sorted(s.activities, key=lambda x: x.created_at or datetime.min, reverse=True)[:20]]
 
         tenants = d.get('tenants', [])
+        active = [t for t in tenants if t.get('lease_status') in ('Current', 'Holdover', 'Leased')]
         d['critical_count'] = sum(1 for t in tenants if t['priority'] == 'Critical')
         d['high_count'] = sum(1 for t in tenants if t['priority'] == 'High')
-        d['fsc_received'] = sum(1 for t in tenants if t['fsc_status'] in ('Received', 'Compliant'))
-        d['fsc_outstanding'] = sum(1 for t in tenants if t['fsc_status'] in ('Outstanding', 'Pending'))
+        d['fsc_received'] = sum(1 for t in active if t['fsc_status'] in ('Received', 'Compliant'))
+        d['fsc_outstanding'] = sum(1 for t in active if t['fsc_status'] in ('Outstanding', 'Pending'))
+        d['active_tenants'] = len(active)
+        d['compliance_rate'] = round(d['fsc_received'] / max(len(active), 1) * 100, 1)
+
+        # Group documents by category
+        doc_groups = {}
+        for doc in d['documents']:
+            cat = doc['category'] or 'General'
+            if cat not in doc_groups:
+                doc_groups[cat] = []
+            doc_groups[cat].append(doc)
+        d['documents_by_category'] = doc_groups
 
         return jsonify(d)
     finally:
@@ -456,6 +517,20 @@ def get_tenant(tenant_id):
         d['communications'] = [communication_to_dict(c) for c in sorted(t.communications, key=lambda x: x.created_at or datetime.min, reverse=True)]
         d['activities'] = [activity_to_dict(a) for a in sorted(t.activities, key=lambda x: x.created_at or datetime.min, reverse=True)[:20]]
 
+        # Group documents by category
+        doc_groups = {}
+        for doc in d['documents']:
+            cat = doc['category'] or 'General'
+            if cat not in doc_groups:
+                doc_groups[cat] = []
+            doc_groups[cat].append(doc)
+        d['documents_by_category'] = doc_groups
+
+        # Defect documents
+        for defect_dict in d['defects']:
+            defect_docs = db.query(Document).filter(Document.defect_id == defect_dict['id']).all()
+            defect_dict['documents'] = [document_to_dict(dd) for dd in defect_docs]
+
         return jsonify(d)
     finally:
         db.close()
@@ -513,12 +588,14 @@ def get_defects():
         risk = request.args.get('risk', '')
         progress = request.args.get('progress', '')
         station_id = request.args.get('station_id', '')
+        tenant_id = request.args.get('tenant_id', '')
 
         q = db.query(Defect)
         if search:
             q = q.filter(or_(
                 Defect.site_name.ilike(f'%{search}%'),
                 Defect.category.ilike(f'%{search}%'),
+                Defect.description.ilike(f'%{search}%'),
             ))
         if risk:
             q = q.filter(Defect.risk == risk)
@@ -526,9 +603,17 @@ def get_defects():
             q = q.filter(Defect.progress == progress)
         if station_id:
             q = q.filter(Defect.station_id == int(station_id))
+        if tenant_id:
+            q = q.filter(Defect.tenant_id == int(tenant_id))
 
         defects = q.order_by(desc(Defect.audit_date)).all()
-        return jsonify([defect_to_dict(d) for d in defects])
+        result = []
+        for d in defects:
+            dd = defect_to_dict(d)
+            # Include document count for each defect
+            dd['doc_count'] = db.query(Document).filter(Document.defect_id == d.id).count()
+            result.append(dd)
+        return jsonify(result)
     finally:
         db.close()
 
@@ -615,6 +700,7 @@ def get_afss():
                 'inspection_month_name': MONTH_NAMES.get(s.inspection_month, ''),
                 'lease_type_category': s.lease_type_category,
                 'afss_likely': s.afss_likely,
+                'has_fss': s.has_fire_safety_schedule,
                 'total_tenants': len(active_tenants),
                 'fsc_received': fsc_received,
                 'fsc_outstanding': fsc_outstanding,
@@ -804,7 +890,7 @@ def upload_document():
         db.add(doc)
         db.commit()
 
-        log_activity(db, 'uploaded', f'Document uploaded: {file.filename}',
+        log_activity(db, 'uploaded', f'Document uploaded: {file.filename} ({doc.category})',
                      station_id=doc.station_id, tenant_id=doc.tenant_id,
                      entity_type='document', entity_id=doc.id)
         return jsonify(document_to_dict(doc)), 201
@@ -838,6 +924,11 @@ def delete_document(doc_id):
         return jsonify({'success': True})
     finally:
         db.close()
+
+
+@app.route('/api/document-categories')
+def get_document_categories():
+    return jsonify(DOCUMENT_CATEGORIES)
 
 
 # ─── Activities ───────────────────────────────────────────────────────────────
@@ -906,7 +997,7 @@ def get_timeline():
                 'user': n.created_by,
             })
 
-        # Communications (tenant-level only)
+        # Communications (tenant-level)
         if tenant_id:
             for c in db.query(Communication).filter(Communication.tenant_id == tenant_id).all():
                 events.append({
@@ -1024,6 +1115,194 @@ def get_analytics():
         db.close()
 
 
+# ─── Monthly Report ──────────────────────────────────────────────────────────
+
+@app.route('/api/reports/monthly')
+def get_monthly_report():
+    """Generate monthly compliance report data for client presentation."""
+    db = get_db()
+    try:
+        report_month = request.args.get('month', type=int) or datetime.now().month
+        report_year = request.args.get('year', type=int) or datetime.now().year
+
+        total_stations = db.query(Station).count()
+        total_tenants = db.query(Tenant).count()
+        active_tenants = db.query(Tenant).filter(
+            Tenant.lease_status.in_(['Current', 'Holdover', 'Leased'])
+        ).count()
+
+        # FSC stats
+        fsc_received = db.query(Tenant).filter(Tenant.fsc_status == 'Received').count()
+        fsc_compliant = db.query(Tenant).filter(Tenant.fsc_status == 'Compliant').count()
+        fsc_pending = db.query(Tenant).filter(Tenant.fsc_status == 'Pending').count()
+        fsc_outstanding = db.query(Tenant).filter(Tenant.fsc_status == 'Outstanding').count()
+        fsc_na = db.query(Tenant).filter(Tenant.fsc_status == 'Not Applicable').count()
+
+        compliance_rate = round((fsc_received + fsc_compliant) / max(active_tenants, 1) * 100, 1)
+        total_for_fsc = fsc_received + fsc_compliant + fsc_pending + fsc_outstanding
+        fsc_pct = round((fsc_received + fsc_compliant) / max(total_for_fsc, 1) * 100, 1)
+
+        # Fire Safety Schedule stats
+        fss_stations = db.query(Station).filter(Station.has_fire_safety_schedule == True).count()
+        fss_tenants = db.query(Tenant).filter(Tenant.has_fire_safety_schedule == True).count()
+
+        # AFSS stations due this month
+        afss_due_this_month = db.query(Station).filter(Station.afss_due_month == report_month).all()
+        afss_due_data = []
+        for s in afss_due_this_month:
+            tenants = db.query(Tenant).filter(Tenant.station_id == s.id).all()
+            active = [t for t in tenants if t.lease_status in ('Current', 'Holdover', 'Leased')]
+            recv = sum(1 for t in active if t.fsc_status in ('Received', 'Compliant'))
+            afss_due_data.append({
+                'station_id': s.id, 'station_name': s.name, 'code': s.code,
+                'total_tenants': len(active), 'fsc_received': recv,
+                'fsc_outstanding': len(active) - recv,
+                'compliance_rate': round(recv / max(len(active), 1) * 100, 1),
+            })
+
+        # Priority breakdown
+        priority_dist = {
+            'Critical': db.query(Tenant).filter(Tenant.priority == 'Critical').count(),
+            'High': db.query(Tenant).filter(Tenant.priority == 'High').count(),
+            'Medium': db.query(Tenant).filter(Tenant.priority == 'Medium').count(),
+            'Low': db.query(Tenant).filter(Tenant.priority == 'Low').count(),
+        }
+
+        # Defect summary
+        open_defects = db.query(Defect).filter(Defect.progress.in_(['In Progress', 'Outstanding'])).count()
+        major_open = db.query(Defect).filter(
+            Defect.risk == 'Major', Defect.progress.in_(['In Progress', 'Outstanding'])
+        ).count()
+        completed_defects = db.query(Defect).filter(Defect.progress == 'Completed').count()
+        total_defects = db.query(Defect).count()
+
+        # Compliance by region
+        regions = db.query(Tenant.region).distinct().filter(Tenant.region.isnot(None)).all()
+        region_compliance = []
+        for (region_name,) in regions:
+            r_active = db.query(Tenant).filter(
+                Tenant.region == region_name,
+                Tenant.lease_status.in_(['Current', 'Holdover', 'Leased'])
+            ).count()
+            r_compliant = db.query(Tenant).filter(
+                Tenant.region == region_name,
+                Tenant.fsc_status.in_(['Received', 'Compliant'])
+            ).count()
+            region_compliance.append({
+                'region': region_name,
+                'active_tenants': r_active,
+                'compliant': r_compliant,
+                'compliance_rate': round(r_compliant / max(r_active, 1) * 100, 1),
+            })
+
+        # AFSS monthly overview
+        afss_monthly = {}
+        for m in range(1, 13):
+            stations = db.query(Station).filter(Station.afss_due_month == m).all()
+            total_t = 0
+            recv_t = 0
+            for s in stations:
+                tenants = db.query(Tenant).filter(Tenant.station_id == s.id).all()
+                active = [t for t in tenants if t.lease_status in ('Current', 'Holdover', 'Leased')]
+                total_t += len(active)
+                recv_t += sum(1 for t in active if t.fsc_status in ('Received', 'Compliant'))
+            afss_monthly[MONTH_NAMES[m]] = {
+                'stations': len(stations),
+                'tenants': total_t,
+                'compliant': recv_t,
+                'rate': round(recv_t / max(total_t, 1) * 100, 1),
+            }
+
+        return jsonify({
+            'report_month': report_month,
+            'report_month_name': MONTH_NAMES.get(report_month, ''),
+            'report_year': report_year,
+            'total_stations': total_stations,
+            'total_tenants': total_tenants,
+            'active_tenants': active_tenants,
+            'compliance_rate': compliance_rate,
+            'fsc_pct': fsc_pct,
+            'fsc_received': fsc_received,
+            'fsc_compliant': fsc_compliant,
+            'fsc_pending': fsc_pending,
+            'fsc_outstanding': fsc_outstanding,
+            'fsc_na': fsc_na,
+            'fss_stations': fss_stations,
+            'fss_tenants': fss_tenants,
+            'afss_due_this_month': afss_due_data,
+            'priority_distribution': priority_dist,
+            'open_defects': open_defects,
+            'major_open_defects': major_open,
+            'completed_defects': completed_defects,
+            'total_defects': total_defects,
+            'region_compliance': sorted(region_compliance, key=lambda x: x['compliance_rate'], reverse=True),
+            'afss_monthly': afss_monthly,
+        })
+    finally:
+        db.close()
+
+
+# ─── Fire Safety Schedule ────────────────────────────────────────────────────
+
+@app.route('/api/fire-safety-schedule')
+def get_fire_safety_schedule():
+    """Get all stations/tenants with their fire safety schedule status."""
+    db = get_db()
+    try:
+        stations = db.query(Station).order_by(Station.name).all()
+        result = []
+        for s in stations:
+            tenants = db.query(Tenant).filter(Tenant.station_id == s.id).all()
+            fss_tenants = sum(1 for t in tenants if t.has_fire_safety_schedule)
+            result.append({
+                'station_id': s.id,
+                'station_name': s.name,
+                'code': s.code,
+                'region': s.region,
+                'has_fss': s.has_fire_safety_schedule,
+                'fss_notes': s.fire_safety_schedule_notes,
+                'total_tenants': len(tenants),
+                'fss_tenants': fss_tenants,
+                'non_fss_tenants': len(tenants) - fss_tenants,
+                'tenants': [{
+                    'id': t.id,
+                    'tenant_name': t.tenant_name,
+                    'has_fss': t.has_fire_safety_schedule,
+                    'fss_notes': t.fire_safety_schedule_notes,
+                    'lease_status': t.lease_status,
+                    'fsc_status': t.fsc_status,
+                } for t in tenants],
+            })
+        return jsonify(result)
+    finally:
+        db.close()
+
+
+@app.route('/api/fire-safety-schedule/<int:station_id>', methods=['PUT'])
+def update_fire_safety_schedule(station_id):
+    """Update fire safety schedule status for a station."""
+    db = get_db()
+    try:
+        s = db.query(Station).filter(Station.id == station_id).first()
+        if not s:
+            return jsonify({'error': 'Station not found'}), 404
+
+        data = request.json
+        if 'has_fire_safety_schedule' in data:
+            s.has_fire_safety_schedule = data['has_fire_safety_schedule']
+        if 'fire_safety_schedule_notes' in data:
+            s.fire_safety_schedule_notes = data['fire_safety_schedule_notes']
+        s.updated_at = datetime.utcnow()
+        db.commit()
+
+        log_activity(db, 'updated',
+                     f'Fire Safety Schedule {"enabled" if s.has_fire_safety_schedule else "disabled"} for {s.name}',
+                     station_id=s.id, entity_type='station', entity_id=s.id)
+        return jsonify({'success': True})
+    finally:
+        db.close()
+
+
 # ─── Search ───────────────────────────────────────────────────────────────────
 
 @app.route('/api/search')
@@ -1068,8 +1347,6 @@ def export_tenants_csv():
     db = get_db()
     try:
         tenants = db.query(Tenant).join(Station).order_by(Station.name, Tenant.tenant_name).all()
-        import io
-        import csv
         output = io.StringIO()
         writer = csv.writer(output)
         writer.writerow([
@@ -1077,7 +1354,7 @@ def export_tenants_csv():
             'Region', 'Industry', 'Lease Status', 'Property Manager',
             'Priority', 'FSC Status', 'AFSS Month', 'Open Defects', 'Major Defects',
             'Contact Name', 'Contact Phone', 'Contact Email',
-            'Has FSS', 'Data Source'
+            'Has FSS', 'Fire Safety Schedule Notes', 'Data Source'
         ])
         for t in tenants:
             writer.writerow([
@@ -1090,6 +1367,7 @@ def export_tenants_csv():
                 t.open_defects or 0, t.major_defects or 0,
                 t.contact_name or '', t.contact_phone or '', t.contact_email or '',
                 'Yes' if t.has_fire_safety_schedule else 'No',
+                t.fire_safety_schedule_notes or '',
                 t.data_source or '',
             ])
 
@@ -1120,6 +1398,7 @@ def get_filter_options():
             'lease_statuses': sorted(statuses),
             'industries': sorted(industries),
             'councils': sorted(councils),
+            'document_categories': DOCUMENT_CATEGORIES,
         })
     finally:
         db.close()
