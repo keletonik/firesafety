@@ -120,7 +120,9 @@ def defect_to_dict(d):
         'assigned_to': d.assigned_to, 'due_date': d.due_date,
         'resolution_notes': d.resolution_notes, 'resolved_date': d.resolved_date,
         'station_name': d.station.name if d.station else '',
+        'tenant_name': d.tenant.tenant_name if d.tenant else '',
         'created_at': d.created_at.isoformat() if d.created_at else None,
+        'updated_at': d.updated_at.isoformat() if d.updated_at else None,
     }
 
 
@@ -441,7 +443,14 @@ def get_tenant(tenant_id):
             return jsonify({'error': 'Tenant not found'}), 404
 
         d = tenant_to_dict(t)
-        d['defects'] = [defect_to_dict(df) for df in t.defects]
+        # Include tenant-specific defects AND station-level defects
+        tenant_defects = list(t.defects)
+        station_defects = db.query(Defect).filter(
+            Defect.station_id == t.station_id,
+            Defect.tenant_id.is_(None)
+        ).all()
+        all_defects = tenant_defects + station_defects
+        d['defects'] = [defect_to_dict(df) for df in all_defects]
         d['notes'] = [note_to_dict(n) for n in sorted(t.notes, key=lambda x: x.created_at or datetime.min, reverse=True)]
         d['documents'] = [document_to_dict(doc) for doc in t.documents]
         d['communications'] = [communication_to_dict(c) for c in sorted(t.communications, key=lambda x: x.created_at or datetime.min, reverse=True)]
@@ -561,8 +570,8 @@ def update_defect(defect_id):
             return jsonify({'error': 'Defect not found'}), 404
 
         data = request.json
-        for field in ['risk', 'progress', 'description', 'assigned_to', 'due_date',
-                       'resolution_notes', 'resolved_date']:
+        for field in ['risk', 'progress', 'description', 'category', 'assigned_to',
+                       'due_date', 'resolution_notes', 'resolved_date']:
             if field in data:
                 setattr(d, field, data[field])
 
@@ -840,6 +849,100 @@ def get_activities():
         limit = request.args.get('limit', 50, type=int)
         activities = db.query(Activity).order_by(desc(Activity.created_at)).limit(limit).all()
         return jsonify([activity_to_dict(a) for a in activities])
+    finally:
+        db.close()
+
+
+# ─── Timeline ────────────────────────────────────────────────────────────────
+
+@app.route('/api/timeline')
+def get_timeline():
+    db = get_db()
+    try:
+        station_id = request.args.get('station_id', type=int)
+        tenant_id = request.args.get('tenant_id', type=int)
+        events = []
+
+        # Resolve station_id from tenant if needed
+        actual_station_id = station_id
+        if tenant_id and not station_id:
+            t = db.query(Tenant).filter(Tenant.id == tenant_id).first()
+            if t:
+                actual_station_id = t.station_id
+
+        # Activities
+        q = db.query(Activity)
+        if tenant_id:
+            q = q.filter(or_(
+                Activity.tenant_id == tenant_id,
+                and_(Activity.station_id == actual_station_id, Activity.tenant_id.is_(None))
+            ))
+        elif station_id:
+            q = q.filter(Activity.station_id == station_id)
+        for a in q.all():
+            events.append({
+                'type': 'activity', 'icon': 'activity',
+                'title': a.action or 'Activity',
+                'description': a.description or '',
+                'date': a.created_at.isoformat() if a.created_at else None,
+                'user': a.user,
+            })
+
+        # Notes
+        q = db.query(Note)
+        if tenant_id:
+            q = q.filter(or_(
+                Note.tenant_id == tenant_id,
+                and_(Note.station_id == actual_station_id, Note.tenant_id.is_(None))
+            ))
+        elif station_id:
+            q = q.filter(Note.station_id == station_id)
+        for n in q.all():
+            events.append({
+                'type': 'note', 'icon': 'note',
+                'title': 'Note added' + (f' by {n.created_by}' if n.created_by else ''),
+                'description': n.content or '',
+                'date': n.created_at.isoformat() if n.created_at else None,
+                'user': n.created_by,
+            })
+
+        # Communications (tenant-level only)
+        if tenant_id:
+            for c in db.query(Communication).filter(Communication.tenant_id == tenant_id).all():
+                events.append({
+                    'type': 'communication',
+                    'icon': (c.comm_type or 'message').lower(),
+                    'title': c.subject or c.comm_type or 'Communication',
+                    'description': c.content or '',
+                    'date': c.created_at.isoformat() if c.created_at else None,
+                    'direction': c.direction,
+                    'status': c.status,
+                    'user': c.contact_person,
+                })
+
+        # Defects
+        q = db.query(Defect)
+        if tenant_id:
+            q = q.filter(or_(
+                Defect.tenant_id == tenant_id,
+                and_(Defect.station_id == actual_station_id, Defect.tenant_id.is_(None))
+            ))
+        elif station_id:
+            q = q.filter(Defect.station_id == station_id)
+        for df in q.all():
+            events.append({
+                'type': 'defect', 'icon': 'defect',
+                'title': f'Defect: {df.category or "Unknown"} ({df.risk or "Unknown"} risk)',
+                'description': f'{df.site_name} - {df.progress or "Outstanding"}'
+                               + (f'. {df.description}' if df.description else ''),
+                'date': df.created_at.isoformat() if df.created_at else (df.audit_date or None),
+                'risk': df.risk,
+                'progress': df.progress,
+                'defect_id': df.id,
+            })
+
+        events.sort(key=lambda e: e.get('date') or '', reverse=True)
+        return jsonify(events)
     finally:
         db.close()
 

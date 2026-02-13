@@ -231,11 +231,17 @@ async function renderStationDetail(id) {
         </tbody></table>
       </div></div>
       ${(s.defects || []).length ? `<div class="card mt-4"><div class="card-header"><h3>Defects (${s.defects.length})</h3></div><div class="card-body table-wrap">
-        <table><thead><tr><th>Category</th><th>Risk</th><th>Progress</th><th>Audit Date</th></tr></thead><tbody>
-          ${s.defects.map(d => `<tr><td>${esc(d.category || '-')}</td><td>${riskBadge(d.risk)}</td><td>${progressBadge(d.progress)}</td><td>${esc(d.audit_date || '-')}</td></tr>`).join('')}
+        <table><thead><tr><th>Category</th><th>Risk</th><th>Progress</th><th>Audit Date</th><th>Actions</th></tr></thead><tbody>
+          ${s.defects.map(d => `<tr class="clickable" onclick="editDefect(${d.id})"><td>${esc(d.category || '-')}</td><td>${riskBadge(d.risk)}</td><td>${progressBadge(d.progress)}</td><td>${esc(d.audit_date || '-')}</td>
+            <td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();editDefect(${d.id})">Edit</button></td></tr>`).join('')}
         </tbody></table>
       </div></div>` : ''}
+      <div class="card mt-4"><div class="card-header"><h3>Timeline</h3></div><div class="card-body" id="timelineContent">
+        <div class="loading-overlay"><div class="spinner"></div> Loading...</div>
+      </div></div>
     `;
+    window._allDefects = s.defects || [];
+    loadTimeline(s.id, null);
   } catch (e) { $('content').innerHTML = `<p>Error: ${e.message}</p>`; }
 }
 
@@ -332,6 +338,7 @@ async function renderTenantDetail(id) {
         <div class="tab" onclick="switchTab('defectsTab')">Defects (${(t.defects || []).length})</div>
         <div class="tab" onclick="switchTab('notesTab')">Notes</div>
         <div class="tab" onclick="switchTab('commsTab')">Communications</div>
+        <div class="tab" onclick="switchTab('timelineTab');loadTimeline(null,${t.id})">Timeline</div>
       </div>
 
       <div class="tab-content active" id="tab-details">
@@ -401,10 +408,14 @@ async function renderTenantDetail(id) {
       </div>
 
       <div class="tab-content" id="tab-defectsTab">
-        <div class="card"><div class="card-body table-wrap">
-          ${(t.defects || []).length ? `<table><thead><tr><th>Category</th><th>Risk</th><th>Progress</th><th>Audit Date</th><th>Financial Year</th></tr></thead><tbody>
-            ${t.defects.map(d => `<tr><td>${esc(d.category || '-')}</td><td>${riskBadge(d.risk)}</td><td>${progressBadge(d.progress)}</td><td>${esc(d.audit_date || '-')}</td><td>${esc(d.financial_year || '-')}</td></tr>`).join('')}
-          </tbody></table>` : '<p class="text-muted">No defects recorded</p>'}
+        <div class="card"><div class="card-header"><h3>Defects (${(t.defects || []).length})</h3><button class="btn btn-primary btn-sm" onclick="addDefectForTenant()">Add Defect</button></div><div class="card-body table-wrap">
+          ${(t.defects || []).length ? `<table><thead><tr><th>Site</th><th>Category</th><th>Risk</th><th>Progress</th><th>Assigned To</th><th>Audit Date</th><th>Actions</th></tr></thead><tbody>
+            ${t.defects.map(d => `<tr class="clickable" onclick="editDefect(${d.id})">
+              <td>${esc(d.site_name || '-')}</td><td>${esc(d.category || '-')}</td><td>${riskBadge(d.risk)}</td>
+              <td>${progressBadge(d.progress)}</td><td>${esc(d.assigned_to || '-')}</td><td>${esc(d.audit_date || '-')}</td>
+              <td><button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();editDefect(${d.id})">Edit</button></td>
+            </tr>`).join('')}
+          </tbody></table>` : '<p class="text-muted">No defects recorded for this tenancy or station</p>'}
         </div></div>
       </div>
 
@@ -423,8 +434,15 @@ async function renderTenantDetail(id) {
           </div>`).join('') || '<p class="text-muted">No communications logged</p>'}
         </div></div>
       </div>
+
+      <div class="tab-content" id="tab-timelineTab">
+        <div class="card"><div class="card-header"><h3>Timeline</h3></div><div class="card-body" id="timelineContent">
+          <div class="loading-overlay"><div class="spinner"></div> Loading timeline...</div>
+        </div></div>
+      </div>
     `;
     window._currentTenant = t;
+    window._allDefects = t.defects || [];
   } catch (e) { $('content').innerHTML = `<p>Error: ${e.message}</p>`; }
 }
 
@@ -577,13 +595,14 @@ async function renderDefects() {
       <div class="card"><div class="card-body table-wrap">
         <table><thead><tr><th>Site</th><th>Category</th><th>Risk</th><th>Progress</th><th>Audit Type</th><th>Audit Date</th><th>FY</th></tr></thead>
         <tbody id="defectTableBody">
-          ${defects.map(d => `<tr data-search="${(d.site_name + ' ' + (d.category || '')).toLowerCase()}" data-risk="${d.risk || ''}" data-progress="${d.progress || ''}">
+          ${defects.map(d => `<tr class="clickable" onclick="editDefect(${d.id})" data-search="${(d.site_name + ' ' + (d.category || '')).toLowerCase()}" data-risk="${d.risk || ''}" data-progress="${d.progress || ''}">
             <td>${esc(d.site_name)}</td><td>${esc(d.category || '-')}</td><td>${riskBadge(d.risk)}</td>
             <td>${progressBadge(d.progress)}</td><td>${esc(d.audit_type || '-')}</td><td>${esc(d.audit_date || '-')}</td><td>${esc(d.financial_year || '-')}</td>
           </tr>`).join('')}
         </tbody></table>
       </div></div>
     `;
+    window._allDefects = defects;
   } catch (e) { $('content').innerHTML = `<p>Error: ${e.message}</p>`; }
 }
 
@@ -711,6 +730,126 @@ async function renderSearchResults(query) {
       ${!r.stations.length && !r.tenants.length && !r.defects.length ? '<p class="text-muted">No results found</p>' : ''}
     `;
   } catch (e) { $('content').innerHTML = `<p>Error: ${e.message}</p>`; }
+}
+
+// ─── Defect Edit ────────────────────────────────────────────────
+async function editDefect(id) {
+  let d = (window._allDefects || []).find(x => x.id === id);
+  if (!d) {
+    try { const all = await api('/api/defects'); d = all.find(x => x.id === id); } catch(e) {}
+  }
+  if (!d) { toast('Defect not found', 'error'); return; }
+
+  showModal('Edit Defect', `
+    <div class="form-group"><label>Site Name</label><input class="form-control" value="${esc(d.site_name || '')}" readonly style="background:#f1f5f9"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Category</label><input class="form-control" id="editDefectCat" value="${esc(d.category || '')}"></div>
+      <div class="form-group"><label>Risk</label><select class="form-control" id="editDefectRisk">
+        ${['Major','Medium','Minor'].map(r => `<option ${d.risk === r ? 'selected' : ''}>${r}</option>`).join('')}
+      </select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Progress</label><select class="form-control" id="editDefectProgress">
+        ${['Outstanding','In Progress','Completed'].map(p => `<option ${d.progress === p ? 'selected' : ''}>${p}</option>`).join('')}
+      </select></div>
+      <div class="form-group"><label>Assigned To</label><input class="form-control" id="editDefectAssign" value="${esc(d.assigned_to || '')}"></div>
+    </div>
+    <div class="form-group"><label>Description</label><textarea class="form-control" id="editDefectDesc" rows="3">${esc(d.description || '')}</textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Due Date</label><input class="form-control" type="date" id="editDefectDue" value="${d.due_date || ''}"></div>
+      <div class="form-group"><label>Resolved Date</label><input class="form-control" type="date" id="editDefectResolved" value="${d.resolved_date || ''}"></div>
+    </div>
+    <div class="form-group"><label>Resolution Notes</label><textarea class="form-control" id="editDefectResNotes" rows="2">${esc(d.resolution_notes || '')}</textarea></div>
+    <div class="text-muted text-sm mt-2">Audit: ${esc(d.audit_type || '-')} | ${esc(d.audit_date || '-')} | FY ${esc(d.financial_year || '-')}</div>
+  `, `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveDefectEdit(${id})">Save</button>`);
+}
+
+async function saveDefectEdit(id) {
+  try {
+    await api(`/api/defects/${id}`, { method: 'PUT', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        risk: $('editDefectRisk').value, progress: $('editDefectProgress').value,
+        description: $('editDefectDesc').value, category: $('editDefectCat').value,
+        assigned_to: $('editDefectAssign').value || null, due_date: $('editDefectDue').value || null,
+        resolved_date: $('editDefectResolved').value || null, resolution_notes: $('editDefectResNotes').value || null,
+      })
+    });
+    closeModal(); toast('Defect updated');
+    if (currentPage === 'defects') renderDefects();
+    else if (window._currentTenant) renderTenantDetail(window._currentTenant.id);
+    else { const h = window.location.hash; if (h.startsWith('#stations/')) renderStationDetail(h.split('/')[1]); }
+  } catch (e) { toast('Error: ' + e.message, 'error'); }
+}
+
+function addDefectForTenant() {
+  const t = window._currentTenant;
+  if (!t) return;
+  showModal('Add Defect for Tenant', `
+    <div class="form-group"><label>Site Name</label><input class="form-control" id="newDefectSite" value="${esc(t.station_name)}" placeholder="Station / site name"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Category</label><input class="form-control" id="newDefectCat" placeholder="e.g. Fire Safety, Electrical"></div>
+      <div class="form-group"><label>Risk</label><select class="form-control" id="newDefectRisk"><option>Minor</option><option>Medium</option><option>Major</option></select></div>
+    </div>
+    <div class="form-group"><label>Description</label><textarea class="form-control" id="newDefectDesc" rows="3"></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label>Audit Date</label><input class="form-control" type="date" id="newDefectDate"></div>
+      <div class="form-group"><label>Assigned To</label><input class="form-control" id="newDefectAssign"></div>
+    </div>
+  `, `<button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveDefectForTenant()">Save</button>`);
+}
+
+async function saveDefectForTenant() {
+  const t = window._currentTenant;
+  try {
+    await api('/api/defects', { method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        site_name: $('newDefectSite').value, category: $('newDefectCat').value,
+        risk: $('newDefectRisk').value, description: $('newDefectDesc').value,
+        audit_date: $('newDefectDate').value, assigned_to: $('newDefectAssign').value,
+        tenant_id: t ? t.id : null, station_id: t ? t.station_id : null,
+      })
+    });
+    closeModal(); toast('Defect created');
+    if (t) renderTenantDetail(t.id); else renderDefects();
+  } catch (e) { toast('Error: ' + e.message, 'error'); }
+}
+
+// ─── Timeline ───────────────────────────────────────────────────
+async function loadTimeline(stationId, tenantId) {
+  const el = $('timelineContent');
+  if (!el) return;
+  el.innerHTML = '<div class="loading-overlay"><div class="spinner"></div> Loading timeline...</div>';
+  try {
+    const params = new URLSearchParams();
+    if (stationId) params.set('station_id', stationId);
+    if (tenantId) params.set('tenant_id', tenantId);
+    const events = await api(`/api/timeline?${params}`);
+
+    if (!events.length) {
+      el.innerHTML = '<p class="text-muted">No timeline events yet. Activities, notes, communications, and defects will appear here.</p>';
+      return;
+    }
+
+    el.innerHTML = `<div class="timeline">${events.map(e => {
+      const icon = e.type === 'note' ? '&#128221;' : e.type === 'communication' ? '&#128172;' : e.type === 'defect' ? '&#9888;' : '&#9679;';
+      const dateStr = e.date ? new Date(e.date).toLocaleString() : '';
+      const meta = [];
+      if (e.user) meta.push(esc(e.user));
+      if (e.direction) meta.push(esc(e.direction));
+      if (e.risk) meta.push(riskBadge(e.risk));
+      if (e.progress) meta.push(progressBadge(e.progress));
+      return `<div class="timeline-event timeline-${e.type}">
+        <div class="timeline-icon">${icon}</div>
+        <div class="timeline-body">
+          <div class="timeline-header"><strong>${esc(e.title)}</strong><span class="timeline-date">${dateStr}</span></div>
+          ${e.description ? `<div class="timeline-desc">${esc(e.description)}</div>` : ''}
+          ${meta.length ? `<div class="timeline-meta">${meta.join(' &middot; ')}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('')}</div>`;
+  } catch (e) {
+    el.innerHTML = `<p class="text-muted">Error loading timeline: ${e.message}</p>`;
+  }
 }
 
 // ─── Init ───────────────────────────────────────────────────────
