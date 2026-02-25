@@ -5,11 +5,28 @@ __pycache__/
 # Binary state files
 *.bin
 
+# Data source files
+*.xlsx
+*.csv
+
+# Images and screenshots
+*.png
+*.jpg
+*.jpeg
+
 # Temp/cache
 .latest.json
 .DS_Store
 Thumbs.db
+rapid_build_success
+
+# Text notes / drafts
+Pasted-*.txt
 
 # IDE
 .vscode/
 .idea/
+
+# Server (not needed for Vercel)
+main.py
+config.toml
