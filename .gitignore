@@ -1,0 +1,15 @@
+# Compiled Python
+*.pyc
+__pycache__/
+
+# Binary state files
+*.bin
+
+# Temp/cache
+.latest.json
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
