@@ -3,38 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fire Safety Manager v13 | JLL - Sydney Trains TAM</title>
+    <title>FYREZEN | Fire Safety Compliance - JLL Sydney Trains TAM</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         :root {
-            --primary: #1a56db;
-            --primary-light: #3b82f6;
-            --primary-dark: #1e40af;
-            --primary-bg: #eff6ff;
-            --success: #059669;
-            --success-light: #10b981;
-            --success-bg: #ecfdf5;
-            --warning: #d97706;
-            --warning-light: #f59e0b;
-            --warning-bg: #fffbeb;
+            --fyre: #E8762F;
+            --fyre-light: #F09A5E;
+            --fyre-dark: #C75E1A;
+            --zen: #5BB8A6;
+            --zen-light: #7DD4C3;
+            --zen-dark: #3D9A88;
+            --primary: #E8762F;
+            --primary-light: #F09A5E;
+            --primary-dark: #C75E1A;
+            --primary-bg: #FEF3EC;
+            --success: #5BB8A6;
+            --success-light: #7DD4C3;
+            --success-bg: #EDFAF7;
+            --warning: #E8762F;
+            --warning-light: #F09A5E;
+            --warning-bg: #FEF3EC;
             --danger: #dc2626;
             --danger-light: #ef4444;
             --danger-bg: #fef2f2;
-            --info: #6366f1;
-            --info-bg: #eef2ff;
-            --bg: #f8fafc;
+            --info: #5BB8A6;
+            --info-bg: #EDFAF7;
+            --bg: #f7f8fa;
             --card-bg: #ffffff;
-            --text: #1e293b;
-            --text-muted: #64748b;
-            --text-light: #94a3b8;
-            --border: #e2e8f0;
-            --border-light: #f1f5f9;
-            --sidebar-bg: #0f172a;
-            --sidebar-text: #e2e8f0;
+            --text: #111113;
+            --text-muted: #5a5a6e;
+            --text-light: #8e8ea0;
+            --border: #e4e4ec;
+            --border-light: #f2f2f6;
+            --sidebar-bg: #111113;
+            --sidebar-text: #e2e2e8;
             --sidebar-hover: rgba(255,255,255,0.06);
-            --sidebar-active: #1a56db;
+            --sidebar-active: #E8762F;
             --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
             --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
@@ -44,21 +50,22 @@
             --transition: 0.2s ease;
         }
         .dark-mode {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #f1f5f9;
-            --text-muted: #94a3b8;
-            --text-light: #64748b;
-            --border: #334155;
-            --border-light: #1e293b;
-            --primary-bg: #1e3a5f;
-            --success-bg: #064e3b;
-            --warning-bg: #451a03;
+            --bg: #111113;
+            --card-bg: #1a1a1f;
+            --text: #f0f0f2;
+            --text-muted: #94949e;
+            --text-light: #5a5a6e;
+            --border: #2a2a32;
+            --border-light: #1a1a1f;
+            --primary-bg: #2d1a0e;
+            --success-bg: #0e2a24;
+            --warning-bg: #2d1a0e;
             --danger-bg: #450a0a;
-            --info-bg: #312e81;
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
-            --shadow: 0 1px 3px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
+            --info-bg: #0e2a24;
+            --sidebar-bg: #0a0a0c;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow: 0 1px 3px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.4);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -112,16 +119,11 @@
             font-weight: 400;
         }
         .brand-icon {
-            width: 28px;
-            height: 28px;
-            background: linear-gradient(135deg, #ef4444, #f97316);
-            border-radius: 7px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
+            width: 32px;
+            height: 32px;
             flex-shrink: 0;
         }
+        .brand-icon svg { width: 32px; height: 32px; }
         .nav-section {
             padding: 16px 12px 8px;
             font-size: 10px;
@@ -147,7 +149,7 @@
             background: var(--sidebar-active);
             color: #fff;
             font-weight: 500;
-            box-shadow: 0 1px 3px rgba(26,86,219,0.4);
+            box-shadow: 0 1px 3px rgba(232,118,47,0.4);
         }
         .nav-item svg { width: 17px; height: 17px; margin-right: 10px; flex-shrink: 0; stroke-width: 1.8; }
         .nav-badge {
@@ -393,7 +395,7 @@
             white-space: nowrap;
         }
         .btn-primary { background: var(--primary); color: #fff; }
-        .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 2px 4px rgba(26,86,219,0.3); }
+        .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 2px 4px rgba(232,118,47,0.3); }
         .btn-secondary { background: var(--card-bg); color: var(--text); border: 1px solid var(--border); }
         .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
         .btn-danger { background: var(--danger); color: #fff; }
@@ -580,7 +582,7 @@
         .form-input:focus, .form-textarea:focus, .form-select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(26,86,219,0.08);
+            box-shadow: 0 0 0 3px rgba(232,118,47,0.08);
         }
         .form-input[readonly] { background: var(--border-light); color: var(--text-muted); cursor: default; }
         .form-textarea { min-height: 80px; resize: vertical; font-family: inherit; }
@@ -888,7 +890,7 @@
     <!-- Sidebar -->
     <nav class="sidebar" role="navigation" aria-label="Main navigation">
         <div class="sidebar-brand">
-            <h1><span class="brand-icon">F</span> <span>Fire Safety</span></h1>
+            <h1><span class="brand-icon"><svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="28" stroke="#5BB8A6" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="0.1 12" opacity="0.3"/><path d="M32 48c-8.8 0-16-7.2-16-16 0-10.5 10-22 16-28 6 6 16 17.5 16 28 0 8.8-7.2 16-16 16z" fill="url(#fyre-grad)" opacity="0.9"/><path d="M32 48c-4.5 0-8.5-3.8-8.5-9 0-6 5-13 8.5-17 3.5 4 8.5 11 8.5 17 0 5.2-4 9-8.5 9z" fill="url(#fyre-inner)"/><circle cx="32" cy="32" r="28" stroke="#5BB8A6" stroke-width="2.5" stroke-linecap="round" opacity="0.7" stroke-dashoffset="20" stroke-dasharray="155 25"/><defs><linearGradient id="fyre-grad" x1="32" y1="4" x2="32" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#F09A5E"/><stop offset="1" stop-color="#E8762F"/></linearGradient><linearGradient id="fyre-inner" x1="32" y1="22" x2="32" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#FFD4A8"/><stop offset="1" stop-color="#F09A5E"/></linearGradient></defs></svg></span> <span>FYREZEN</span></h1>
             <p>JLL - Sydney Trains TAM</p>
         </div>
         <div class="nav-section">Management</div>
@@ -954,7 +956,7 @@
         <div class="topbar">
             <div class="topbar-left">
                 <div class="breadcrumb">
-                    <span>Fire Safety Manager</span>
+                    <span>FYREZEN</span>
                     <span>/</span>
                     <span class="breadcrumb-active" id="breadcrumb-page">Dashboard</span>
                 </div>
@@ -999,7 +1001,7 @@
                 <div class="stats-grid" style="grid-template-columns: repeat(6, 1fr)">
                     <div class="stat-card primary">
                         <div class="stat-icon primary">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a56db" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E8762F" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                         </div>
                         <div class="stat-value" id="stat-total-tenants">0</div>
                         <div class="stat-label">Total Tenancies</div>
@@ -2839,12 +2841,12 @@
         // CHARTS - Blue/White Professional Theme
         // ============================================================
         const chartColors = {
-            primary: ['#1a56db', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#dbeafe'],
-            categorical: ['#1a56db', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#1e40af', '#1d4ed8'],
-            priority: ['#dc2626', '#f59e0b', '#10b981', '#94a3b8'],
-            fsc: ['#dc2626', '#f59e0b', '#10b981', '#94a3b8'],
-            gridColor: 'rgba(148,163,184,0.15)',
-            fontColor: '#64748b'
+            primary: ['#E8762F', '#F09A5E', '#F5B88A', '#FAD4B3', '#FDEEDE', '#FEF3EC'],
+            categorical: ['#E8762F', '#5BB8A6', '#F09A5E', '#7DD4C3', '#C75E1A', '#3D9A88', '#F5B88A', '#A8E0D4'],
+            priority: ['#dc2626', '#E8762F', '#5BB8A6', '#94a3b8'],
+            fsc: ['#dc2626', '#E8762F', '#5BB8A6', '#94a3b8'],
+            gridColor: 'rgba(90,90,110,0.12)',
+            fontColor: '#5a5a6e'
         };
 
         const chartDefaults = {
@@ -2852,7 +2854,7 @@
             maintainAspectRatio: false,
             plugins: {
                 legend: { labels: { color: chartColors.fontColor, font: { size: 11, family: '-apple-system, BlinkMacSystemFont, sans-serif' }, padding: 16, usePointStyle: true, pointStyle: 'circle' } },
-                tooltip: { backgroundColor: '#1e293b', titleColor: '#f1f5f9', bodyColor: '#e2e8f0', borderColor: '#334155', borderWidth: 1, padding: 10, cornerRadius: 8, titleFont: { weight: '600', size: 12 }, bodyFont: { size: 11 } }
+                tooltip: { backgroundColor: '#111113', titleColor: '#f0f0f2', bodyColor: '#e2e2e8', borderColor: '#2a2a32', borderWidth: 1, padding: 10, cornerRadius: 8, titleFont: { weight: '600', size: 12 }, bodyFont: { size: 11 } }
             },
             scales: {
                 x: { grid: { color: chartColors.gridColor }, ticks: { color: chartColors.fontColor, font: { size: 11 } } },
@@ -2872,7 +2874,7 @@
                     datasets: [{
                         label: 'AFSS Due',
                         data: monthCounts,
-                        backgroundColor: '#1a56db',
+                        backgroundColor: '#E8762F',
                         borderRadius: 4,
                         borderSkipped: false,
                         maxBarThickness: 36
@@ -2909,7 +2911,7 @@
                 type: 'doughnut',
                 data: {
                     labels: fscStatuses,
-                    datasets: [{ data: fscCounts, backgroundColor: ['#dc2626', '#f59e0b', '#3b82f6', '#10b981', '#94a3b8'], borderWidth: 0, spacing: 2 }]
+                    datasets: [{ data: fscCounts, backgroundColor: ['#dc2626', '#E8762F', '#5BB8A6', '#7DD4C3', '#94a3b8'], borderWidth: 0, spacing: 2 }]
                 },
                 options: {
                     responsive: true,
@@ -2935,7 +2937,7 @@
                     datasets: [{
                         label: 'Defects',
                         data: sortedCats.map(c => c[1]),
-                        backgroundColor: '#3b82f6',
+                        backgroundColor: '#5BB8A6',
                         borderRadius: 4,
                         maxBarThickness: 24
                     }]
@@ -2957,7 +2959,7 @@
                     datasets: [{
                         label: 'Open Defects',
                         data: stationDefects.map(s => s.defectsOpen || 0),
-                        backgroundColor: '#1a56db',
+                        backgroundColor: '#E8762F',
                         borderRadius: 4,
                         maxBarThickness: 28
                     }]
@@ -2986,7 +2988,7 @@
                         datasets: [{
                             label: 'FSC Compliance %',
                             data: stationCompliance.map(s => s.pct),
-                            backgroundColor: stationCompliance.map(s => s.pct >= 70 ? '#10b981' : s.pct >= 40 ? '#f59e0b' : '#ef4444'),
+                            backgroundColor: stationCompliance.map(s => s.pct >= 70 ? '#5BB8A6' : s.pct >= 40 ? '#E8762F' : '#ef4444'),
                             borderRadius: 4,
                             maxBarThickness: 28
                         }]
@@ -3478,9 +3480,9 @@
         function generateReport(type) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            const blue = [26, 86, 219];
-            const darkText = [30, 41, 59];
-            const mutedText = [100, 116, 139];
+            const blue = [232, 118, 47];
+            const darkText = [17, 17, 19];
+            const mutedText = [90, 90, 110];
             const white = [255, 255, 255];
 
             // Header
@@ -3489,7 +3491,7 @@
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(18);
             doc.setTextColor(...white);
-            doc.text('Fire Safety Compliance Report', 14, 16);
+            doc.text('FYREZEN - Fire Safety Compliance Report', 14, 16);
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(10);
             doc.text('JLL - Sydney Trains TAM Portfolio', 14, 24);
@@ -3505,7 +3507,7 @@
             const tableStyle = {
                 headStyles: { fillColor: blue, textColor: white, fontSize: 9, fontStyle: 'bold', cellPadding: 4 },
                 bodyStyles: { fontSize: 8, cellPadding: 3, textColor: darkText },
-                alternateRowStyles: { fillColor: [239, 246, 255] },
+                alternateRowStyles: { fillColor: [254, 243, 236] },
                 styles: { lineColor: [226, 232, 240], lineWidth: 0.2 },
                 margin: { left: 14, right: 14 }
             };
@@ -3625,7 +3627,7 @@
                 doc.setPage(i);
                 doc.setFontSize(8);
                 doc.setTextColor(...mutedText);
-                doc.text('Fire Safety Manager v13 - JLL Sydney Trains TAM - Confidential', 14, 287);
+                doc.text('FYREZEN v13 - JLL Sydney Trains TAM - Confidential', 14, 287);
                 doc.text('Page ' + i + ' of ' + pageCount, 196, 287, { align: 'right' });
             }
 
@@ -3790,7 +3792,7 @@ Required documents:
 If you have any questions regarding these requirements, please do not hesitate to contact us.
 
 Kind regards,
-JLL - Sydney Trains TAM
+FYREZEN | JLL - Sydney Trains TAM
 Fire Safety Compliance Team`
                 },
                 'fsc-followup': {
@@ -3811,7 +3813,7 @@ Please provide the required FSC documentation within 14 days of this notice.
 If you have already submitted your FSC, please disregard this message and confirm receipt with our office.
 
 Kind regards,
-JLL - Sydney Trains TAM
+FYREZEN | JLL - Sydney Trains TAM
 Fire Safety Compliance Team`
                 },
                 'defect-notice': {
@@ -3827,7 +3829,7 @@ Under the Environmental Planning and Assessment Regulation 2021, these defects m
 Please arrange for the above defects to be rectified by a suitably qualified contractor and provide evidence of completion within 30 days.
 
 Kind regards,
-JLL - Sydney Trains TAM
+FYREZEN | JLL - Sydney Trains TAM
 Fire Safety Compliance Team`
                 },
                 'afss-reminder': {
@@ -3844,7 +3846,7 @@ To ensure timely submission, please ensure the following are in order:
 Please coordinate with your fire safety practitioner to complete the necessary inspections and provide the required documentation.
 
 Kind regards,
-JLL - Sydney Trains TAM
+FYREZEN | JLL - Sydney Trains TAM
 Fire Safety Compliance Team`
                 },
                 'general': {
@@ -3854,7 +3856,7 @@ Fire Safety Compliance Team`
 [Your message here]
 
 Kind regards,
-JLL - Sydney Trains TAM
+FYREZEN | JLL - Sydney Trains TAM
 Fire Safety Compliance Team`
                 }
             };
@@ -4000,7 +4002,7 @@ Fire Safety Compliance Team`
 
             let xml = '<?xml version="1.0"?>\n<?mso-application progid="Excel.Sheet"?>\n';
             xml += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n';
-            xml += '<Styles><Style ss:ID="header"><Font ss:Bold="1" ss:Color="#FFFFFF" ss:Size="11"/><Interior ss:Color="#1A56DB" ss:Pattern="Solid"/><Alignment ss:Horizontal="Center"/></Style>';
+            xml += '<Styles><Style ss:ID="header"><Font ss:Bold="1" ss:Color="#FFFFFF" ss:Size="11"/><Interior ss:Color="#E8762F" ss:Pattern="Solid"/><Alignment ss:Horizontal="Center"/></Style>';
             xml += '<Style ss:ID="critical"><Interior ss:Color="#FEE2E2" ss:Pattern="Solid"/></Style>';
             xml += '<Style ss:ID="high"><Interior ss:Color="#FFFBEB" ss:Pattern="Solid"/></Style>';
             xml += '<Style ss:ID="default"></Style></Styles>\n';
