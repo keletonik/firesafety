@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fire Safety Manager v12 | JLL - Sydney Trains TAM</title>
+    <title>Fire Safety Manager v13 | JLL - Sydney Trains TAM</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -785,6 +785,103 @@
         /* Keyboard focus */
         *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
         button:focus-visible, a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+        /* Contact Directory */
+        .contact-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+        .contact-card {
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 18px 20px; transition: all var(--transition);
+        }
+        .contact-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); }
+        .contact-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .contact-avatar {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; flex-shrink: 0;
+        }
+        .contact-name { font-weight: 600; font-size: 14px; }
+        .contact-tenant { font-size: 12px; color: var(--text-muted); }
+        .contact-details { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+        .contact-detail { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); }
+        .contact-detail svg { width: 14px; height: 14px; flex-shrink: 0; }
+        .contact-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .contact-actions .btn { font-size: 11px; padding: 5px 10px; }
+
+        /* Email Compose Modal */
+        .compose-modal {
+            background: var(--card-bg); border-radius: var(--radius-lg);
+            width: 92%; max-width: 720px; max-height: 90vh; overflow: hidden;
+            display: flex; flex-direction: column; box-shadow: var(--shadow-lg);
+        }
+        .compose-header {
+            padding: 16px 20px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--primary); color: #fff;
+        }
+        .compose-header h3 { font-size: 15px; font-weight: 600; }
+        .compose-body { padding: 20px; overflow-y: auto; flex: 1; }
+        .compose-field { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-light); }
+        .compose-field label { font-size: 12px; font-weight: 600; color: var(--text-muted); min-width: 50px; text-transform: uppercase; }
+        .compose-field input {
+            flex: 1; border: none; outline: none; font-size: 13px;
+            background: transparent; color: var(--text); padding: 4px 0;
+        }
+        .compose-editor {
+            min-height: 200px; padding: 12px 0; font-size: 13px; border: none; outline: none;
+            resize: vertical; width: 100%; background: transparent; color: var(--text);
+            font-family: inherit; line-height: 1.6;
+        }
+        .compose-footer {
+            padding: 14px 20px; border-top: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .compose-toolbar { display: flex; gap: 6px; align-items: center; }
+        .template-chip {
+            display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 14px;
+            font-size: 11px; font-weight: 500; cursor: pointer; background: var(--bg);
+            border: 1px solid var(--border); transition: all var(--transition); gap: 4px;
+        }
+        .template-chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-bg); }
+
+        /* Bulk Actions Bar */
+        .bulk-bar {
+            display: none; align-items: center; gap: 12px; padding: 10px 16px;
+            background: var(--primary-bg); border: 1px solid var(--primary-light);
+            border-radius: var(--radius); margin-bottom: 12px; animation: slideDown 0.2s ease;
+        }
+        .bulk-bar.show { display: flex; }
+        .bulk-count { font-size: 13px; font-weight: 600; color: var(--primary); }
+        .bulk-actions { display: flex; gap: 6px; margin-left: auto; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        .row-checkbox { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
+
+        /* Command Palette */
+        .cmd-palette-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2000;
+            align-items: flex-start; justify-content: center; padding-top: 20vh;
+        }
+        .cmd-palette-overlay.show { display: flex; }
+        .cmd-palette {
+            background: var(--card-bg); border-radius: var(--radius-lg); width: 560px;
+            max-height: 400px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+        }
+        .cmd-search {
+            width: 100%; padding: 14px 18px; border: none; border-bottom: 1px solid var(--border);
+            font-size: 15px; background: transparent; color: var(--text); outline: none;
+        }
+        .cmd-results { max-height: 320px; overflow-y: auto; padding: 6px; }
+        .cmd-item {
+            display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+            border-radius: 8px; cursor: pointer; font-size: 13px; transition: background 0.1s;
+        }
+        .cmd-item:hover, .cmd-item.active { background: var(--primary-bg); }
+        .cmd-item svg { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; }
+        .cmd-item-label { flex: 1; }
+        .cmd-item-shortcut { font-size: 11px; color: var(--text-light); }
+        .cmd-kbd { display: inline-flex; align-items: center; justify-content: center; padding: 2px 6px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; font-size: 10px; font-family: inherit; color: var(--text-muted); }
     </style>
 </head>
 <body>
@@ -807,6 +904,10 @@
         <div class="nav-item" data-page="stations" role="button" tabindex="0" aria-label="Stations">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             <span>Stations</span>
+        </div>
+        <div class="nav-item" data-page="contacts" role="button" tabindex="0" aria-label="Contacts">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span>Contacts</span>
         </div>
         <div class="nav-item" data-page="afss" role="button" tabindex="0" aria-label="AFSS Schedule">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -859,6 +960,14 @@
                 </div>
             </div>
             <div class="topbar-right">
+                <button class="topbar-btn" onclick="openCommandPalette()" title="Command palette (Ctrl+K)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span class="cmd-kbd">Ctrl+K</span>
+                </button>
+                <button class="topbar-btn" onclick="openComposeEmail()" title="Compose email">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    Email
+                </button>
                 <button class="topbar-btn" onclick="exportJSON()" title="Export backup">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Backup
@@ -1070,12 +1179,30 @@
                     </div>
                 </div>
 
+                <!-- Bulk Actions Bar -->
+                <div class="bulk-bar" id="bulk-bar">
+                    <input type="checkbox" class="row-checkbox" id="select-all-tenants" title="Select all on page">
+                    <span class="bulk-count" id="bulk-count">0 selected</span>
+                    <div class="bulk-actions">
+                        <button class="btn btn-primary btn-sm" onclick="bulkEmail()">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            Email Selected
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="bulkExportSelected()">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Export Selected
+                        </button>
+                        <button class="btn btn-ghost btn-sm" onclick="clearSelection()">Clear</button>
+                    </div>
+                </div>
+
                 <div class="card">
                     <div class="card-body" style="padding:0">
                         <div class="table-container">
                             <table id="tenants-table-el">
                                 <thead>
                                     <tr>
+                                        <th style="width:36px"><input type="checkbox" class="row-checkbox" id="header-select-all" title="Select all"></th>
                                         <th data-sort="tenantName">Tenant <span class="sort-icon">&#9650;</span></th>
                                         <th data-sort="tradingName">Trading Name <span class="sort-icon">&#9650;</span></th>
                                         <th data-sort="station">Station <span class="sort-icon">&#9650;</span></th>
@@ -1143,6 +1270,60 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Contacts Page -->
+            <div class="page" id="page-contacts">
+                <div class="page-header">
+                    <div>
+                        <h2 class="page-title">Contact Directory</h2>
+                        <p class="page-subtitle" id="contacts-subtitle">Tenant contacts with email, call, and SMS actions</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="exportContactsCSV()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Export Contacts
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="openComposeEmail()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            Compose Email
+                        </button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card primary">
+                        <div class="stat-value" id="contacts-total">0</div>
+                        <div class="stat-label">Total Contacts</div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-value" id="contacts-with-email">0</div>
+                        <div class="stat-label">With Email</div>
+                    </div>
+                    <div class="stat-card high">
+                        <div class="stat-value" id="contacts-with-phone">0</div>
+                        <div class="stat-label">With Phone</div>
+                    </div>
+                    <div class="stat-card info">
+                        <div class="stat-value" id="contacts-no-info">0</div>
+                        <div class="stat-label">Missing Contact Info</div>
+                    </div>
+                </div>
+                <div class="search-bar">
+                    <div class="search-input-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" class="search-input" id="contact-search" placeholder="Search contacts by name, email, station, tenant...">
+                    </div>
+                    <select class="form-select" id="contact-filter" style="width:auto;min-width:160px;padding:8px 12px;font-size:13px">
+                        <option value="all">All Contacts</option>
+                        <option value="has-email">Has Email</option>
+                        <option value="has-phone">Has Phone</option>
+                        <option value="no-email">Missing Email</option>
+                        <option value="no-phone">Missing Phone</option>
+                        <option value="critical">Critical Tenants</option>
+                        <option value="high">High Priority</option>
+                    </select>
+                </div>
+                <div class="contact-grid" id="contacts-grid"></div>
             </div>
 
             <!-- AFSS Schedule Page -->
@@ -1414,6 +1595,14 @@
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                 Defects CSV
                             </button>
+                            <button class="btn btn-secondary" onclick="exportContactsCSV()">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                Contacts CSV
+                            </button>
+                            <button class="btn btn-success" onclick="exportTenantsXLSX()">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                Tenants Excel
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1573,7 +1762,7 @@
                             <div style="display:grid;gap:14px">
                                 <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-light)">
                                     <span style="color:var(--text-muted);font-size:13px">Version</span>
-                                    <span class="badge badge-info">v12.0</span>
+                                    <span class="badge badge-info">v13.0</span>
                                 </div>
                                 <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-light)">
                                     <span style="color:var(--text-muted);font-size:13px">Total Tenancies</span>
@@ -1911,8 +2100,70 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-success btn-sm" onclick="emailCurrentTenant()" id="modal-email-btn" style="display:none">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    Email Tenant
+                </button>
                 <button class="btn btn-primary" onclick="saveTenant()">Save Changes</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Email Compose Modal -->
+    <div class="modal-overlay" id="compose-modal">
+        <div class="compose-modal">
+            <div class="compose-header">
+                <h3>New Email</h3>
+                <button onclick="closeCompose()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer">&times;</button>
+            </div>
+            <div class="compose-body">
+                <div class="compose-field">
+                    <label>To</label>
+                    <input type="text" id="compose-to" placeholder="recipient@email.com">
+                </div>
+                <div class="compose-field">
+                    <label>Cc</label>
+                    <input type="text" id="compose-cc" placeholder="Optional cc recipients">
+                </div>
+                <div class="compose-field">
+                    <label>Subject</label>
+                    <input type="text" id="compose-subject" placeholder="Email subject">
+                </div>
+                <div style="padding:8px 0;margin-bottom:8px">
+                    <label style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:8px">Templates</label>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap">
+                        <span class="template-chip" onclick="applyTemplate('fsc-request')">FSC Request</span>
+                        <span class="template-chip" onclick="applyTemplate('fsc-followup')">FSC Follow-up</span>
+                        <span class="template-chip" onclick="applyTemplate('defect-notice')">Defect Notice</span>
+                        <span class="template-chip" onclick="applyTemplate('afss-reminder')">AFSS Reminder</span>
+                        <span class="template-chip" onclick="applyTemplate('general')">General</span>
+                    </div>
+                </div>
+                <textarea class="compose-editor" id="compose-body" placeholder="Write your email..."></textarea>
+            </div>
+            <div class="compose-footer">
+                <div class="compose-toolbar">
+                    <button class="btn btn-ghost btn-sm" onclick="closeCompose()">Discard</button>
+                </div>
+                <div style="display:flex;gap:8px">
+                    <button class="btn btn-secondary btn-sm" onclick="copyEmailToClipboard()">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="sendEmail()">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        Send via Email Client
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Command Palette -->
+    <div class="cmd-palette-overlay" id="cmd-palette">
+        <div class="cmd-palette">
+            <input type="text" class="cmd-search" id="cmd-search" placeholder="Search commands, tenants, pages... (Ctrl+K)">
+            <div class="cmd-results" id="cmd-results"></div>
         </div>
     </div>
 
@@ -1961,6 +2212,7 @@
             renderDashboard();
             renderTenants();
             renderStations();
+            renderContacts();
             renderAFSS();
             renderCritical();
             renderDefects();
@@ -2076,6 +2328,12 @@
             document.getElementById('tenant-search').addEventListener('input', debounce(() => { state.tenantPage = 1; renderTenants(); }, 200));
             document.getElementById('station-search').addEventListener('input', debounce(() => renderStations(), 200));
             document.getElementById('defect-search').addEventListener('input', debounce(() => { state.defectPage = 1; renderDefects(); }, 200));
+            document.getElementById('contact-search')?.addEventListener('input', debounce(() => renderContacts(), 200));
+            document.getElementById('contact-filter')?.addEventListener('change', () => renderContacts());
+
+            // Header select-all checkbox
+            document.getElementById('header-select-all')?.addEventListener('change', function() { toggleSelectAll(this); });
+            document.getElementById('select-all-tenants')?.addEventListener('change', function() { toggleSelectAll(this); });
 
             // Filter changes
             ['filter-region', 'filter-zone', 'filter-council', 'filter-pm', 'filter-lease-status', 'filter-industry'].forEach(id => {
@@ -2123,10 +2381,6 @@
                 if (e.target === document.getElementById('tenant-modal')) closeModal();
             });
 
-            // Close modal on Escape
-            document.addEventListener('keydown', e => {
-                if (e.key === 'Escape') closeModal();
-            });
         }
 
         function debounce(fn, ms) {
@@ -2299,6 +2553,7 @@
             const tbody = document.getElementById('tenants-table');
             tbody.innerHTML = page.map(t => `
                 <tr>
+                    <td><input type="checkbox" class="row-checkbox tenant-row-checkbox" data-tenant-id="${t.id}" ${selectedTenants.has(t.id) ? 'checked' : ''} onchange="toggleTenantSelection(${t.id}, this)"></td>
                     <td class="td-tenant">${escapeHtml(t.tenantName)}</td>
                     <td>${escapeHtml(t.tradingName) || '<span style="color:var(--text-light)">-</span>'}</td>
                     <td>${escapeHtml(t.station)}</td>
@@ -2916,8 +3171,20 @@
             document.querySelectorAll('#tenant-modal .tab').forEach((t, i) => t.classList.toggle('active', i === 0));
             document.querySelectorAll('#tenant-modal .tab-content').forEach((c, i) => c.classList.toggle('active', i === 0));
 
+            // Show/hide email button based on contact email
+            const emailBtn = document.getElementById('modal-email-btn');
+            if (emailBtn) {
+                emailBtn.style.display = (tenant.contactEmail && tenant.contactEmail.trim()) ? 'inline-flex' : 'none';
+            }
+
             document.getElementById('tenant-modal').classList.add('show');
             document.body.style.overflow = 'hidden';
+        }
+
+        function emailCurrentTenant() {
+            if (!state.currentTenant || !state.currentTenant.contactEmail) return;
+            closeModal();
+            openComposeEmailTo(state.currentTenant.contactEmail, state.currentTenant.tenantName);
         }
 
         function renderTenantDocuments(tenantId) {
@@ -3358,7 +3625,7 @@
                 doc.setPage(i);
                 doc.setFontSize(8);
                 doc.setTextColor(...mutedText);
-                doc.text('Fire Safety Manager v12 - JLL Sydney Trains TAM - Confidential', 14, 287);
+                doc.text('Fire Safety Manager v13 - JLL Sydney Trains TAM - Confidential', 14, 287);
                 doc.text('Page ' + i + ' of ' + pageCount, 196, 287, { align: 'right' });
             }
 
@@ -3383,6 +3650,576 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
+
+        // ============================================================
+        // CONTACTS PAGE
+        // ============================================================
+        function renderContacts() {
+            const tenants = state.tenants || [];
+            const search = (document.getElementById('contact-search')?.value || '').toLowerCase();
+            const filter = document.getElementById('contact-filter')?.value || 'all';
+
+            let contacts = tenants.filter(t => t.contactName || t.contactEmail || t.contactMobile);
+            const allWithContact = contacts.length;
+            const withEmail = tenants.filter(t => t.contactEmail && t.contactEmail.trim()).length;
+            const withPhone = tenants.filter(t => t.contactMobile && t.contactMobile.trim()).length;
+            const noInfo = tenants.filter(t => !t.contactName && !t.contactEmail && !t.contactMobile).length;
+
+            document.getElementById('contacts-total').textContent = allWithContact;
+            document.getElementById('contacts-with-email').textContent = withEmail;
+            document.getElementById('contacts-with-phone').textContent = withPhone;
+            document.getElementById('contacts-no-info').textContent = noInfo;
+            document.getElementById('contacts-subtitle').textContent = allWithContact + ' contacts across ' + tenants.length + ' tenancies';
+
+            // Apply filter
+            if (filter === 'has-email') contacts = tenants.filter(t => t.contactEmail && t.contactEmail.trim());
+            else if (filter === 'has-phone') contacts = tenants.filter(t => t.contactMobile && t.contactMobile.trim());
+            else if (filter === 'no-email') contacts = tenants.filter(t => !t.contactEmail || !t.contactEmail.trim());
+            else if (filter === 'no-phone') contacts = tenants.filter(t => !t.contactMobile || !t.contactMobile.trim());
+            else if (filter === 'critical') contacts = tenants.filter(t => t.priority === 'Critical' && (t.contactName || t.contactEmail));
+            else if (filter === 'high') contacts = tenants.filter(t => t.priority === 'High' && (t.contactName || t.contactEmail));
+
+            // Apply search
+            if (search) {
+                contacts = contacts.filter(t =>
+                    (t.contactName || '').toLowerCase().includes(search) ||
+                    (t.contactEmail || '').toLowerCase().includes(search) ||
+                    (t.contactMobile || '').toLowerCase().includes(search) ||
+                    (t.tenantName || '').toLowerCase().includes(search) ||
+                    (t.station || '').toLowerCase().includes(search)
+                );
+            }
+
+            const grid = document.getElementById('contacts-grid');
+            if (contacts.length === 0) {
+                grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><h4>No contacts found</h4><p>Adjust your search or filter criteria</p></div>';
+                return;
+            }
+
+            grid.innerHTML = contacts.map(t => {
+                const initials = (t.contactName || t.tenantName || '?').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+                const email = escapeHtml(t.contactEmail || '');
+                const phone = escapeHtml(t.contactMobile || '');
+                const name = escapeHtml(t.contactName || 'No Name');
+                return `
+                <div class="contact-card">
+                    <div class="contact-card-header">
+                        <div class="contact-avatar">${initials}</div>
+                        <div>
+                            <div class="contact-name">${name}</div>
+                            <div class="contact-tenant">${escapeHtml(t.tenantName)} - ${escapeHtml(t.station)}</div>
+                        </div>
+                        <span class="badge badge-${(t.priority || 'low').toLowerCase()}" style="margin-left:auto">${escapeHtml(t.priority)}</span>
+                    </div>
+                    <div class="contact-details">
+                        ${email ? `<div class="contact-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${email}</div>` : '<div class="contact-detail" style="color:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>No email</div>'}
+                        ${phone ? `<div class="contact-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${phone}</div>` : '<div class="contact-detail" style="color:var(--warning)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg>No phone</div>'}
+                    </div>
+                    <div class="contact-actions">
+                        ${email ? `<button class="btn btn-primary btn-sm" onclick="openComposeEmailTo('${email}', '${escapeHtml(t.tenantName)}')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            Email</button>` : ''}
+                        ${phone ? `<button class="btn btn-success btn-sm" onclick="window.open('tel:${phone}')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg>
+                            Call</button>` : ''}
+                        ${phone ? `<button class="btn btn-secondary btn-sm" onclick="window.open('sms:${phone}')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            SMS</button>` : ''}
+                        <button class="btn btn-ghost btn-sm" onclick="openTenant(${t.id})">View</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function exportContactsCSV() {
+            const tenants = (state.tenants || []).filter(t => t.contactName || t.contactEmail || t.contactMobile);
+            const headers = ['Tenant Name', 'Trading Name', 'Station', 'Contact Name', 'Contact Email', 'Contact Mobile', 'Priority', 'FSC Status', 'Property Manager'];
+            const rows = tenants.map(t => [
+                t.tenantName, t.tradingName, t.station, t.contactName, t.contactEmail, t.contactMobile,
+                t.priority, t.fscStatus, t.propertyManager
+            ]);
+            let csv = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csv += row.map(v => `"${(v || '').toString().replace(/"/g, '""')}"`).join(',') + '\n';
+            });
+            downloadFile(csv, 'text/csv', 'contacts_export_' + new Date().toISOString().split('T')[0] + '.csv');
+            showToast('Contacts CSV exported', 'success');
+        }
+
+        // ============================================================
+        // EMAIL COMPOSE
+        // ============================================================
+        function openComposeEmail() {
+            document.getElementById('compose-modal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('compose-to').focus();
+        }
+
+        function openComposeEmailTo(email, tenantName) {
+            openComposeEmail();
+            document.getElementById('compose-to').value = email;
+            document.getElementById('compose-subject').value = 'Fire Safety Compliance - ' + (tenantName || '');
+        }
+
+        function closeCompose() {
+            document.getElementById('compose-modal').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function applyTemplate(templateType) {
+            const to = document.getElementById('compose-to').value;
+            const subjectEl = document.getElementById('compose-subject');
+            const bodyEl = document.getElementById('compose-body');
+
+            const templates = {
+                'fsc-request': {
+                    subject: 'Fire Safety Certificate (FSC) Request - Action Required',
+                    body: `Dear Tenant,
+
+I am writing to you regarding the fire safety compliance requirements for your tenancy at Sydney Trains.
+
+As part of our Annual Fire Safety Statement (AFSS) obligations under the Environmental Planning and Assessment Act 1979 (NSW), we require you to provide a current Fire Safety Certificate (FSC) for your premises.
+
+Please arrange for your qualified fire safety practitioner to inspect and certify the essential fire safety measures in your tenancy and provide the FSC at your earliest convenience.
+
+Required documents:
+- Fire Safety Certificate (FSC) from an accredited practitioner
+- Evidence of annual maintenance of essential fire safety measures
+- Copy of current fire safety schedule (if applicable)
+
+If you have any questions regarding these requirements, please do not hesitate to contact us.
+
+Kind regards,
+JLL - Sydney Trains TAM
+Fire Safety Compliance Team`
+                },
+                'fsc-followup': {
+                    subject: 'URGENT: Fire Safety Certificate Follow-up - Outstanding',
+                    body: `Dear Tenant,
+
+This is a follow-up regarding our previous request for your Fire Safety Certificate (FSC).
+
+Our records indicate that we have not yet received the required FSC documentation for your tenancy. This matter is now overdue and requires your immediate attention.
+
+As a reminder, failure to maintain current fire safety compliance documentation may result in:
+- Non-compliance notices
+- Referral to the relevant council/authority
+- Potential lease implications
+
+Please provide the required FSC documentation within 14 days of this notice.
+
+If you have already submitted your FSC, please disregard this message and confirm receipt with our office.
+
+Kind regards,
+JLL - Sydney Trains TAM
+Fire Safety Compliance Team`
+                },
+                'defect-notice': {
+                    subject: 'Fire Safety Defect Notice - Rectification Required',
+                    body: `Dear Tenant,
+
+Following a recent fire safety inspection of your tenancy, the following defect(s) have been identified that require rectification:
+
+[DEFECT DETAILS - Please update before sending]
+
+Under the Environmental Planning and Assessment Regulation 2021, these defects must be rectified to maintain compliance with the fire safety schedule for the building.
+
+Please arrange for the above defects to be rectified by a suitably qualified contractor and provide evidence of completion within 30 days.
+
+Kind regards,
+JLL - Sydney Trains TAM
+Fire Safety Compliance Team`
+                },
+                'afss-reminder': {
+                    subject: 'Annual Fire Safety Statement (AFSS) - Upcoming Due Date',
+                    body: `Dear Tenant,
+
+This is a reminder that the Annual Fire Safety Statement (AFSS) for your building is due for submission.
+
+To ensure timely submission, please ensure the following are in order:
+- All essential fire safety measures have been inspected and maintained
+- Fire Safety Certificate (FSC) from your practitioner is current
+- Any identified defects have been rectified
+
+Please coordinate with your fire safety practitioner to complete the necessary inspections and provide the required documentation.
+
+Kind regards,
+JLL - Sydney Trains TAM
+Fire Safety Compliance Team`
+                },
+                'general': {
+                    subject: 'Fire Safety Compliance - ',
+                    body: `Dear Tenant,
+
+[Your message here]
+
+Kind regards,
+JLL - Sydney Trains TAM
+Fire Safety Compliance Team`
+                }
+            };
+
+            const tmpl = templates[templateType];
+            if (tmpl) {
+                subjectEl.value = tmpl.subject;
+                bodyEl.value = tmpl.body;
+            }
+        }
+
+        function sendEmail() {
+            const to = document.getElementById('compose-to').value;
+            const cc = document.getElementById('compose-cc').value;
+            const subject = document.getElementById('compose-subject').value;
+            const body = document.getElementById('compose-body').value;
+
+            if (!to) { showToast('Please enter a recipient email', 'error'); return; }
+
+            let mailtoUrl = 'mailto:' + encodeURIComponent(to);
+            const params = [];
+            if (cc) params.push('cc=' + encodeURIComponent(cc));
+            if (subject) params.push('subject=' + encodeURIComponent(subject));
+            if (body) params.push('body=' + encodeURIComponent(body));
+            if (params.length > 0) mailtoUrl += '?' + params.join('&');
+
+            window.open(mailtoUrl, '_blank');
+
+            // Log as communication note
+            state.notes.unshift({
+                id: Date.now(),
+                type: 'communication',
+                related: to,
+                content: 'Email sent to ' + to + ' - Subject: ' + subject,
+                date: new Date().toISOString()
+            });
+            saveData();
+
+            closeCompose();
+            showToast('Opening email client...', 'success');
+        }
+
+        function copyEmailToClipboard() {
+            const subject = document.getElementById('compose-subject').value;
+            const body = document.getElementById('compose-body').value;
+            const text = 'Subject: ' + subject + '\n\n' + body;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Email content copied to clipboard', 'success');
+            }).catch(() => {
+                // Fallback
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                showToast('Email content copied to clipboard', 'success');
+            });
+        }
+
+        // ============================================================
+        // BULK ACTIONS
+        // ============================================================
+        let selectedTenants = new Set();
+
+        function updateBulkBar() {
+            const bar = document.getElementById('bulk-bar');
+            const count = selectedTenants.size;
+            if (count > 0) {
+                bar.classList.add('show');
+                document.getElementById('bulk-count').textContent = count + ' selected';
+            } else {
+                bar.classList.remove('show');
+            }
+        }
+
+        function toggleTenantSelection(id, checkbox) {
+            if (checkbox.checked) {
+                selectedTenants.add(id);
+            } else {
+                selectedTenants.delete(id);
+            }
+            updateBulkBar();
+            // Sync header checkbox
+            const headerCb = document.getElementById('header-select-all');
+            if (headerCb) {
+                const allCbs = document.querySelectorAll('.tenant-row-checkbox');
+                headerCb.checked = allCbs.length > 0 && [...allCbs].every(cb => cb.checked);
+            }
+        }
+
+        function toggleSelectAll(headerCheckbox) {
+            const allCbs = document.querySelectorAll('.tenant-row-checkbox');
+            allCbs.forEach(cb => {
+                cb.checked = headerCheckbox.checked;
+                const id = parseInt(cb.dataset.tenantId);
+                if (headerCheckbox.checked) {
+                    selectedTenants.add(id);
+                } else {
+                    selectedTenants.delete(id);
+                }
+            });
+            updateBulkBar();
+        }
+
+        function clearSelection() {
+            selectedTenants.clear();
+            document.querySelectorAll('.tenant-row-checkbox, #header-select-all, #select-all-tenants').forEach(cb => cb.checked = false);
+            updateBulkBar();
+        }
+
+        function bulkEmail() {
+            const tenants = (state.tenants || []).filter(t => selectedTenants.has(t.id));
+            const emails = tenants.map(t => t.contactEmail).filter(e => e && e.trim());
+            if (emails.length === 0) {
+                showToast('No email addresses found for selected tenants', 'error');
+                return;
+            }
+            openComposeEmail();
+            document.getElementById('compose-to').value = emails.join('; ');
+            document.getElementById('compose-subject').value = 'Fire Safety Compliance - Bulk Communication';
+        }
+
+        function bulkExportSelected() {
+            const tenants = (state.tenants || []).filter(t => selectedTenants.has(t.id));
+            if (tenants.length === 0) { showToast('No tenants selected', 'error'); return; }
+            const headers = ['ID', 'Tenant Name', 'Trading Name', 'Station', 'Contact Name', 'Contact Email', 'Contact Mobile', 'Priority', 'FSC Status', 'Defects Open', 'AFSS Month'];
+            let csv = headers.join(',') + '\n';
+            tenants.forEach(t => {
+                csv += [t.id, t.tenantName, t.tradingName, t.station, t.contactName, t.contactEmail, t.contactMobile, t.priority, t.fscStatus, t.defectsOpen, t.afssMonth]
+                    .map(v => `"${(v || '').toString().replace(/"/g, '""')}"`).join(',') + '\n';
+            });
+            downloadFile(csv, 'text/csv', 'selected_tenants_' + new Date().toISOString().split('T')[0] + '.csv');
+            showToast(tenants.length + ' tenants exported', 'success');
+        }
+
+        // ============================================================
+        // EXCEL EXPORT (XLSX via XML spreadsheet)
+        // ============================================================
+        function exportTenantsXLSX() {
+            const tenants = state.tenants || [];
+            const headers = ['ID', 'Tenant Name', 'Trading Name', 'Station', 'Lease ID', 'File Number', 'Priority', 'FSC Status', 'Has FSS', 'Compliance Status', 'Contact Name', 'Contact Email', 'Contact Mobile', 'Defects Open', 'Defects Major', 'AFSS Month', 'Property Manager', 'Region', 'Zone', 'Council', 'Lease Status', 'Last Updated'];
+
+            let xml = '<?xml version="1.0"?>\n<?mso-application progid="Excel.Sheet"?>\n';
+            xml += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n';
+            xml += '<Styles><Style ss:ID="header"><Font ss:Bold="1" ss:Color="#FFFFFF" ss:Size="11"/><Interior ss:Color="#1A56DB" ss:Pattern="Solid"/><Alignment ss:Horizontal="Center"/></Style>';
+            xml += '<Style ss:ID="critical"><Interior ss:Color="#FEE2E2" ss:Pattern="Solid"/></Style>';
+            xml += '<Style ss:ID="high"><Interior ss:Color="#FFFBEB" ss:Pattern="Solid"/></Style>';
+            xml += '<Style ss:ID="default"></Style></Styles>\n';
+            xml += '<Worksheet ss:Name="Tenants"><Table>\n';
+
+            // Header row
+            xml += '<Row>';
+            headers.forEach(h => { xml += '<Cell ss:StyleID="header"><Data ss:Type="String">' + escapeHtml(h) + '</Data></Cell>'; });
+            xml += '</Row>\n';
+
+            // Data rows
+            tenants.forEach(t => {
+                const style = t.priority === 'Critical' ? 'critical' : t.priority === 'High' ? 'high' : 'default';
+                xml += '<Row>';
+                const vals = [t.id, t.tenantName, t.tradingName, t.station, t.leaseId, t.fileNumber, t.priority, t.fscStatus, t.hasFSS, t.complianceStatus, t.contactName, t.contactEmail, t.contactMobile, t.defectsOpen, t.defectsMajor, t.afssMonth, t.propertyManager, t.region, t.zone, t.council, t.leaseStatus, t.lastUpdated];
+                vals.forEach((v, i) => {
+                    const type = (typeof v === 'number') ? 'Number' : 'String';
+                    xml += '<Cell ss:StyleID="' + style + '"><Data ss:Type="' + type + '">' + escapeHtml((v ?? '').toString()) + '</Data></Cell>';
+                });
+                xml += '</Row>\n';
+            });
+
+            xml += '</Table></Worksheet></Workbook>';
+
+            downloadFile(xml, 'application/vnd.ms-excel', 'tenants_export_' + new Date().toISOString().split('T')[0] + '.xls');
+            showToast('Excel file exported', 'success');
+        }
+
+        // ============================================================
+        // COMMAND PALETTE (Ctrl+K)
+        // ============================================================
+        let cmdActiveIndex = 0;
+
+        function openCommandPalette() {
+            document.getElementById('cmd-palette').classList.add('show');
+            const input = document.getElementById('cmd-search');
+            input.value = '';
+            input.focus();
+            renderCommandResults('');
+        }
+
+        function closeCommandPalette() {
+            document.getElementById('cmd-palette').classList.remove('show');
+        }
+
+        function getCommandItems(query) {
+            const q = query.toLowerCase();
+            const items = [
+                { icon: 'grid', label: 'Go to Dashboard', shortcut: 'Alt+1', action: () => navigateTo('dashboard') },
+                { icon: 'users', label: 'Go to Tenants', shortcut: 'Alt+2', action: () => navigateTo('tenants') },
+                { icon: 'map', label: 'Go to Stations', shortcut: 'Alt+3', action: () => navigateTo('stations') },
+                { icon: 'mail', label: 'Go to Contacts', shortcut: 'Alt+4', action: () => navigateTo('contacts') },
+                { icon: 'calendar', label: 'Go to AFSS Schedule', action: () => navigateTo('afss') },
+                { icon: 'alert', label: 'Go to Critical Items', action: () => navigateTo('critical') },
+                { icon: 'tool', label: 'Go to Defects', action: () => navigateTo('defects') },
+                { icon: 'chart', label: 'Go to Analytics', action: () => navigateTo('analytics') },
+                { icon: 'file', label: 'Go to Reports', action: () => navigateTo('reports') },
+                { icon: 'edit', label: 'Go to Notes', action: () => navigateTo('notes') },
+                { icon: 'settings', label: 'Go to Settings', action: () => navigateTo('settings') },
+                { icon: 'mail', label: 'Compose Email', shortcut: 'Ctrl+E', action: () => openComposeEmail() },
+                { icon: 'download', label: 'Export JSON Backup', action: () => exportJSON() },
+                { icon: 'download', label: 'Export Tenants CSV', action: () => exportTenantsCSV() },
+                { icon: 'download', label: 'Export Tenants Excel', action: () => exportTenantsXLSX() },
+                { icon: 'download', label: 'Export Defects CSV', action: () => exportDefectsCSV() },
+                { icon: 'download', label: 'Export Contacts CSV', action: () => exportContactsCSV() },
+                { icon: 'file', label: 'Generate Executive Report', action: () => generateReport('executive') },
+                { icon: 'file', label: 'Generate Monthly Report', action: () => generateReport('monthly') },
+                { icon: 'file', label: 'Generate Critical Report', action: () => generateReport('critical') },
+                { icon: 'moon', label: 'Toggle Dark Mode', action: () => toggleDarkMode() },
+            ];
+
+            // Add tenant search results
+            if (q.length >= 2) {
+                const matchedTenants = (state.tenants || [])
+                    .filter(t => (t.tenantName || '').toLowerCase().includes(q) || (t.tradingName || '').toLowerCase().includes(q) || (t.station || '').toLowerCase().includes(q))
+                    .slice(0, 8);
+                matchedTenants.forEach(t => {
+                    items.push({
+                        icon: 'user',
+                        label: t.tenantName + ' - ' + t.station,
+                        action: () => { openTenant(t.id); }
+                    });
+                });
+            }
+
+            if (!q) return items.slice(0, 12);
+            return items.filter(item => item.label.toLowerCase().includes(q)).slice(0, 12);
+        }
+
+        function renderCommandResults(query) {
+            const items = getCommandItems(query);
+            cmdActiveIndex = 0;
+            const container = document.getElementById('cmd-results');
+
+            const iconSvgs = {
+                grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>',
+                users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>',
+                map: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+                mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
+                calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>',
+                alert: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>',
+                tool: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+                chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+                file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+                edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+                settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33"/></svg>',
+                download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+                moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+                user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
+            };
+
+            if (items.length === 0) {
+                container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px">No results found</div>';
+                return;
+            }
+
+            container.innerHTML = items.map((item, i) => `
+                <div class="cmd-item ${i === 0 ? 'active' : ''}" data-index="${i}">
+                    ${iconSvgs[item.icon] || iconSvgs.file}
+                    <span class="cmd-item-label">${escapeHtml(item.label)}</span>
+                    ${item.shortcut ? `<span class="cmd-item-shortcut"><span class="cmd-kbd">${item.shortcut}</span></span>` : ''}
+                </div>
+            `).join('');
+
+            // Click handlers
+            container.querySelectorAll('.cmd-item').forEach((el, i) => {
+                el.addEventListener('click', () => {
+                    items[i].action();
+                    closeCommandPalette();
+                });
+            });
+        }
+
+        // ============================================================
+        // KEYBOARD SHORTCUTS
+        // ============================================================
+        document.addEventListener('keydown', (e) => {
+            // Ctrl+K or Cmd+K - Command Palette
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                const palette = document.getElementById('cmd-palette');
+                if (palette.classList.contains('show')) {
+                    closeCommandPalette();
+                } else {
+                    openCommandPalette();
+                }
+                return;
+            }
+
+            // Ctrl+E - Compose Email
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                e.preventDefault();
+                openComposeEmail();
+                return;
+            }
+
+            // Escape - Close modals
+            if (e.key === 'Escape') {
+                if (document.getElementById('cmd-palette').classList.contains('show')) {
+                    closeCommandPalette();
+                    return;
+                }
+                if (document.getElementById('compose-modal').classList.contains('show')) {
+                    closeCompose();
+                    return;
+                }
+                if (document.getElementById('tenant-modal').classList.contains('show')) {
+                    closeModal();
+                    return;
+                }
+            }
+
+            // Command palette navigation
+            if (document.getElementById('cmd-palette').classList.contains('show')) {
+                const items = document.querySelectorAll('.cmd-item');
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    cmdActiveIndex = Math.min(cmdActiveIndex + 1, items.length - 1);
+                    items.forEach((el, i) => el.classList.toggle('active', i === cmdActiveIndex));
+                    items[cmdActiveIndex]?.scrollIntoView({ block: 'nearest' });
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    cmdActiveIndex = Math.max(cmdActiveIndex - 1, 0);
+                    items.forEach((el, i) => el.classList.toggle('active', i === cmdActiveIndex));
+                    items[cmdActiveIndex]?.scrollIntoView({ block: 'nearest' });
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    items[cmdActiveIndex]?.click();
+                }
+                return;
+            }
+
+            // Alt+number shortcuts for navigation (only when not in input)
+            if (e.altKey && !e.ctrlKey && !e.metaKey) {
+                const tag = document.activeElement?.tagName;
+                if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+                const pages = ['dashboard', 'tenants', 'stations', 'contacts', 'afss', 'critical', 'defects', 'reports', 'analytics'];
+                const num = parseInt(e.key);
+                if (num >= 1 && num <= pages.length) {
+                    e.preventDefault();
+                    navigateTo(pages[num - 1]);
+                }
+            }
+        });
+
+        // Command palette search input handler
+        document.getElementById('cmd-search')?.addEventListener('input', debounce((e) => {
+            renderCommandResults(e.target.value);
+        }, 100));
+
+        // Close command palette on overlay click
+        document.getElementById('cmd-palette')?.addEventListener('click', (e) => {
+            if (e.target.id === 'cmd-palette') closeCommandPalette();
+        });
+
+        // Close compose modal on overlay click
+        document.getElementById('compose-modal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'compose-modal') closeCompose();
+        });
     </script>
 </body>
 </html>
