@@ -1682,6 +1682,7 @@
                     </div>
                     <div class="card-body">
                         <div class="stats-grid" id="station-detail-stats" style="margin-bottom:16px"></div>
+                        <div id="station-afss-edit" style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px 16px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border)"></div>
                         <h4 style="font-size:14px;font-weight:600;margin-bottom:12px">Tenancies at this Station</h4>
                         <div class="table-container">
                             <table>
@@ -1848,6 +1849,7 @@
                                         <th>FSCs Outstanding</th>
                                         <th>Completion</th>
                                         <th>Status</th>
+                                        <th style="width:60px"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="afss-table"></tbody>
@@ -2407,11 +2409,23 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">AFSS Month</label>
-                            <input type="text" class="form-input" id="modal-afss-month" readonly>
+                            <select class="form-select" id="modal-afss-month">
+                                <option value="">Not Set</option>
+                                <option value="January">January</option><option value="February">February</option><option value="March">March</option>
+                                <option value="April">April</option><option value="May">May</option><option value="June">June</option>
+                                <option value="July">July</option><option value="August">August</option><option value="September">September</option>
+                                <option value="October">October</option><option value="November">November</option><option value="December">December</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">FSC Due Month</label>
-                            <input type="text" class="form-input" id="modal-fsc-due" readonly>
+                            <select class="form-select" id="modal-fsc-due">
+                                <option value="">Not Set</option>
+                                <option value="January">January</option><option value="February">February</option><option value="March">March</option>
+                                <option value="April">April</option><option value="May">May</option><option value="June">June</option>
+                                <option value="July">July</option><option value="August">August</option><option value="September">September</option>
+                                <option value="October">October</option><option value="November">November</option><option value="December">December</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Compliance Status</label>
@@ -3198,6 +3212,42 @@
                 <div class="stat-card" style="padding:12px 16px;border-left:3px solid var(--success)"><div class="stat-value" style="font-size:20px">${hasFSS}</div><div class="stat-label">Has FSS</div></div>
             `;
 
+            // AFSS edit row
+            const afssEditEl = document.getElementById('station-afss-edit');
+            const currentAfss = station ? (station.afssMonth || '') : '';
+            const afssEntry = (state.afssSchedule || []).find(a => a.station === stationName);
+            const currentFscDue = afssEntry ? (afssEntry.fscDueMonth || '') : '';
+            const currentStatus = afssEntry ? (afssEntry.status || '') : '';
+            const monthOpts = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            afssEditEl.innerHTML = `
+                <div style="display:flex;align-items:center;gap:6px">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--fyre)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span style="font-size:12px;font-weight:600">AFSS Due Dates</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px">
+                    <label style="font-size:11px;color:var(--text-muted);white-space:nowrap">AFSS Month:</label>
+                    <select class="form-select" id="station-edit-afss-month" style="padding:4px 8px;font-size:12px;min-width:120px">
+                        <option value="">Not Set</option>
+                        ${monthOpts.map(m => '<option value="' + m + '"' + (m === currentAfss ? ' selected' : '') + '>' + m + '</option>').join('')}
+                    </select>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px">
+                    <label style="font-size:11px;color:var(--text-muted);white-space:nowrap">FSC Due:</label>
+                    <select class="form-select" id="station-edit-fsc-due" style="padding:4px 8px;font-size:12px;min-width:120px">
+                        <option value="">Not Set</option>
+                        ${monthOpts.map(m => '<option value="' + m + '"' + (m === currentFscDue ? ' selected' : '') + '>' + m + '</option>').join('')}
+                    </select>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px">
+                    <label style="font-size:11px;color:var(--text-muted);white-space:nowrap">Status:</label>
+                    <select class="form-select" id="station-edit-status" style="padding:4px 8px;font-size:12px;min-width:120px">
+                        <option value=""${!currentStatus ? ' selected' : ''}>Pending</option>
+                        <option value="Submitted"${currentStatus === 'Submitted' ? ' selected' : ''}>Submitted</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="saveStationAfss('${escapeHtml(stationName)}')" style="margin-left:auto;padding:4px 14px;font-size:11px">Save</button>
+            `;
+
             // Tenants table
             const tbody = document.getElementById('station-tenants-table');
             tbody.innerHTML = tenants.map(t => `
@@ -3217,6 +3267,131 @@
 
         function closeStationDetail() {
             document.getElementById('station-detail-panel').style.display = 'none';
+        }
+
+        function saveStationAfss(stationName) {
+            const monthOrder = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            const newAfssMonth = document.getElementById('station-edit-afss-month').value;
+            const newFscDue = document.getElementById('station-edit-fsc-due').value;
+            const newStatus = document.getElementById('station-edit-status').value;
+
+            // Update station
+            const stationIdx = (state.stations || []).findIndex(s => s.name === stationName);
+            if (stationIdx > -1) {
+                state.stations[stationIdx].afssMonth = newAfssMonth;
+            }
+
+            // Update AFSS schedule
+            const afssIdx = (state.afssSchedule || []).findIndex(a => a.station === stationName);
+            if (afssIdx > -1) {
+                state.afssSchedule[afssIdx].afssMonth = newAfssMonth;
+                state.afssSchedule[afssIdx].afssMonthNum = monthOrder.indexOf(newAfssMonth) + 1 || 0;
+                state.afssSchedule[afssIdx].fscDueMonth = newFscDue;
+                state.afssSchedule[afssIdx].status = newStatus || null;
+            }
+
+            // Update all tenants at this station to match the new AFSS month
+            (state.tenants || []).forEach(t => {
+                if (t.station === stationName) {
+                    t.afssMonth = newAfssMonth;
+                    t.afssMonthNum = monthOrder.indexOf(newAfssMonth) + 1 || 0;
+                    t.fscDueMonth = newFscDue;
+                    t.lastUpdated = new Date().toISOString().split('T')[0];
+                }
+            });
+
+            saveData();
+            renderAll();
+            openStationDetail(stationName); // Re-open to reflect changes
+            showToast(stationName + ' AFSS dates updated', 'success');
+        }
+
+        function openAfssEdit(afssId) {
+            const afss = (state.afssSchedule || []).find(a => a.id === afssId);
+            if (!afss) return;
+
+            const monthOrder = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            const monthOpts = monthOrder.map(m => '<option value="' + m + '"' + (m === afss.afssMonth ? ' selected' : '') + '>' + m + '</option>').join('');
+            const fscOpts = monthOrder.map(m => '<option value="' + m + '"' + (m === afss.fscDueMonth ? ' selected' : '') + '>' + m + '</option>').join('');
+
+            // Create inline edit modal
+            const overlay = document.createElement('div');
+            overlay.id = 'afss-edit-overlay';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center';
+            overlay.innerHTML = `
+                <div style="background:var(--card-bg);border-radius:var(--radius-lg);padding:24px;width:400px;max-width:90vw;box-shadow:var(--shadow-lg)">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+                        <h3 style="font-size:15px;font-weight:700">Edit AFSS - ${escapeHtml(afss.station)}</h3>
+                        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('afss-edit-overlay').remove()">&times;</button>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:12px">
+                        <div class="form-group" style="margin-bottom:0">
+                            <label class="form-label">AFSS Month</label>
+                            <select class="form-select" id="afss-edit-month">
+                                <option value="">Not Set</option>
+                                ${monthOpts}
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0">
+                            <label class="form-label">FSC Due Month</label>
+                            <select class="form-select" id="afss-edit-fsc-due">
+                                <option value="">Not Set</option>
+                                ${fscOpts}
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="afss-edit-status">
+                                <option value=""${!afss.status ? ' selected' : ''}>Pending</option>
+                                <option value="Submitted"${afss.status === 'Submitted' ? ' selected' : ''}>Submitted</option>
+                            </select>
+                        </div>
+                        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+                            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('afss-edit-overlay').remove()">Cancel</button>
+                            <button class="btn btn-primary btn-sm" onclick="saveAfssEdit(${afssId})">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+            document.body.appendChild(overlay);
+        }
+
+        function saveAfssEdit(afssId) {
+            const monthOrder = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            const afssIdx = (state.afssSchedule || []).findIndex(a => a.id === afssId);
+            if (afssIdx === -1) return;
+
+            const newMonth = document.getElementById('afss-edit-month').value;
+            const newFscDue = document.getElementById('afss-edit-fsc-due').value;
+            const newStatus = document.getElementById('afss-edit-status').value;
+            const stationName = state.afssSchedule[afssIdx].station;
+
+            state.afssSchedule[afssIdx].afssMonth = newMonth;
+            state.afssSchedule[afssIdx].afssMonthNum = monthOrder.indexOf(newMonth) + 1 || 0;
+            state.afssSchedule[afssIdx].fscDueMonth = newFscDue;
+            state.afssSchedule[afssIdx].status = newStatus || null;
+
+            // Update station record
+            const stationIdx = (state.stations || []).findIndex(s => s.name === stationName);
+            if (stationIdx > -1) {
+                state.stations[stationIdx].afssMonth = newMonth;
+            }
+
+            // Update all tenants at this station
+            (state.tenants || []).forEach(t => {
+                if (t.station === stationName) {
+                    t.afssMonth = newMonth;
+                    t.afssMonthNum = monthOrder.indexOf(newMonth) + 1 || 0;
+                    t.fscDueMonth = newFscDue;
+                    t.lastUpdated = new Date().toISOString().split('T')[0];
+                }
+            });
+
+            document.getElementById('afss-edit-overlay').remove();
+            saveData();
+            renderAll();
+            showToast(stationName + ' AFSS schedule updated', 'success');
         }
 
         // ============================================================
@@ -3295,6 +3470,9 @@
                         </div>
                     </td>
                     <td><span class="badge badge-${a.status === 'Submitted' ? 'received' : isOverdue ? 'outstanding' : 'pending'}">${isOverdue && a.status !== 'Submitted' ? 'Overdue' : (a.status || 'Pending')}</span></td>
+                    <td><button class="btn btn-ghost btn-sm" onclick="openAfssEdit(${a.id})" title="Edit AFSS record">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button></td>
                 </tr>`;
             }).join('');
         }
@@ -3872,6 +4050,8 @@
             const idx = state.tenants.findIndex(t => t.id === state.currentTenant.id);
             if (idx === -1) return;
 
+            const monthOrder = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
             state.tenants[idx].contactName = document.getElementById('modal-contact-name').value;
             state.tenants[idx].contactMobile = document.getElementById('modal-contact-mobile').value;
             state.tenants[idx].contactEmail = document.getElementById('modal-contact-email').value;
@@ -3883,6 +4063,20 @@
             state.tenants[idx].fscReceivedDate = document.getElementById('modal-fsc-received').value;
             state.tenants[idx].notes = document.getElementById('modal-notes').value;
             state.tenants[idx].outstandingItems = document.getElementById('modal-outstanding').value;
+
+            // AFSS Month and FSC Due Month (editable)
+            const newAfssMonth = document.getElementById('modal-afss-month').value;
+            const newFscDue = document.getElementById('modal-fsc-due').value;
+            const oldAfssMonth = state.tenants[idx].afssMonth;
+
+            state.tenants[idx].afssMonth = newAfssMonth;
+            state.tenants[idx].afssMonthNum = monthOrder.indexOf(newAfssMonth) + 1 || 0;
+            state.tenants[idx].fscDueMonth = newFscDue;
+
+            // Cascade AFSS month change to station and AFSS schedule if changed
+            if (newAfssMonth !== oldAfssMonth) {
+                syncStationAfssData(state.tenants[idx].station);
+            }
 
             state.tenants[idx].fireSafetyMeasures = {
                 ...state.tenants[idx].fireSafetyMeasures,
@@ -3903,6 +4097,50 @@
             closeModal();
             renderAll();
             showToast('Tenant updated', 'success');
+        }
+
+        // Re-calculate station-level AFSS data when a tenant's AFSS month changes
+        function syncStationAfssData(stationName) {
+            if (!stationName) return;
+            const tenants = (state.tenants || []).filter(t => t.station === stationName);
+
+            // Update station record
+            const stationIdx = (state.stations || []).findIndex(s => s.name === stationName);
+            if (stationIdx > -1) {
+                const station = state.stations[stationIdx];
+                // Use the most common AFSS month among tenants at this station
+                const monthCounts = {};
+                tenants.forEach(t => {
+                    if (t.afssMonth) monthCounts[t.afssMonth] = (monthCounts[t.afssMonth] || 0) + 1;
+                });
+                const topMonth = Object.entries(monthCounts).sort((a, b) => b[1] - a[1])[0];
+                if (topMonth) station.afssMonth = topMonth[0];
+                station.tenantCount = tenants.length;
+                station.fscCompliant = tenants.filter(t => t.fscStatus === 'Received' || t.fscStatus === 'Compliant').length;
+                station.criticalCount = tenants.filter(t => t.priority === 'Critical').length;
+                station.highCount = tenants.filter(t => t.priority === 'High').length;
+                station.defectsOpen = tenants.reduce((sum, t) => sum + (t.defectsOpen || 0), 0);
+            }
+
+            // Update AFSS schedule record
+            const afssIdx = (state.afssSchedule || []).findIndex(a => a.station === stationName);
+            if (afssIdx > -1) {
+                const sched = state.afssSchedule[afssIdx];
+                const monthOrder = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                // Use the most common AFSS month
+                const monthCounts = {};
+                tenants.forEach(t => {
+                    if (t.afssMonth) monthCounts[t.afssMonth] = (monthCounts[t.afssMonth] || 0) + 1;
+                });
+                const topMonth = Object.entries(monthCounts).sort((a, b) => b[1] - a[1])[0];
+                if (topMonth) {
+                    sched.afssMonth = topMonth[0];
+                    sched.afssMonthNum = monthOrder.indexOf(topMonth[0]) + 1;
+                }
+                sched.totalTenants = tenants.length;
+                sched.fscReceived = tenants.filter(t => t.fscStatus === 'Received' || t.fscStatus === 'Compliant').length;
+                sched.fscPending = tenants.filter(t => t.fscStatus === 'Outstanding' || t.fscStatus === 'Pending').length;
+            }
         }
 
         // ============================================================
