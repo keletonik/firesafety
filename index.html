@@ -2787,7 +2787,7 @@
             if (!str) return '';
             const div = document.createElement('div');
             div.textContent = String(str);
-            return div.innerHTML;
+            return div.innerHTML.replace(/'/g, '&#39;');
         }
 
         function setupEventListeners() {
@@ -4068,13 +4068,14 @@
             const newAfssMonth = document.getElementById('modal-afss-month').value;
             const newFscDue = document.getElementById('modal-fsc-due').value;
             const oldAfssMonth = state.tenants[idx].afssMonth;
+            const oldFscDue = state.tenants[idx].fscDueMonth;
 
             state.tenants[idx].afssMonth = newAfssMonth;
             state.tenants[idx].afssMonthNum = monthOrder.indexOf(newAfssMonth) + 1 || 0;
             state.tenants[idx].fscDueMonth = newFscDue;
 
-            // Cascade AFSS month change to station and AFSS schedule if changed
-            if (newAfssMonth !== oldAfssMonth) {
+            // Cascade changes to station and AFSS schedule if either date changed
+            if (newAfssMonth !== oldAfssMonth || newFscDue !== oldFscDue) {
                 syncStationAfssData(state.tenants[idx].station);
             }
 
@@ -4099,22 +4100,27 @@
             showToast('Tenant updated', 'success');
         }
 
-        // Re-calculate station-level AFSS data when a tenant's AFSS month changes
+        // Re-calculate station-level AFSS data when a tenant's AFSS/FSC dates change
         function syncStationAfssData(stationName) {
             if (!stationName) return;
             const tenants = (state.tenants || []).filter(t => t.station === stationName);
+
+            // Helper: find the most common value in an array of strings
+            function mostCommon(values) {
+                const counts = {};
+                values.forEach(v => { if (v) counts[v] = (counts[v] || 0) + 1; });
+                const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+                return top ? top[0] : null;
+            }
+
+            const topAfssMonth = mostCommon(tenants.map(t => t.afssMonth));
+            const topFscDue = mostCommon(tenants.map(t => t.fscDueMonth));
 
             // Update station record
             const stationIdx = (state.stations || []).findIndex(s => s.name === stationName);
             if (stationIdx > -1) {
                 const station = state.stations[stationIdx];
-                // Use the most common AFSS month among tenants at this station
-                const monthCounts = {};
-                tenants.forEach(t => {
-                    if (t.afssMonth) monthCounts[t.afssMonth] = (monthCounts[t.afssMonth] || 0) + 1;
-                });
-                const topMonth = Object.entries(monthCounts).sort((a, b) => b[1] - a[1])[0];
-                if (topMonth) station.afssMonth = topMonth[0];
+                if (topAfssMonth) station.afssMonth = topAfssMonth;
                 station.tenantCount = tenants.length;
                 station.fscCompliant = tenants.filter(t => t.fscStatus === 'Received' || t.fscStatus === 'Compliant').length;
                 station.criticalCount = tenants.filter(t => t.priority === 'Critical').length;
@@ -4127,15 +4133,12 @@
             if (afssIdx > -1) {
                 const sched = state.afssSchedule[afssIdx];
                 const monthOrder = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-                // Use the most common AFSS month
-                const monthCounts = {};
-                tenants.forEach(t => {
-                    if (t.afssMonth) monthCounts[t.afssMonth] = (monthCounts[t.afssMonth] || 0) + 1;
-                });
-                const topMonth = Object.entries(monthCounts).sort((a, b) => b[1] - a[1])[0];
-                if (topMonth) {
-                    sched.afssMonth = topMonth[0];
-                    sched.afssMonthNum = monthOrder.indexOf(topMonth[0]) + 1;
+                if (topAfssMonth) {
+                    sched.afssMonth = topAfssMonth;
+                    sched.afssMonthNum = monthOrder.indexOf(topAfssMonth) + 1;
+                }
+                if (topFscDue) {
+                    sched.fscDueMonth = topFscDue;
                 }
                 sched.totalTenants = tenants.length;
                 sched.fscReceived = tenants.filter(t => t.fscStatus === 'Received' || t.fscStatus === 'Compliant').length;
