@@ -884,6 +884,318 @@
         .cmd-item-label { flex: 1; }
         .cmd-item-shortcut { font-size: 11px; color: var(--text-light); }
         .cmd-kbd { display: inline-flex; align-items: center; justify-content: center; padding: 2px 6px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; font-size: 10px; font-family: inherit; color: var(--text-muted); }
+
+        /* ============================================================
+           AI EMAIL CHATBOT
+           ============================================================ */
+        .chatbot-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        .chatbot-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, var(--sidebar-bg) 0%, #1e1e24 100%);
+            color: #fff;
+            border-bottom: 2px solid var(--fyre);
+        }
+        .chatbot-header-icon {
+            width: 36px; height: 36px;
+            background: var(--fyre);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(232,118,47,0.3);
+        }
+        .chatbot-header-info h3 { font-size: 14px; font-weight: 700; letter-spacing: -0.01em; }
+        .chatbot-header-info p { font-size: 11px; color: #94a3b8; margin-top: 1px; }
+        .chatbot-status { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 11px; color: #5BB8A6; }
+        .chatbot-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #5BB8A6; animation: pulse-dot 2s infinite; }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .chatbot-body {
+            display: flex;
+            flex-direction: column;
+            height: 520px;
+        }
+
+        /* Drop Zone */
+        .email-drop-zone {
+            margin: 16px;
+            padding: 28px 20px;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background: var(--bg);
+            position: relative;
+        }
+        .email-drop-zone:hover {
+            border-color: var(--fyre-light);
+            background: var(--primary-bg);
+        }
+        .email-drop-zone.drag-over {
+            border-color: var(--fyre);
+            background: var(--primary-bg);
+            transform: scale(1.01);
+            box-shadow: 0 0 20px rgba(232,118,47,0.15);
+        }
+        .email-drop-zone.drag-over .drop-icon { transform: scale(1.15) translateY(-2px); }
+        .drop-icon {
+            width: 44px; height: 44px;
+            margin: 0 auto 10px;
+            background: var(--primary-bg);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.25s ease;
+        }
+        .drop-icon svg { stroke: var(--fyre); }
+        .email-drop-zone h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .email-drop-zone p { font-size: 11px; color: var(--text-muted); }
+        .drop-formats { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
+        .drop-format-tag {
+            font-size: 10px; padding: 2px 8px;
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 4px; color: var(--text-muted); font-weight: 500;
+        }
+        .email-drop-zone.has-file { border-color: var(--zen); background: var(--success-bg); }
+        .email-drop-zone.has-file .drop-icon { background: var(--success-bg); }
+        .email-drop-zone.has-file .drop-icon svg { stroke: var(--zen); }
+
+        /* Chat Messages */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .chat-msg {
+            display: flex;
+            gap: 8px;
+            max-width: 90%;
+            animation: msg-in 0.3s ease;
+        }
+        @keyframes msg-in {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chat-msg.bot { align-self: flex-start; }
+        .chat-msg.user { align-self: flex-end; flex-direction: row-reverse; }
+        .chat-avatar {
+            width: 28px; height: 28px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px; font-weight: 700;
+        }
+        .chat-msg.bot .chat-avatar { background: var(--primary-bg); color: var(--fyre); }
+        .chat-msg.user .chat-avatar { background: var(--info-bg); color: var(--zen); }
+        .chat-bubble {
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 12.5px;
+            line-height: 1.55;
+        }
+        .chat-msg.bot .chat-bubble {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-top-left-radius: 4px;
+        }
+        .chat-msg.user .chat-bubble {
+            background: var(--fyre);
+            color: #fff;
+            border-top-right-radius: 4px;
+        }
+        .chat-bubble strong { font-weight: 600; }
+
+        /* Typing indicator */
+        .typing-indicator { display: flex; gap: 4px; padding: 12px 14px; }
+        .typing-indicator span {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--text-muted); opacity: 0.4;
+            animation: typing-bounce 1.4s infinite;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing-bounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* Email Analysis Card */
+        .email-analysis {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            margin-top: 8px;
+        }
+        .email-analysis-header {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 10px; padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .email-analysis-header svg { stroke: var(--fyre); }
+        .email-analysis-header span { font-size: 12px; font-weight: 600; }
+        .email-field { display: flex; gap: 8px; font-size: 11.5px; margin-bottom: 5px; }
+        .email-field-label { font-weight: 600; color: var(--text-muted); min-width: 50px; }
+        .email-field-value { color: var(--text); word-break: break-word; }
+
+        /* Task Cards */
+        .task-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-top: 6px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .task-card:hover { border-color: var(--fyre-light); box-shadow: var(--shadow-sm); }
+        .task-card.completed { opacity: 0.6; }
+        .task-card.completed .task-title { text-decoration: line-through; }
+        .task-card-header {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .task-checkbox {
+            width: 16px; height: 16px; border-radius: 4px;
+            border: 2px solid var(--border); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: all 0.15s ease;
+        }
+        .task-checkbox.checked {
+            background: var(--zen); border-color: var(--zen);
+        }
+        .task-checkbox.checked::after {
+            content: ''; display: block;
+            width: 5px; height: 8px;
+            border: solid #fff; border-width: 0 2px 2px 0;
+            transform: rotate(45deg) translate(-1px, -1px);
+        }
+        .task-title { font-size: 12px; font-weight: 500; flex: 1; }
+        .task-priority {
+            font-size: 9px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.05em; padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .task-priority.critical { background: var(--danger-bg); color: var(--danger); }
+        .task-priority.high { background: #fffbeb; color: #d97706; }
+        .task-priority.medium { background: var(--primary-bg); color: var(--fyre); }
+        .task-priority.low { background: var(--success-bg); color: var(--zen); }
+        .task-meta {
+            display: flex; align-items: center; gap: 8px;
+            margin-top: 6px; font-size: 10.5px; color: var(--text-muted);
+        }
+        .task-tag {
+            font-size: 10px; padding: 1px 6px;
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 3px;
+        }
+
+        /* Update Suggestion */
+        .update-suggestion {
+            background: var(--info-bg);
+            border: 1px solid var(--zen);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-top: 6px;
+        }
+        .update-suggestion-header {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 11.5px; font-weight: 600; color: var(--zen-dark);
+            margin-bottom: 8px;
+        }
+        .update-row {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 11px; padding: 4px 0;
+            border-bottom: 1px solid rgba(91,184,166,0.15);
+        }
+        .update-row:last-child { border-bottom: none; }
+        .update-field { font-weight: 600; color: var(--text-muted); min-width: 70px; font-size: 10.5px; }
+        .update-old { color: var(--danger); text-decoration: line-through; font-size: 10.5px; }
+        .update-arrow { color: var(--text-light); font-size: 10px; }
+        .update-new { color: var(--zen-dark); font-weight: 600; font-size: 10.5px; }
+        .update-actions {
+            display: flex; gap: 6px; margin-top: 8px;
+        }
+
+        /* Chat Input */
+        .chat-input-bar {
+            display: flex; align-items: center; gap: 8px;
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            background: var(--card-bg);
+        }
+        .chat-input {
+            flex: 1; padding: 9px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 12.5px;
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .chat-input:focus { border-color: var(--fyre); }
+        .chat-input::placeholder { color: var(--text-light); }
+        .chat-send-btn {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            border: none;
+            background: var(--fyre);
+            color: #fff;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+        .chat-send-btn:hover { background: var(--fyre-dark); transform: scale(1.05); }
+        .chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+        /* Task summary bar */
+        .task-summary-bar {
+            display: flex; gap: 12px; align-items: center;
+            padding: 10px 16px;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+            font-size: 11px;
+        }
+        .task-summary-stat { display: flex; align-items: center; gap: 4px; }
+        .task-summary-dot { width: 7px; height: 7px; border-radius: 50%; }
+        .task-summary-dot.pending { background: var(--fyre); }
+        .task-summary-dot.done { background: var(--zen); }
+        .task-summary-dot.total { background: var(--text-muted); }
+
+        /* Quick action buttons in chat */
+        .chat-quick-actions {
+            display: flex; flex-wrap: wrap; gap: 6px;
+            margin-top: 8px;
+        }
+        .chat-action-btn {
+            padding: 5px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--card-bg);
+            font-size: 11px;
+            cursor: pointer;
+            color: var(--text);
+            transition: all 0.15s;
+        }
+        .chat-action-btn:hover {
+            border-color: var(--fyre);
+            background: var(--primary-bg);
+            color: var(--fyre-dark);
+        }
     </style>
 </head>
 <body>
@@ -1109,6 +1421,64 @@
                                 <tbody id="priority-actions-table"></tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+
+                <!-- AI Email Chatbot -->
+                <div class="chatbot-panel" id="chatbot-panel">
+                    <div class="chatbot-header">
+                        <div class="chatbot-header-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>
+                        </div>
+                        <div class="chatbot-header-info">
+                            <h3>FYREZEN AI Assistant</h3>
+                            <p>Drop an email to analyse &amp; assign tasks</p>
+                        </div>
+                        <div class="chatbot-status">
+                            <span class="chatbot-status-dot"></span>
+                            Online
+                        </div>
+                    </div>
+                    <div class="chatbot-body">
+                        <div class="email-drop-zone" id="email-drop-zone">
+                            <input type="file" id="email-file-input" accept=".eml,.msg,.txt,.html,.htm" style="display:none" multiple>
+                            <div class="drop-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            </div>
+                            <h4>Drag &amp; drop an email here</h4>
+                            <p>Or click to browse - supports Outlook emails and text files</p>
+                            <div class="drop-formats">
+                                <span class="drop-format-tag">.eml</span>
+                                <span class="drop-format-tag">.msg</span>
+                                <span class="drop-format-tag">.txt</span>
+                                <span class="drop-format-tag">.html</span>
+                            </div>
+                        </div>
+                        <div class="chat-messages" id="chat-messages" style="display:none"></div>
+                    </div>
+                    <div class="task-summary-bar" id="task-summary-bar" style="display:none">
+                        <div class="task-summary-stat">
+                            <span class="task-summary-dot total"></span>
+                            <span id="task-count-total">0</span> tasks
+                        </div>
+                        <div class="task-summary-stat">
+                            <span class="task-summary-dot pending"></span>
+                            <span id="task-count-pending">0</span> pending
+                        </div>
+                        <div class="task-summary-stat">
+                            <span class="task-summary-dot done"></span>
+                            <span id="task-count-done">0</span> done
+                        </div>
+                        <button class="btn btn-ghost btn-sm" onclick="exportChatbotTasks()" style="margin-left:auto;font-size:10px">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            Export Tasks
+                        </button>
+                    </div>
+                    <div class="chat-input-bar">
+                        <input type="text" class="chat-input" id="chat-input" placeholder="Ask about the email or type a command..." disabled>
+                        <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" disabled>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -4134,6 +4504,875 @@ Fire Safety Compliance Team`
                     closeCommandPalette();
                 });
             });
+        }
+
+        // ============================================================
+        // AI EMAIL CHATBOT
+        // ============================================================
+        const chatbotState = {
+            tasks: [],
+            parsedEmail: null,
+            detectedUpdates: [],
+            conversationHistory: [],
+            isProcessing: false,
+            taskIdCounter: 0
+        };
+
+        // Save/load chatbot tasks from localStorage
+        function saveChatbotTasks() {
+            localStorage.setItem('fyrezen_chatbot_tasks', JSON.stringify(chatbotState.tasks));
+        }
+        function loadChatbotTasks() {
+            try {
+                const saved = localStorage.getItem('fyrezen_chatbot_tasks');
+                if (saved) chatbotState.tasks = JSON.parse(saved);
+            } catch(e) {}
+        }
+        loadChatbotTasks();
+
+        // Email drop zone setup
+        (function initEmailDropZone() {
+            const dropZone = document.getElementById('email-drop-zone');
+            const fileInput = document.getElementById('email-file-input');
+            if (!dropZone || !fileInput) return;
+
+            dropZone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) handleEmailFiles(e.target.files);
+            });
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.add('drag-over');
+            });
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('drag-over');
+            });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('drag-over');
+                if (e.dataTransfer.files.length > 0) {
+                    handleEmailFiles(e.dataTransfer.files);
+                } else {
+                    // Handle dragged text (e.g. from Outlook web)
+                    const text = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('text/html');
+                    if (text && text.trim().length > 20) {
+                        processEmailContent(text, 'Dragged Email Content');
+                    }
+                }
+            });
+
+            // Also accept paste
+            document.getElementById('chat-input')?.addEventListener('paste', (e) => {
+                const text = e.clipboardData.getData('text/plain');
+                if (text && text.length > 100 && (text.includes('From:') || text.includes('Subject:') || text.includes('@'))) {
+                    e.preventDefault();
+                    processEmailContent(text, 'Pasted Email');
+                }
+            });
+        })();
+
+        function handleEmailFiles(files) {
+            for (const file of files) {
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (['eml', 'msg', 'txt', 'html', 'htm'].includes(ext)) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        processEmailContent(e.target.result, file.name);
+                    };
+                    reader.readAsText(file);
+                } else {
+                    addBotMessage('I can only process email files (.eml, .msg, .txt, .html). The file "' + escapeHtml(file.name) + '" is not supported.');
+                }
+            }
+        }
+
+        function processEmailContent(rawContent, fileName) {
+            if (chatbotState.isProcessing) return;
+            chatbotState.isProcessing = true;
+
+            // Show chat area, hide drop zone partially
+            const dropZone = document.getElementById('email-drop-zone');
+            const chatArea = document.getElementById('chat-messages');
+            dropZone.style.display = 'none';
+            chatArea.style.display = 'flex';
+
+            // Enable input
+            document.getElementById('chat-input').disabled = false;
+            document.getElementById('chat-send-btn').disabled = false;
+
+            addUserMessage('Dropped email: ' + escapeHtml(fileName));
+            addBotTyping();
+
+            setTimeout(() => {
+                removeTyping();
+                const parsed = parseEmailContent(rawContent);
+                chatbotState.parsedEmail = parsed;
+
+                // Show email analysis
+                addBotMessage(renderEmailAnalysis(parsed));
+
+                addBotTyping();
+                setTimeout(() => {
+                    removeTyping();
+
+                    // Generate tasks
+                    const tasks = generateTasksFromEmail(parsed);
+                    chatbotState.tasks.push(...tasks);
+                    saveChatbotTasks();
+
+                    if (tasks.length > 0) {
+                        addBotMessage('<strong>I\'ve identified ' + tasks.length + ' action item' + (tasks.length > 1 ? 's' : '') + ' from this email:</strong>' + renderTaskCards(tasks));
+                    }
+
+                    updateTaskSummary();
+
+                    // Check for tenant/station updates
+                    addBotTyping();
+                    setTimeout(() => {
+                        removeTyping();
+                        const updates = detectTenantStationUpdates(parsed);
+                        chatbotState.detectedUpdates = updates;
+
+                        if (updates.length > 0) {
+                            addBotMessage(renderUpdateSuggestions(updates));
+                        } else {
+                            addBotMessage('No automatic tenant/station updates detected from this email. You can ask me to update specific details if needed.');
+                        }
+
+                        // Quick actions
+                        addBotMessage('What would you like to do next?' + renderQuickActions());
+                        chatbotState.isProcessing = false;
+                    }, 800);
+                }, 1000);
+            }, 600);
+        }
+
+        // ---- Email Parser ----
+        function parseEmailContent(raw) {
+            const email = {
+                from: '', to: '', cc: '', subject: '', date: '',
+                body: '', mentions: { tenants: [], stations: [], priorities: [], fscStatuses: [], contacts: [] },
+                rawContent: raw
+            };
+
+            // Parse EML headers
+            const headerMatch = (field) => {
+                const re = new RegExp('^' + field + ':\\s*(.+?)(?=^[A-Z][\\w-]*:|^\\s*$)', 'im');
+                const m = raw.match(re);
+                return m ? m[1].trim() : '';
+            };
+
+            email.from = headerMatch('From') || extractField(raw, 'From');
+            email.to = headerMatch('To') || extractField(raw, 'To');
+            email.cc = headerMatch('Cc') || headerMatch('CC') || extractField(raw, 'Cc');
+            email.subject = headerMatch('Subject') || extractField(raw, 'Subject');
+            email.date = headerMatch('Date') || extractField(raw, 'Date');
+
+            // Extract body
+            const bodyStart = raw.indexOf('\n\n');
+            email.body = bodyStart > -1 ? raw.substring(bodyStart + 2) : raw;
+
+            // Strip HTML tags if present
+            if (email.body.includes('<html') || email.body.includes('<HTML') || email.body.includes('<div')) {
+                const tmp = document.createElement('div');
+                tmp.innerHTML = email.body;
+                email.body = tmp.textContent || tmp.innerText || email.body;
+            }
+
+            // Clean up
+            email.body = email.body.replace(/=\r?\n/g, '').replace(/=([0-9A-F]{2})/gi, (m, hex) => {
+                try { return String.fromCharCode(parseInt(hex, 16)); } catch(e) { return m; }
+            }).trim();
+
+            // Match against existing data
+            const lowerBody = (email.subject + ' ' + email.body).toLowerCase();
+            const tenants = state.tenants || [];
+            const stations = state.stations || [];
+
+            // Find mentioned tenants
+            tenants.forEach(t => {
+                if (t.tenantName && lowerBody.includes(t.tenantName.toLowerCase())) {
+                    email.mentions.tenants.push(t);
+                } else if (t.tradingName && lowerBody.includes(t.tradingName.toLowerCase())) {
+                    email.mentions.tenants.push(t);
+                }
+            });
+
+            // Find mentioned stations
+            stations.forEach(s => {
+                if (s.name && lowerBody.includes(s.name.toLowerCase())) {
+                    email.mentions.stations.push(s);
+                }
+            });
+
+            // Detect priority keywords
+            if (/\b(urgent|critical|immediate|emergency|asap)\b/i.test(lowerBody)) email.mentions.priorities.push('Critical');
+            else if (/\b(high\s*priority|important|escalat|overdue)\b/i.test(lowerBody)) email.mentions.priorities.push('High');
+            else if (/\b(follow.?up|remind|pending|medium\s*priority)\b/i.test(lowerBody)) email.mentions.priorities.push('Medium');
+
+            // Detect FSC-related content
+            if (/\bFSC\b/i.test(lowerBody)) {
+                if (/\b(received|submitted|attached|enclosed|provided)\b/i.test(lowerBody)) email.mentions.fscStatuses.push('Received');
+                if (/\b(outstanding|missing|not\s*received|overdue|awaiting)\b/i.test(lowerBody)) email.mentions.fscStatuses.push('Outstanding');
+                if (/\b(request|chase|follow|send)\b/i.test(lowerBody)) email.mentions.fscStatuses.push('Pending');
+            }
+
+            // Extract email addresses from body
+            const emailRegex = /[\w.+-]+@[\w-]+\.[\w.-]+/g;
+            const foundEmails = lowerBody.match(emailRegex) || [];
+            email.mentions.contacts = [...new Set(foundEmails)];
+
+            return email;
+        }
+
+        function extractField(text, field) {
+            const patterns = [
+                new RegExp(field + ':\\s*(.+)', 'i'),
+                new RegExp(field + '\\s*:\\s*(.+)', 'i')
+            ];
+            for (const p of patterns) {
+                const m = text.match(p);
+                if (m) return m[1].trim();
+            }
+            return '';
+        }
+
+        // ---- Task Generation Engine ----
+        function generateTasksFromEmail(email) {
+            const tasks = [];
+            const body = email.body.toLowerCase();
+            const subject = email.subject.toLowerCase();
+            const combined = subject + ' ' + body;
+            const now = new Date().toISOString();
+
+            function addTask(title, priority, category, detail) {
+                chatbotState.taskIdCounter++;
+                tasks.push({
+                    id: chatbotState.taskIdCounter,
+                    title: title,
+                    priority: priority,
+                    category: category,
+                    detail: detail || '',
+                    status: 'pending',
+                    created: now,
+                    tenants: email.mentions.tenants.map(t => t.tenantName),
+                    stations: email.mentions.stations.map(s => s.name),
+                    source: email.subject || 'Email'
+                });
+            }
+
+            const topPriority = email.mentions.priorities[0] || 'Medium';
+
+            // FSC-related tasks
+            if (/\bFSC\b/i.test(combined)) {
+                if (/\b(request|chase|follow|send|require)\b/i.test(combined)) {
+                    const targetTenants = email.mentions.tenants.length > 0
+                        ? email.mentions.tenants.map(t => t.tenantName).join(', ')
+                        : 'identified tenants';
+                    addTask('Send FSC request to ' + targetTenants, topPriority, 'FSC', 'Follow up on FSC collection as referenced in email');
+                }
+                if (/\b(received|submitted|attached|enclosed)\b/i.test(combined)) {
+                    addTask('Process received FSC and update records', topPriority, 'FSC', 'FSC documents have been submitted - update compliance status');
+                }
+                if (/\b(outstanding|missing|overdue)\b/i.test(combined)) {
+                    addTask('Chase outstanding FSC documents', 'High', 'FSC', 'FSC collection is overdue for mentioned tenancies');
+                }
+                if (/\b(expir|renew)\b/i.test(combined)) {
+                    addTask('Review FSC expiry dates and schedule renewals', 'High', 'FSC', 'Check FSC expiry for mentioned tenants');
+                }
+            }
+
+            // AFSS-related tasks
+            if (/\bAFSS\b/i.test(combined)) {
+                if (/\b(due|submit|annual|schedule)\b/i.test(combined)) {
+                    addTask('Prepare AFSS submission', topPriority, 'AFSS', 'Annual Fire Safety Statement submission referenced');
+                }
+                if (/\b(overdue|late|missed|outstanding)\b/i.test(combined)) {
+                    addTask('Escalate overdue AFSS submissions', 'Critical', 'AFSS', 'AFSS submissions are overdue');
+                }
+            }
+
+            // Defect-related tasks
+            if (/\b(defect|fault|repair|fix|broken|damage|malfunction|issue)\b/i.test(combined)) {
+                addTask('Log and review reported defects', topPriority, 'Defects', 'Defects or maintenance issues reported in email');
+                if (/\b(major|critical|serious|safety)\b/i.test(combined)) {
+                    addTask('Escalate critical safety defects', 'Critical', 'Defects', 'Major safety defects require immediate attention');
+                }
+            }
+
+            // Inspection-related tasks
+            if (/\b(inspect|audit|survey|assessment|review|site\s*visit)\b/i.test(combined)) {
+                addTask('Schedule fire safety inspection', topPriority, 'Inspection', 'Inspection or audit referenced in email');
+                if (/\b(report|finding|result)\b/i.test(combined)) {
+                    addTask('Review inspection findings and update records', 'Medium', 'Inspection', 'Process inspection report outcomes');
+                }
+            }
+
+            // Lease/tenant management
+            if (/\b(lease|tenant|new\s*tenant|vacate|move.?out|move.?in)\b/i.test(combined)) {
+                if (/\b(new|commence|start|move.?in)\b/i.test(combined)) {
+                    addTask('Set up fire safety compliance for new tenant', 'High', 'Tenant', 'New tenant onboarding - ensure fire safety requirements');
+                }
+                if (/\b(vacate|move.?out|exit|terminate|expir)\b/i.test(combined)) {
+                    addTask('Process tenant exit and update compliance records', 'Medium', 'Tenant', 'Tenant vacating - update station records');
+                }
+            }
+
+            // Contact updates
+            if (/\b(new\s*contact|contact\s*details?|phone|mobile|email\s*address)\b/i.test(combined)) {
+                addTask('Update tenant contact information', 'Medium', 'Admin', 'Contact details update referenced in email');
+            }
+
+            // Insurance
+            if (/\b(insurance|public\s*liability|certificate\s*of\s*currency)\b/i.test(combined)) {
+                addTask('Review and file insurance documentation', 'Medium', 'Insurance', 'Insurance documentation referenced');
+            }
+
+            // Emergency/evacuation
+            if (/\b(emergency|evacuation|fire\s*drill|warden|alarm)\b/i.test(combined)) {
+                addTask('Review emergency procedures and warden contacts', 'High', 'Emergency', 'Emergency/evacuation matters raised');
+            }
+
+            // Meeting/deadline
+            if (/\b(meeting|deadline|due\s*date|by\s+\d+\/\d+|by\s+\w+\s+\d+)\b/i.test(combined)) {
+                addTask('Add deadline/meeting to calendar and track', topPriority, 'Admin', 'Meeting or deadline referenced in email');
+            }
+
+            // Reply/respond
+            if (/\b(please\s*(reply|respond|confirm|advise|let\s*me\s*know|get\s*back))\b/i.test(combined)) {
+                addTask('Draft and send reply to ' + (email.from || 'sender'), topPriority, 'Communication', 'Response requested by sender');
+            }
+
+            // Generic follow-up if no specific tasks found
+            if (tasks.length === 0) {
+                addTask('Review email and determine required actions', 'Medium', 'Admin', 'Email from: ' + (email.from || 'Unknown') + ' - Subject: ' + (email.subject || 'No subject'));
+                if (email.mentions.tenants.length > 0) {
+                    addTask('Check compliance status for ' + email.mentions.tenants.map(t => t.tenantName).join(', '), 'Medium', 'Compliance', 'Tenants mentioned in email - verify records are current');
+                }
+            }
+
+            return tasks;
+        }
+
+        // ---- Tenant/Station Update Detection ----
+        function detectTenantStationUpdates(email) {
+            const updates = [];
+            const body = email.body;
+            const combined = email.subject + ' ' + body;
+
+            email.mentions.tenants.forEach(tenant => {
+                // Check FSC status changes
+                if (email.mentions.fscStatuses.length > 0) {
+                    const newStatus = email.mentions.fscStatuses[0];
+                    if (tenant.fscStatus !== newStatus) {
+                        updates.push({
+                            type: 'tenant',
+                            tenantId: tenant.id,
+                            tenantName: tenant.tenantName,
+                            station: tenant.station,
+                            field: 'fscStatus',
+                            fieldLabel: 'FSC Status',
+                            oldValue: tenant.fscStatus || 'Not Set',
+                            newValue: newStatus
+                        });
+                    }
+                }
+
+                // Check priority escalation
+                if (email.mentions.priorities.length > 0) {
+                    const newPriority = email.mentions.priorities[0];
+                    const priorityOrder = { 'Critical': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
+                    if (priorityOrder[newPriority] < priorityOrder[tenant.priority || 'Medium']) {
+                        updates.push({
+                            type: 'tenant',
+                            tenantId: tenant.id,
+                            tenantName: tenant.tenantName,
+                            station: tenant.station,
+                            field: 'priority',
+                            fieldLabel: 'Priority',
+                            oldValue: tenant.priority || 'Medium',
+                            newValue: newPriority
+                        });
+                    }
+                }
+
+                // Detect contact info updates
+                const emailRegex = /[\w.+-]+@[\w-]+\.[\w.-]+/g;
+                const bodyEmails = body.match(emailRegex) || [];
+                const newContactEmail = bodyEmails.find(e =>
+                    e !== tenant.contactEmail &&
+                    !e.includes('fyrezen') && !e.includes('jll.com') &&
+                    !email.from.includes(e)
+                );
+                if (newContactEmail && tenant.contactEmail && newContactEmail !== tenant.contactEmail) {
+                    updates.push({
+                        type: 'tenant',
+                        tenantId: tenant.id,
+                        tenantName: tenant.tenantName,
+                        station: tenant.station,
+                        field: 'contactEmail',
+                        fieldLabel: 'Contact Email',
+                        oldValue: tenant.contactEmail,
+                        newValue: newContactEmail
+                    });
+                }
+
+                // Detect phone number updates
+                const phoneRegex = /(?:0|\+61)\s*[234578]\s*[\d\s]{7,10}/g;
+                const bodyPhones = body.match(phoneRegex) || [];
+                const newPhone = bodyPhones.map(p => p.replace(/\s+/g, '')).find(p => p !== (tenant.contactMobile || '').replace(/\s+/g, ''));
+                if (newPhone && tenant.contactMobile) {
+                    updates.push({
+                        type: 'tenant',
+                        tenantId: tenant.id,
+                        tenantName: tenant.tenantName,
+                        station: tenant.station,
+                        field: 'contactMobile',
+                        fieldLabel: 'Contact Mobile',
+                        oldValue: tenant.contactMobile,
+                        newValue: newPhone
+                    });
+                }
+
+                // Detect compliance status changes
+                if (/\b(compliant|non.?compliant|in\s*progress|completed|not\s*started)\b/i.test(combined)) {
+                    let newCompStatus = '';
+                    if (/\bcompliant\b/i.test(combined) && !/\bnon.?compliant\b/i.test(combined)) newCompStatus = 'Compliant';
+                    else if (/\bnon.?compliant\b/i.test(combined)) newCompStatus = 'Non-Compliant';
+                    else if (/\bin\s*progress\b/i.test(combined)) newCompStatus = 'In Progress';
+
+                    if (newCompStatus && tenant.complianceStatus !== newCompStatus) {
+                        updates.push({
+                            type: 'tenant',
+                            tenantId: tenant.id,
+                            tenantName: tenant.tenantName,
+                            station: tenant.station,
+                            field: 'complianceStatus',
+                            fieldLabel: 'Compliance Status',
+                            oldValue: tenant.complianceStatus || 'Not Started',
+                            newValue: newCompStatus
+                        });
+                    }
+                }
+            });
+
+            return updates;
+        }
+
+        function applyUpdate(index) {
+            const update = chatbotState.detectedUpdates[index];
+            if (!update) return;
+
+            const tenantIdx = state.tenants.findIndex(t => t.id === update.tenantId);
+            if (tenantIdx === -1) return;
+
+            state.tenants[tenantIdx][update.field] = update.newValue;
+            state.tenants[tenantIdx].lastUpdated = new Date().toISOString().split('T')[0];
+            saveData();
+            renderAll();
+
+            // Mark update as applied
+            const btn = document.getElementById('apply-update-' + index);
+            if (btn) {
+                btn.textContent = 'Applied';
+                btn.disabled = true;
+                btn.style.background = 'var(--zen)';
+                btn.style.color = '#fff';
+            }
+
+            addBotMessage('Updated <strong>' + escapeHtml(update.fieldLabel) + '</strong> for <strong>' + escapeHtml(update.tenantName) + '</strong> to "' + escapeHtml(update.newValue) + '".');
+            showToast(update.tenantName + ' - ' + update.fieldLabel + ' updated', 'success');
+        }
+
+        function applyAllUpdates() {
+            chatbotState.detectedUpdates.forEach((update, i) => {
+                const tenantIdx = state.tenants.findIndex(t => t.id === update.tenantId);
+                if (tenantIdx > -1) {
+                    state.tenants[tenantIdx][update.field] = update.newValue;
+                    state.tenants[tenantIdx].lastUpdated = new Date().toISOString().split('T')[0];
+                }
+            });
+            saveData();
+            renderAll();
+
+            addBotMessage('All ' + chatbotState.detectedUpdates.length + ' updates have been applied successfully. Records are now up to date.');
+            showToast('All updates applied', 'success');
+
+            // Disable all apply buttons
+            document.querySelectorAll('[id^="apply-update-"]').forEach(btn => {
+                btn.textContent = 'Applied';
+                btn.disabled = true;
+                btn.style.background = 'var(--zen)';
+                btn.style.color = '#fff';
+            });
+            const allBtn = document.getElementById('apply-all-updates');
+            if (allBtn) {
+                allBtn.textContent = 'All Applied';
+                allBtn.disabled = true;
+            }
+        }
+
+        // ---- Chat Message Rendering ----
+        function addBotMessage(html) {
+            const container = document.getElementById('chat-messages');
+            const msg = document.createElement('div');
+            msg.className = 'chat-msg bot';
+            msg.innerHTML = '<div class="chat-avatar">AI</div><div class="chat-bubble">' + html + '</div>';
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+            chatbotState.conversationHistory.push({ role: 'bot', content: html });
+        }
+
+        function addUserMessage(text) {
+            const container = document.getElementById('chat-messages');
+            const msg = document.createElement('div');
+            msg.className = 'chat-msg user';
+            msg.innerHTML = '<div class="chat-avatar">You</div><div class="chat-bubble">' + escapeHtml(text) + '</div>';
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+            chatbotState.conversationHistory.push({ role: 'user', content: text });
+        }
+
+        function addBotTyping() {
+            const container = document.getElementById('chat-messages');
+            const msg = document.createElement('div');
+            msg.className = 'chat-msg bot';
+            msg.id = 'typing-msg';
+            msg.innerHTML = '<div class="chat-avatar">AI</div><div class="chat-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div>';
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function removeTyping() {
+            const el = document.getElementById('typing-msg');
+            if (el) el.remove();
+        }
+
+        // ---- Render Helpers ----
+        function renderEmailAnalysis(email) {
+            return '<div class="email-analysis">' +
+                '<div class="email-analysis-header">' +
+                    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>' +
+                    '<span>Email Analysis</span>' +
+                '</div>' +
+                (email.from ? '<div class="email-field"><span class="email-field-label">From:</span><span class="email-field-value">' + escapeHtml(email.from) + '</span></div>' : '') +
+                (email.to ? '<div class="email-field"><span class="email-field-label">To:</span><span class="email-field-value">' + escapeHtml(email.to) + '</span></div>' : '') +
+                (email.subject ? '<div class="email-field"><span class="email-field-label">Subject:</span><span class="email-field-value"><strong>' + escapeHtml(email.subject) + '</strong></span></div>' : '') +
+                (email.date ? '<div class="email-field"><span class="email-field-label">Date:</span><span class="email-field-value">' + escapeHtml(email.date) + '</span></div>' : '') +
+                '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">' +
+                    (email.mentions.tenants.length > 0 ? '<div class="email-field"><span class="email-field-label">Tenants:</span><span class="email-field-value">' + email.mentions.tenants.map(t => '<span class="task-tag">' + escapeHtml(t.tenantName) + '</span>').join(' ') + '</span></div>' : '') +
+                    (email.mentions.stations.length > 0 ? '<div class="email-field"><span class="email-field-label">Stations:</span><span class="email-field-value">' + email.mentions.stations.map(s => '<span class="task-tag">' + escapeHtml(s.name) + '</span>').join(' ') + '</span></div>' : '') +
+                    (email.mentions.priorities.length > 0 ? '<div class="email-field"><span class="email-field-label">Priority:</span><span class="email-field-value"><span class="task-priority ' + email.mentions.priorities[0].toLowerCase() + '">' + email.mentions.priorities[0] + '</span></span></div>' : '') +
+                    (email.mentions.fscStatuses.length > 0 ? '<div class="email-field"><span class="email-field-label">FSC:</span><span class="email-field-value">' + email.mentions.fscStatuses.join(', ') + '</span></div>' : '') +
+                '</div>' +
+            '</div>';
+        }
+
+        function renderTaskCards(tasks) {
+            return '<div style="margin-top:6px">' + tasks.map(t =>
+                '<div class="task-card" id="task-card-' + t.id + '">' +
+                    '<div class="task-card-header">' +
+                        '<div class="task-checkbox" onclick="toggleChatbotTask(' + t.id + ')" title="Mark complete"></div>' +
+                        '<span class="task-title">' + escapeHtml(t.title) + '</span>' +
+                        '<span class="task-priority ' + t.priority.toLowerCase() + '">' + t.priority + '</span>' +
+                    '</div>' +
+                    (t.detail ? '<div class="task-meta">' + escapeHtml(t.detail) + '</div>' : '') +
+                    '<div class="task-meta">' +
+                        '<span class="task-tag">' + escapeHtml(t.category) + '</span>' +
+                        (t.tenants.length > 0 ? t.tenants.map(tn => '<span class="task-tag">' + escapeHtml(tn) + '</span>').join('') : '') +
+                    '</div>' +
+                '</div>'
+            ).join('') + '</div>';
+        }
+
+        function renderUpdateSuggestions(updates) {
+            return '<div class="update-suggestion">' +
+                '<div class="update-suggestion-header">' +
+                    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+                    'I detected ' + updates.length + ' potential update' + (updates.length > 1 ? 's' : '') + ' to tenant/station records:' +
+                '</div>' +
+                updates.map((u, i) =>
+                    '<div class="update-row">' +
+                        '<span class="update-field">' + escapeHtml(u.tenantName) + '</span>' +
+                        '<span class="update-field" style="min-width:auto">' + escapeHtml(u.fieldLabel) + ':</span>' +
+                        '<span class="update-old">' + escapeHtml(u.oldValue) + '</span>' +
+                        '<span class="update-arrow">&rarr;</span>' +
+                        '<span class="update-new">' + escapeHtml(u.newValue) + '</span>' +
+                        '<button class="btn btn-primary btn-sm" id="apply-update-' + i + '" onclick="applyUpdate(' + i + ')" style="margin-left:auto;padding:2px 8px;font-size:10px">Apply</button>' +
+                    '</div>'
+                ).join('') +
+                '<div class="update-actions">' +
+                    '<button class="btn btn-primary btn-sm" id="apply-all-updates" onclick="applyAllUpdates()">Apply All Updates</button>' +
+                    '<button class="btn btn-secondary btn-sm" onclick="dismissUpdates()">Dismiss</button>' +
+                '</div>' +
+            '</div>';
+        }
+
+        function renderQuickActions() {
+            return '<div class="chat-quick-actions">' +
+                '<button class="chat-action-btn" onclick="chatAction(\'summary\')">Email Summary</button>' +
+                '<button class="chat-action-btn" onclick="chatAction(\'export\')">Export Tasks</button>' +
+                '<button class="chat-action-btn" onclick="chatAction(\'newEmail\')">Drop Another Email</button>' +
+                '<button class="chat-action-btn" onclick="chatAction(\'compliance\')">Check Compliance</button>' +
+            '</div>';
+        }
+
+        function dismissUpdates() {
+            chatbotState.detectedUpdates = [];
+            addBotMessage('Updates dismissed. You can always manually update records from the Tenants page.');
+        }
+
+        // ---- Task Management ----
+        function toggleChatbotTask(taskId) {
+            const task = chatbotState.tasks.find(t => t.id === taskId);
+            if (!task) return;
+            task.status = task.status === 'completed' ? 'pending' : 'completed';
+            saveChatbotTasks();
+
+            const card = document.getElementById('task-card-' + taskId);
+            if (card) {
+                const checkbox = card.querySelector('.task-checkbox');
+                if (task.status === 'completed') {
+                    card.classList.add('completed');
+                    checkbox.classList.add('checked');
+                } else {
+                    card.classList.remove('completed');
+                    checkbox.classList.remove('checked');
+                }
+            }
+            updateTaskSummary();
+        }
+
+        function updateTaskSummary() {
+            const bar = document.getElementById('task-summary-bar');
+            if (chatbotState.tasks.length === 0) {
+                if (bar) bar.style.display = 'none';
+                return;
+            }
+            if (bar) bar.style.display = 'flex';
+            const total = chatbotState.tasks.length;
+            const done = chatbotState.tasks.filter(t => t.status === 'completed').length;
+            const pending = total - done;
+            document.getElementById('task-count-total').textContent = total;
+            document.getElementById('task-count-pending').textContent = pending;
+            document.getElementById('task-count-done').textContent = done;
+        }
+
+        function exportChatbotTasks() {
+            if (chatbotState.tasks.length === 0) {
+                showToast('No tasks to export', 'error');
+                return;
+            }
+            const headers = ['ID', 'Title', 'Priority', 'Category', 'Status', 'Tenants', 'Stations', 'Detail', 'Source', 'Created'];
+            let csv = headers.join(',') + '\n';
+            chatbotState.tasks.forEach(t => {
+                csv += [t.id, t.title, t.priority, t.category, t.status, t.tenants.join('; '), t.stations.join('; '), t.detail, t.source, t.created]
+                    .map(v => '"' + (v || '').toString().replace(/"/g, '""') + '"').join(',') + '\n';
+            });
+            downloadFile(csv, 'text/csv', 'chatbot_tasks_' + new Date().toISOString().split('T')[0] + '.csv');
+            showToast('Tasks exported', 'success');
+        }
+
+        // ---- Chat Input Handler ----
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+            addUserMessage(text);
+            addBotTyping();
+
+            setTimeout(() => {
+                removeTyping();
+                handleChatCommand(text);
+            }, 500);
+        }
+
+        // Enter key to send
+        document.getElementById('chat-input')?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        });
+
+        function handleChatCommand(text) {
+            const lower = text.toLowerCase();
+
+            // Summary of email
+            if (lower.includes('summary') || lower.includes('summarise') || lower.includes('summarize')) {
+                chatAction('summary');
+                return;
+            }
+
+            // Check compliance
+            if (lower.includes('compliance') || lower.includes('status')) {
+                chatAction('compliance');
+                return;
+            }
+
+            // Export tasks
+            if (lower.includes('export') || lower.includes('download')) {
+                exportChatbotTasks();
+                addBotMessage('Tasks exported as CSV.');
+                return;
+            }
+
+            // New email
+            if (lower.includes('new email') || lower.includes('another email') || lower.includes('drop') || lower.includes('upload')) {
+                chatAction('newEmail');
+                return;
+            }
+
+            // Task list
+            if (lower.includes('task') || lower.includes('todo') || lower.includes('action')) {
+                if (chatbotState.tasks.length === 0) {
+                    addBotMessage('No tasks have been generated yet. Drop an email to get started.');
+                } else {
+                    const pending = chatbotState.tasks.filter(t => t.status === 'pending');
+                    const done = chatbotState.tasks.filter(t => t.status === 'completed');
+                    let response = '<strong>' + pending.length + ' pending, ' + done.length + ' completed</strong>';
+                    if (pending.length > 0) {
+                        response += renderTaskCards(pending);
+                    }
+                    addBotMessage(response);
+                }
+                return;
+            }
+
+            // Tenant lookup
+            if (lower.includes('tenant') || lower.includes('find')) {
+                const searchTerm = text.replace(/(?:find|search|look\s*up|tenant|show)\s*/gi, '').trim();
+                if (searchTerm.length > 1) {
+                    const results = (state.tenants || []).filter(t =>
+                        (t.tenantName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        (t.tradingName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        (t.station || '').toLowerCase().includes(searchTerm.toLowerCase())
+                    ).slice(0, 5);
+                    if (results.length > 0) {
+                        let html = '<strong>Found ' + results.length + ' match' + (results.length > 1 ? 'es' : '') + ':</strong><div style="margin-top:6px">';
+                        results.forEach(t => {
+                            html += '<div class="task-card" onclick="openTenant(' + t.id + ')" style="cursor:pointer">' +
+                                '<div class="task-card-header"><span class="task-title">' + escapeHtml(t.tenantName) + '</span><span class="task-priority ' + (t.priority || 'medium').toLowerCase() + '">' + (t.priority || 'Medium') + '</span></div>' +
+                                '<div class="task-meta"><span class="task-tag">' + escapeHtml(t.station) + '</span><span class="task-tag">FSC: ' + (t.fscStatus || 'N/A') + '</span></div>' +
+                            '</div>';
+                        });
+                        html += '</div>';
+                        addBotMessage(html);
+                    } else {
+                        addBotMessage('No tenants found matching "' + escapeHtml(searchTerm) + '". Try a different search term.');
+                    }
+                } else {
+                    addBotMessage('Please provide a tenant name, station, or trading name to search for.');
+                }
+                return;
+            }
+
+            // Station info
+            if (lower.includes('station')) {
+                const stationName = text.replace(/(?:station|info|details?|show)\s*/gi, '').trim();
+                if (stationName.length > 1) {
+                    const station = (state.stations || []).find(s => s.name.toLowerCase().includes(stationName.toLowerCase()));
+                    if (station) {
+                        addBotMessage(
+                            '<strong>' + escapeHtml(station.name) + ' Station</strong>' +
+                            '<div class="email-analysis" style="margin-top:6px">' +
+                                '<div class="email-field"><span class="email-field-label">Tenants:</span><span class="email-field-value">' + station.tenantCount + '</span></div>' +
+                                '<div class="email-field"><span class="email-field-label">Critical:</span><span class="email-field-value"><span class="task-priority critical">' + (station.criticalCount || 0) + '</span></span></div>' +
+                                '<div class="email-field"><span class="email-field-label">High:</span><span class="email-field-value"><span class="task-priority high">' + (station.highCount || 0) + '</span></span></div>' +
+                                '<div class="email-field"><span class="email-field-label">Defects:</span><span class="email-field-value">' + (station.defectsOpen || 0) + ' open</span></div>' +
+                                '<div class="email-field"><span class="email-field-label">FSC:</span><span class="email-field-value">' + (station.fscReceived || 0) + ' received</span></div>' +
+                            '</div>'
+                        );
+                    } else {
+                        addBotMessage('Station "' + escapeHtml(stationName) + '" not found. Try the full station name.');
+                    }
+                } else {
+                    addBotMessage('Please provide a station name to look up.');
+                }
+                return;
+            }
+
+            // Update/change
+            if (lower.includes('update') || lower.includes('change') || lower.includes('set')) {
+                if (chatbotState.detectedUpdates.length > 0) {
+                    addBotMessage('I have ' + chatbotState.detectedUpdates.length + ' pending update suggestions.' + renderUpdateSuggestions(chatbotState.detectedUpdates));
+                } else {
+                    addBotMessage('No automatic updates detected. You can tell me what to update, e.g.:<br>"Update FSC status for [tenant] to Received"');
+                }
+                return;
+            }
+
+            // Help
+            if (lower.includes('help') || lower === '?') {
+                addBotMessage(
+                    '<strong>Here\'s what I can do:</strong><br>' +
+                    '&bull; <strong>Drop an email</strong> - I\'ll analyse it and generate tasks<br>' +
+                    '&bull; <strong>"summary"</strong> - Get a summary of the last email<br>' +
+                    '&bull; <strong>"tasks"</strong> - View current task list<br>' +
+                    '&bull; <strong>"compliance"</strong> - Check portfolio compliance status<br>' +
+                    '&bull; <strong>"find [name]"</strong> - Look up a tenant<br>' +
+                    '&bull; <strong>"station [name]"</strong> - Get station details<br>' +
+                    '&bull; <strong>"update"</strong> - Show pending record updates<br>' +
+                    '&bull; <strong>"export"</strong> - Export tasks as CSV<br>' +
+                    '&bull; <strong>"new email"</strong> - Drop another email'
+                );
+                return;
+            }
+
+            // Default / conversational
+            addBotMessage('I understand you said: <em>"' + escapeHtml(text) + '"</em>. I can help with email analysis, task management, tenant lookups, and compliance checks. Type <strong>help</strong> to see all available commands.' + renderQuickActions());
+        }
+
+        function chatAction(action) {
+            switch (action) {
+                case 'summary':
+                    if (chatbotState.parsedEmail) {
+                        const e = chatbotState.parsedEmail;
+                        let summary = '<strong>Email Summary</strong><br>';
+                        summary += 'From: ' + escapeHtml(e.from || 'Unknown') + '<br>';
+                        summary += 'Subject: ' + escapeHtml(e.subject || 'No subject') + '<br>';
+                        if (e.mentions.tenants.length > 0) summary += 'Tenants mentioned: ' + e.mentions.tenants.map(t => escapeHtml(t.tenantName)).join(', ') + '<br>';
+                        if (e.mentions.stations.length > 0) summary += 'Stations mentioned: ' + e.mentions.stations.map(s => escapeHtml(s.name)).join(', ') + '<br>';
+                        const pending = chatbotState.tasks.filter(t => t.status === 'pending').length;
+                        summary += '<br><strong>' + chatbotState.tasks.length + ' tasks generated</strong> (' + pending + ' pending)';
+                        addBotMessage(summary);
+                    } else {
+                        addBotMessage('No email has been analysed yet. Drop an email to get started.');
+                    }
+                    break;
+                case 'export':
+                    exportChatbotTasks();
+                    addBotMessage('Tasks exported as CSV file.');
+                    break;
+                case 'newEmail':
+                    const dropZone = document.getElementById('email-drop-zone');
+                    dropZone.style.display = '';
+                    addBotMessage('Ready for another email. Drag &amp; drop or click the upload zone above.');
+                    break;
+                case 'compliance':
+                    const tenants = state.tenants || [];
+                    const applicable = tenants.filter(t => t.fscStatus !== 'Not Applicable').length;
+                    const compliant = tenants.filter(t => t.fscStatus === 'Compliant' || t.fscStatus === 'Received').length;
+                    const pct = applicable > 0 ? Math.round((compliant / applicable) * 100) : 0;
+                    addBotMessage(
+                        '<strong>Portfolio Compliance Status</strong>' +
+                        '<div class="email-analysis" style="margin-top:6px">' +
+                            '<div class="email-field"><span class="email-field-label">Rate:</span><span class="email-field-value"><strong>' + pct + '%</strong></span></div>' +
+                            '<div class="email-field"><span class="email-field-label">Total:</span><span class="email-field-value">' + tenants.length + ' tenancies</span></div>' +
+                            '<div class="email-field"><span class="email-field-label">Critical:</span><span class="email-field-value"><span class="task-priority critical">' + tenants.filter(t => t.priority === 'Critical').length + '</span></span></div>' +
+                            '<div class="email-field"><span class="email-field-label">High:</span><span class="email-field-value"><span class="task-priority high">' + tenants.filter(t => t.priority === 'High').length + '</span></span></div>' +
+                            '<div class="email-field"><span class="email-field-label">FSC Outstanding:</span><span class="email-field-value">' + tenants.filter(t => t.fscStatus === 'Outstanding').length + '</span></div>' +
+                            '<div class="email-field"><span class="email-field-label">Defects:</span><span class="email-field-value">' + tenants.reduce((s, t) => s + (t.defectsOpen || 0), 0) + ' open</span></div>' +
+                        '</div>'
+                    );
+                    break;
+            }
         }
 
         // ============================================================
