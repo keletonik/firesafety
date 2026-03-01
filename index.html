@@ -4513,19 +4513,27 @@ Fire Safety Compliance Team`
             tasks: [],
             parsedEmail: null,
             detectedUpdates: [],
+            appliedUpdates: [],  // Audit trail of all applied updates with original values
             conversationHistory: [],
             isProcessing: false,
             taskIdCounter: 0
         };
 
-        // Save/load chatbot tasks from localStorage
+        // Save/load chatbot tasks and update history from localStorage
         function saveChatbotTasks() {
             localStorage.setItem('fyrezen_chatbot_tasks', JSON.stringify(chatbotState.tasks));
+        }
+        function saveChatbotUpdateHistory() {
+            localStorage.setItem('fyrezen_chatbot_updates', JSON.stringify(chatbotState.appliedUpdates));
         }
         function loadChatbotTasks() {
             try {
                 const saved = localStorage.getItem('fyrezen_chatbot_tasks');
                 if (saved) chatbotState.tasks = JSON.parse(saved);
+            } catch(e) {}
+            try {
+                const savedUpdates = localStorage.getItem('fyrezen_chatbot_updates');
+                if (savedUpdates) chatbotState.appliedUpdates = JSON.parse(savedUpdates);
             } catch(e) {}
         }
         loadChatbotTasks();
@@ -4971,39 +4979,87 @@ Fire Safety Compliance Team`
             const tenantIdx = state.tenants.findIndex(t => t.id === update.tenantId);
             if (tenantIdx === -1) return;
 
+            // Snapshot the current value BEFORE any change (preserves original data)
+            const originalValue = state.tenants[tenantIdx][update.field];
+
+            // Record in audit trail so we can always revert
+            const auditEntry = {
+                id: Date.now() + '-' + index,
+                tenantId: update.tenantId,
+                tenantName: update.tenantName,
+                station: update.station,
+                field: update.field,
+                fieldLabel: update.fieldLabel,
+                originalValue: originalValue,
+                newValue: update.newValue,
+                appliedAt: new Date().toISOString(),
+                source: chatbotState.parsedEmail ? (chatbotState.parsedEmail.subject || 'Email') : 'Chatbot',
+                reverted: false
+            };
+            chatbotState.appliedUpdates.push(auditEntry);
+            saveChatbotUpdateHistory();
+
+            // Now apply the change
             state.tenants[tenantIdx][update.field] = update.newValue;
             state.tenants[tenantIdx].lastUpdated = new Date().toISOString().split('T')[0];
             saveData();
             renderAll();
 
-            // Mark update as applied
+            // Mark update as applied with revert option
             const btn = document.getElementById('apply-update-' + index);
             if (btn) {
-                btn.textContent = 'Applied';
-                btn.disabled = true;
-                btn.style.background = 'var(--zen)';
-                btn.style.color = '#fff';
+                btn.outerHTML = '<span style="display:inline-flex;gap:4px;align-items:center;margin-left:auto">' +
+                    '<span style="font-size:10px;color:var(--zen);font-weight:600">Applied</span>' +
+                    '<button class="btn btn-ghost btn-sm" onclick="revertUpdate(\'' + auditEntry.id + '\')" style="padding:2px 6px;font-size:9px;color:var(--danger)">Revert</button>' +
+                '</span>';
             }
 
-            addBotMessage('Updated <strong>' + escapeHtml(update.fieldLabel) + '</strong> for <strong>' + escapeHtml(update.tenantName) + '</strong> to "' + escapeHtml(update.newValue) + '".');
+            addBotMessage('Updated <strong>' + escapeHtml(update.fieldLabel) + '</strong> for <strong>' + escapeHtml(update.tenantName) + '</strong> to "' + escapeHtml(update.newValue) + '".<br><span style="font-size:10px;color:var(--text-muted)">Original value "' + escapeHtml(String(originalValue || '')) + '" has been preserved. You can revert anytime.</span>');
             showToast(update.tenantName + ' - ' + update.fieldLabel + ' updated', 'success');
         }
 
         function applyAllUpdates() {
+            const applied = [];
             chatbotState.detectedUpdates.forEach((update, i) => {
                 const tenantIdx = state.tenants.findIndex(t => t.id === update.tenantId);
                 if (tenantIdx > -1) {
+                    // Snapshot original value BEFORE changing
+                    const originalValue = state.tenants[tenantIdx][update.field];
+
+                    const auditEntry = {
+                        id: Date.now() + '-' + i,
+                        tenantId: update.tenantId,
+                        tenantName: update.tenantName,
+                        station: update.station,
+                        field: update.field,
+                        fieldLabel: update.fieldLabel,
+                        originalValue: originalValue,
+                        newValue: update.newValue,
+                        appliedAt: new Date().toISOString(),
+                        source: chatbotState.parsedEmail ? (chatbotState.parsedEmail.subject || 'Email') : 'Chatbot',
+                        reverted: false
+                    };
+                    chatbotState.appliedUpdates.push(auditEntry);
+                    applied.push(auditEntry);
+
+                    // Apply the change
                     state.tenants[tenantIdx][update.field] = update.newValue;
                     state.tenants[tenantIdx].lastUpdated = new Date().toISOString().split('T')[0];
                 }
             });
+            saveChatbotUpdateHistory();
             saveData();
             renderAll();
 
-            addBotMessage('All ' + chatbotState.detectedUpdates.length + ' updates have been applied successfully. Records are now up to date.');
-            showToast('All updates applied', 'success');
+            let summary = 'All ' + applied.length + ' updates applied. Original values preserved in audit trail:<br>';
+            applied.forEach(a => {
+                summary += '<span style="font-size:10.5px">&bull; <strong>' + escapeHtml(a.tenantName) + '</strong> ' + escapeHtml(a.fieldLabel) + ': "' + escapeHtml(String(a.originalValue || '')) + '" &rarr; "' + escapeHtml(a.newValue) + '"</span><br>';
+            });
+            summary += '<br><button class="btn btn-secondary btn-sm" onclick="revertAllUpdates()" style="font-size:10px">Revert All Changes</button>';
+            addBotMessage(summary);
+            showToast('All updates applied (originals preserved)', 'success');
 
-            // Disable all apply buttons
+            // Disable apply buttons
             document.querySelectorAll('[id^="apply-update-"]').forEach(btn => {
                 btn.textContent = 'Applied';
                 btn.disabled = true;
@@ -5014,6 +5070,58 @@ Fire Safety Compliance Team`
             if (allBtn) {
                 allBtn.textContent = 'All Applied';
                 allBtn.disabled = true;
+            }
+        }
+
+        function revertUpdate(auditId) {
+            const entry = chatbotState.appliedUpdates.find(a => a.id === auditId);
+            if (!entry || entry.reverted) {
+                showToast('Update already reverted or not found', 'error');
+                return;
+            }
+
+            const tenantIdx = state.tenants.findIndex(t => t.id === entry.tenantId);
+            if (tenantIdx === -1) {
+                showToast('Tenant not found', 'error');
+                return;
+            }
+
+            // Restore the original value
+            state.tenants[tenantIdx][entry.field] = entry.originalValue;
+            state.tenants[tenantIdx].lastUpdated = new Date().toISOString().split('T')[0];
+            entry.reverted = true;
+            entry.revertedAt = new Date().toISOString();
+
+            saveChatbotUpdateHistory();
+            saveData();
+            renderAll();
+
+            addBotMessage('Reverted <strong>' + escapeHtml(entry.fieldLabel) + '</strong> for <strong>' + escapeHtml(entry.tenantName) + '</strong> back to original value "' + escapeHtml(String(entry.originalValue || '')) + '".');
+            showToast(entry.tenantName + ' - ' + entry.fieldLabel + ' reverted to original', 'success');
+        }
+
+        function revertAllUpdates() {
+            let count = 0;
+            chatbotState.appliedUpdates.filter(a => !a.reverted).forEach(entry => {
+                const tenantIdx = state.tenants.findIndex(t => t.id === entry.tenantId);
+                if (tenantIdx > -1) {
+                    state.tenants[tenantIdx][entry.field] = entry.originalValue;
+                    state.tenants[tenantIdx].lastUpdated = new Date().toISOString().split('T')[0];
+                    entry.reverted = true;
+                    entry.revertedAt = new Date().toISOString();
+                    count++;
+                }
+            });
+
+            saveChatbotUpdateHistory();
+            saveData();
+            renderAll();
+
+            if (count > 0) {
+                addBotMessage('Reverted <strong>' + count + ' update' + (count > 1 ? 's' : '') + '</strong> back to their original values. All data has been restored.');
+                showToast('All ' + count + ' updates reverted', 'success');
+            } else {
+                addBotMessage('No updates to revert.');
             }
         }
 
@@ -5096,6 +5204,7 @@ Fire Safety Compliance Team`
                     '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
                     'I detected ' + updates.length + ' potential update' + (updates.length > 1 ? 's' : '') + ' to tenant/station records:' +
                 '</div>' +
+                '<div style="font-size:10px;color:var(--zen-dark);margin-bottom:6px;font-style:italic">Original values are always preserved. You can revert any change at any time.</div>' +
                 updates.map((u, i) =>
                     '<div class="update-row">' +
                         '<span class="update-field">' + escapeHtml(u.tenantName) + '</span>' +
@@ -5308,6 +5417,39 @@ Fire Safety Compliance Team`
                 return;
             }
 
+            // Revert / audit history
+            if (lower.includes('revert') || lower.includes('undo') || lower.includes('restore') || lower.includes('history') || lower.includes('audit')) {
+                const active = chatbotState.appliedUpdates.filter(a => !a.reverted);
+                const reverted = chatbotState.appliedUpdates.filter(a => a.reverted);
+                if (chatbotState.appliedUpdates.length === 0) {
+                    addBotMessage('No update history yet. When you apply updates from email analysis, they\'ll be tracked here with full revert capability.');
+                } else {
+                    let html = '<strong>Update Audit Trail</strong> (' + chatbotState.appliedUpdates.length + ' total)<br>';
+                    if (active.length > 0) {
+                        html += '<div style="margin-top:6px"><strong style="font-size:11px;color:var(--zen-dark)">' + active.length + ' Active Changes:</strong>';
+                        active.forEach(a => {
+                            html += '<div class="update-row" style="border:1px solid var(--border);border-radius:6px;padding:6px 8px;margin-top:4px">' +
+                                '<span class="update-field">' + escapeHtml(a.tenantName) + '</span>' +
+                                '<span style="font-size:10px">' + escapeHtml(a.fieldLabel) + ':</span>' +
+                                '<span class="update-old">' + escapeHtml(String(a.originalValue || '')) + '</span>' +
+                                '<span class="update-arrow">&rarr;</span>' +
+                                '<span class="update-new">' + escapeHtml(a.newValue) + '</span>' +
+                                '<button class="btn btn-ghost btn-sm" onclick="revertUpdate(\'' + a.id + '\')" style="margin-left:auto;padding:2px 6px;font-size:9px;color:var(--danger)">Revert</button>' +
+                            '</div>';
+                        });
+                        html += '</div>';
+                        html += '<button class="btn btn-secondary btn-sm" onclick="revertAllUpdates()" style="margin-top:8px;font-size:10px">Revert All Active Changes</button>';
+                    }
+                    if (reverted.length > 0) {
+                        html += '<div style="margin-top:8px;font-size:10.5px;color:var(--text-muted)"><strong>' + reverted.length + ' Reverted:</strong> ';
+                        html += reverted.map(a => escapeHtml(a.tenantName) + ' ' + escapeHtml(a.fieldLabel)).join(', ');
+                        html += '</div>';
+                    }
+                    addBotMessage(html);
+                }
+                return;
+            }
+
             // Help
             if (lower.includes('help') || lower === '?') {
                 addBotMessage(
@@ -5319,6 +5461,8 @@ Fire Safety Compliance Team`
                     '&bull; <strong>"find [name]"</strong> - Look up a tenant<br>' +
                     '&bull; <strong>"station [name]"</strong> - Get station details<br>' +
                     '&bull; <strong>"update"</strong> - Show pending record updates<br>' +
+                    '&bull; <strong>"history"</strong> - View update audit trail &amp; revert changes<br>' +
+                    '&bull; <strong>"revert"</strong> - Restore original data for applied changes<br>' +
                     '&bull; <strong>"export"</strong> - Export tasks as CSV<br>' +
                     '&bull; <strong>"new email"</strong> - Drop another email'
                 );
