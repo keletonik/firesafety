@@ -1355,6 +1355,20 @@
                     </div>
                 </div>
 
+                <!-- Monthly Due Date Timeline -->
+                <div class="card" style="margin-bottom:20px">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            AFSS / FSC Due Dates by Month
+                        </span>
+                        <span style="font-size:11px;color:var(--text-muted)">Click a month to filter tenancies</span>
+                    </div>
+                    <div class="card-body" style="padding:12px 20px">
+                        <div id="dashboard-month-timeline" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px"></div>
+                    </div>
+                </div>
+
                 <!-- Compliance Summary Bar -->
                 <div class="card" style="margin-bottom:20px">
                     <div class="card-body" style="padding:16px 20px">
@@ -1453,6 +1467,20 @@
                                 <span class="drop-format-tag">.txt</span>
                                 <span class="drop-format-tag">.html</span>
                             </div>
+                            <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
+                                <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();showEmailPasteArea()" style="font-size:11px">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                    Paste Email Text
+                                </button>
+                            </div>
+                        </div>
+                        <div id="email-paste-area" style="display:none;padding:16px;flex-direction:column;gap:10px;height:100%">
+                            <div style="font-size:12px;font-weight:600;color:var(--text)">Paste your email content below:</div>
+                            <textarea id="email-paste-textarea" placeholder="Paste the full email text here including headers (From, To, Subject, Date) and body content..." style="flex:1;width:100%;border:1px solid var(--border);border-radius:var(--radius);padding:12px;font-size:12px;font-family:inherit;resize:none;background:var(--bg);color:var(--text)"></textarea>
+                            <div style="display:flex;gap:8px;justify-content:flex-end">
+                                <button class="btn btn-secondary btn-sm" onclick="hideEmailPasteArea()" style="font-size:11px">Cancel</button>
+                                <button class="btn btn-primary btn-sm" onclick="submitPastedEmail()" style="font-size:11px">Analyse Email</button>
+                            </div>
                         </div>
                         <div class="chat-messages" id="chat-messages" style="display:none"></div>
                     </div>
@@ -1526,6 +1554,20 @@
 
                 <div class="advanced-filters" id="advanced-filters">
                     <div class="filter-group">
+                        <label>AFSS Month</label>
+                        <select id="filter-afss-month">
+                            <option value="">All Months</option>
+                            <option value="January">January</option><option value="February">February</option><option value="March">March</option>
+                            <option value="April">April</option><option value="May">May</option><option value="June">June</option>
+                            <option value="July">July</option><option value="August">August</option><option value="September">September</option>
+                            <option value="October">October</option><option value="November">November</option><option value="December">December</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Station</label>
+                        <select id="filter-station"><option value="">All Stations</option></select>
+                    </div>
+                    <div class="filter-group">
                         <label>Region</label>
                         <select id="filter-region"><option value="">All Regions</option></select>
                     </div>
@@ -1548,6 +1590,9 @@
                     <div class="filter-group">
                         <label>Industry</label>
                         <select id="filter-industry"><option value="">All Industries</option></select>
+                    </div>
+                    <div class="filter-group" style="display:flex;align-items:flex-end">
+                        <button class="btn btn-ghost btn-sm" onclick="clearAllTenantFilters()" style="font-size:11px;color:var(--danger)">Clear All Filters</button>
                     </div>
                 </div>
 
@@ -1612,6 +1657,20 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         <input type="text" class="search-input" id="station-search" placeholder="Search stations...">
                     </div>
+                    <select class="form-select" id="station-month-filter" style="width:auto;min-width:140px;padding:8px 12px;font-size:13px">
+                        <option value="">All Months</option>
+                        <option value="January">January</option><option value="February">February</option><option value="March">March</option>
+                        <option value="April">April</option><option value="May">May</option><option value="June">June</option>
+                        <option value="July">July</option><option value="August">August</option><option value="September">September</option>
+                        <option value="October">October</option><option value="November">November</option><option value="December">December</option>
+                    </select>
+                    <select class="form-select" id="station-priority-filter" style="width:auto;min-width:140px;padding:8px 12px;font-size:13px">
+                        <option value="">All Priorities</option>
+                        <option value="has-critical">Has Critical</option>
+                        <option value="has-high">Has High</option>
+                        <option value="has-defects">Has Defects</option>
+                        <option value="fully-compliant">Fully Compliant</option>
+                    </select>
                 </div>
                 <div id="stations-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin-bottom:20px"></div>
 
@@ -1685,6 +1744,9 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         <input type="text" class="search-input" id="contact-search" placeholder="Search contacts by name, email, station, tenant...">
                     </div>
+                    <select class="form-select" id="contact-station-filter" style="width:auto;min-width:150px;padding:8px 12px;font-size:13px">
+                        <option value="">All Stations</option>
+                    </select>
                     <select class="form-select" id="contact-filter" style="width:auto;min-width:160px;padding:8px 12px;font-size:13px">
                         <option value="all">All Contacts</option>
                         <option value="has-email">Has Email</option>
@@ -1729,6 +1791,25 @@
                         <div class="stat-value" id="afss-overdue">0</div>
                         <div class="stat-label">Overdue</div>
                     </div>
+                </div>
+                <div class="search-bar">
+                    <div class="search-input-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" class="search-input" id="afss-search" placeholder="Search by station name...">
+                    </div>
+                    <select class="form-select" id="afss-month-filter" style="width:auto;min-width:140px;padding:8px 12px;font-size:13px">
+                        <option value="">All Months</option>
+                        <option value="January">January</option><option value="February">February</option><option value="March">March</option>
+                        <option value="April">April</option><option value="May">May</option><option value="June">June</option>
+                        <option value="July">July</option><option value="August">August</option><option value="September">September</option>
+                        <option value="October">October</option><option value="November">November</option><option value="December">December</option>
+                    </select>
+                    <select class="form-select" id="afss-status-filter" style="width:auto;min-width:140px;padding:8px 12px;font-size:13px">
+                        <option value="">All Statuses</option>
+                        <option value="submitted">Submitted</option>
+                        <option value="pending">Pending</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
                 </div>
                 <!-- FSS Property Tracking -->
                 <div class="card" style="margin-bottom:20px">
@@ -1808,6 +1889,26 @@
                         <div class="stat-label">Major Defects</div>
                     </div>
                 </div>
+                <div class="search-bar">
+                    <div class="search-input-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" class="search-input" id="critical-search" placeholder="Search critical items by tenant, station...">
+                    </div>
+                    <select class="form-select" id="critical-station-filter" style="width:auto;min-width:160px;padding:8px 12px;font-size:13px">
+                        <option value="">All Stations</option>
+                    </select>
+                    <select class="form-select" id="critical-priority-filter" style="width:auto;min-width:140px;padding:8px 12px;font-size:13px">
+                        <option value="">All Priorities</option>
+                        <option value="Critical">Critical Only</option>
+                        <option value="High">High Only</option>
+                    </select>
+                    <select class="form-select" id="critical-fsc-filter" style="width:auto;min-width:140px;padding:8px 12px;font-size:13px">
+                        <option value="">All FSC Status</option>
+                        <option value="Outstanding">Outstanding</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Received">Received</option>
+                    </select>
+                </div>
                 <div class="card">
                     <div class="card-body" style="padding:0">
                         <div class="table-container">
@@ -1878,6 +1979,18 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         <input type="text" class="search-input" id="defect-search" placeholder="Search defects by site, category, description...">
                     </div>
+                    <select class="form-select" id="defect-station-filter" style="width:auto;min-width:150px;padding:8px 12px;font-size:13px">
+                        <option value="">All Sites</option>
+                    </select>
+                    <select class="form-select" id="defect-progress-filter" style="width:auto;min-width:140px;padding:8px 12px;font-size:13px">
+                        <option value="">All Progress</option>
+                        <option value="Outstanding">Outstanding</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                    <select class="form-select" id="defect-category-filter" style="width:auto;min-width:160px;padding:8px 12px;font-size:13px">
+                        <option value="">All Categories</option>
+                    </select>
                 </div>
                 <div class="card">
                     <div class="card-body" style="padding:0">
@@ -2707,11 +2820,34 @@
             document.getElementById('header-select-all')?.addEventListener('change', function() { toggleSelectAll(this); });
             document.getElementById('select-all-tenants')?.addEventListener('change', function() { toggleSelectAll(this); });
 
-            // Filter changes
-            ['filter-region', 'filter-zone', 'filter-council', 'filter-pm', 'filter-lease-status', 'filter-industry'].forEach(id => {
+            // Tenant filter changes (includes new AFSS month & station filters)
+            ['filter-afss-month', 'filter-station', 'filter-region', 'filter-zone', 'filter-council', 'filter-pm', 'filter-lease-status', 'filter-industry'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('change', () => { state.tenantPage = 1; renderTenants(); });
             });
+
+            // Station page filters
+            document.getElementById('station-month-filter')?.addEventListener('change', () => renderStations());
+            document.getElementById('station-priority-filter')?.addEventListener('change', () => renderStations());
+
+            // AFSS page filters
+            document.getElementById('afss-search')?.addEventListener('input', debounce(() => renderAFSS(), 200));
+            document.getElementById('afss-month-filter')?.addEventListener('change', () => renderAFSS());
+            document.getElementById('afss-status-filter')?.addEventListener('change', () => renderAFSS());
+
+            // Critical page filters
+            document.getElementById('critical-search')?.addEventListener('input', debounce(() => renderCritical(), 200));
+            document.getElementById('critical-station-filter')?.addEventListener('change', () => renderCritical());
+            document.getElementById('critical-priority-filter')?.addEventListener('change', () => renderCritical());
+            document.getElementById('critical-fsc-filter')?.addEventListener('change', () => renderCritical());
+
+            // Defect page filters
+            document.getElementById('defect-station-filter')?.addEventListener('change', () => { state.defectPage = 1; renderDefects(); });
+            document.getElementById('defect-progress-filter')?.addEventListener('change', () => { state.defectPage = 1; renderDefects(); });
+            document.getElementById('defect-category-filter')?.addEventListener('change', () => { state.defectPage = 1; renderDefects(); });
+
+            // Contact page filters
+            document.getElementById('contact-station-filter')?.addEventListener('change', () => renderContacts());
 
             // Note filter
             const noteFilter = document.getElementById('note-filter');
@@ -2850,6 +2986,8 @@
             else if (f === 'no-fss') tenants = tenants.filter(t => t.hasFSS === 'no');
 
             // Advanced filters
+            const afssMonth = document.getElementById('filter-afss-month')?.value;
+            const station = document.getElementById('filter-station')?.value;
             const region = document.getElementById('filter-region')?.value;
             const zone = document.getElementById('filter-zone')?.value;
             const council = document.getElementById('filter-council')?.value;
@@ -2857,6 +2995,8 @@
             const leaseStatus = document.getElementById('filter-lease-status')?.value;
             const industry = document.getElementById('filter-industry')?.value;
 
+            if (afssMonth) tenants = tenants.filter(t => t.afssMonth === afssMonth);
+            if (station) tenants = tenants.filter(t => t.station === station);
             if (region) tenants = tenants.filter(t => t.region === region);
             if (zone) tenants = tenants.filter(t => t.zone === zone);
             if (council) tenants = tenants.filter(t => t.council === council);
@@ -2973,10 +3113,29 @@
         function renderStations(searchVal) {
             let stations = state.stations || [];
             const search = searchVal !== undefined ? searchVal : (document.getElementById('station-search')?.value || '');
+            const monthFilter = document.getElementById('station-month-filter')?.value || '';
+            const priorityFilter = document.getElementById('station-priority-filter')?.value || '';
 
             if (search) {
                 const s = search.toLowerCase();
                 stations = stations.filter(st => (st.name || '').toLowerCase().includes(s));
+            }
+
+            if (monthFilter) {
+                stations = stations.filter(st => st.afssMonth === monthFilter);
+            }
+
+            if (priorityFilter === 'has-critical') {
+                stations = stations.filter(st => (st.criticalCount || 0) > 0);
+            } else if (priorityFilter === 'has-high') {
+                stations = stations.filter(st => (st.highCount || 0) > 0);
+            } else if (priorityFilter === 'has-defects') {
+                stations = stations.filter(st => (st.defectsOpen || 0) > 0);
+            } else if (priorityFilter === 'fully-compliant') {
+                stations = stations.filter(st => {
+                    const tc = st.tenantCount || 0;
+                    return tc > 0 && (st.fscCompliant || 0) === tc;
+                });
             }
 
             stations = stations.sort((a, b) => (b.defectsOpen || 0) - (a.defectsOpen || 0));
@@ -3064,24 +3223,46 @@
         // AFSS
         // ============================================================
         function renderAFSS() {
-            const afss = state.afssSchedule || [];
+            let afss = state.afssSchedule || [];
             const tenants = state.tenants || [];
             const now = new Date();
             const currentMonth = now.getMonth();
 
             const monthOrder = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
+            // Stats from unfiltered data
             document.getElementById('afss-total').textContent = afss.length;
             document.getElementById('afss-submitted').textContent = afss.filter(a => a.status === 'Submitted').length;
             document.getElementById('afss-pending').textContent = afss.filter(a => a.status !== 'Submitted').length;
 
-            // Overdue count
             let overdueCount = 0;
             afss.forEach(a => {
                 const monthIdx = monthOrder.indexOf(a.afssMonth);
                 if (monthIdx >= 0 && monthIdx < currentMonth && a.status !== 'Submitted') overdueCount++;
             });
             document.getElementById('afss-overdue').textContent = overdueCount;
+
+            // Apply filters
+            const afssSearch = (document.getElementById('afss-search')?.value || '').toLowerCase();
+            const afssMonthFilter = document.getElementById('afss-month-filter')?.value || '';
+            const afssStatusFilter = document.getElementById('afss-status-filter')?.value || '';
+
+            if (afssSearch) {
+                afss = afss.filter(a => (a.station || '').toLowerCase().includes(afssSearch));
+            }
+            if (afssMonthFilter) {
+                afss = afss.filter(a => a.afssMonth === afssMonthFilter);
+            }
+            if (afssStatusFilter === 'submitted') {
+                afss = afss.filter(a => a.status === 'Submitted');
+            } else if (afssStatusFilter === 'pending') {
+                afss = afss.filter(a => a.status !== 'Submitted' && !(monthOrder.indexOf(a.afssMonth) >= 0 && monthOrder.indexOf(a.afssMonth) < currentMonth));
+            } else if (afssStatusFilter === 'overdue') {
+                afss = afss.filter(a => {
+                    const mi = monthOrder.indexOf(a.afssMonth);
+                    return mi >= 0 && mi < currentMonth && a.status !== 'Submitted';
+                });
+            }
 
             // FSS tracking
             const hasFSS = tenants.filter(t => t.hasFSS === 'yes').length;
@@ -3122,14 +3303,15 @@
         // CRITICAL ITEMS
         // ============================================================
         function renderCritical() {
-            const critical = (state.tenants || [])
-                .filter(t => t.priority === 'Critical' || t.priority === 'High')
-                .sort((a, b) => {
-                    if (a.priority === 'Critical' && b.priority !== 'Critical') return -1;
-                    if (b.priority === 'Critical' && a.priority !== 'Critical') return 1;
-                    return (b.defectsOpen || 0) - (a.defectsOpen || 0);
-                });
+            const critSearch = (document.getElementById('critical-search')?.value || '').toLowerCase();
+            const critStation = document.getElementById('critical-station-filter')?.value || '';
+            const critPriority = document.getElementById('critical-priority-filter')?.value || '';
+            const critFsc = document.getElementById('critical-fsc-filter')?.value || '';
 
+            let critical = (state.tenants || [])
+                .filter(t => t.priority === 'Critical' || t.priority === 'High');
+
+            // Stats from unfiltered critical items
             const critCount = critical.filter(t => t.priority === 'Critical').length;
             const highCount = critical.filter(t => t.priority === 'High').length;
             const totalDefects = critical.reduce((sum, t) => sum + (t.defectsOpen || 0), 0);
@@ -3139,6 +3321,24 @@
             document.getElementById('crit-high-count').textContent = highCount;
             document.getElementById('crit-defects-count').textContent = totalDefects;
             document.getElementById('crit-major-count').textContent = majorDefects;
+
+            // Apply filters
+            if (critSearch) {
+                critical = critical.filter(t =>
+                    (t.tenantName || '').toLowerCase().includes(critSearch) ||
+                    (t.tradingName || '').toLowerCase().includes(critSearch) ||
+                    (t.station || '').toLowerCase().includes(critSearch)
+                );
+            }
+            if (critStation) critical = critical.filter(t => t.station === critStation);
+            if (critPriority) critical = critical.filter(t => t.priority === critPriority);
+            if (critFsc) critical = critical.filter(t => t.fscStatus === critFsc);
+
+            critical.sort((a, b) => {
+                if (a.priority === 'Critical' && b.priority !== 'Critical') return -1;
+                if (b.priority === 'Critical' && a.priority !== 'Critical') return 1;
+                return (b.defectsOpen || 0) - (a.defectsOpen || 0);
+            });
 
             const tbody = document.getElementById('critical-table');
             tbody.innerHTML = critical.map(t => `
@@ -3161,10 +3361,23 @@
         function renderDefects() {
             let defects = state.defects || [];
             const search = (document.getElementById('defect-search')?.value || '').toLowerCase();
+            const stationFilter = document.getElementById('defect-station-filter')?.value || '';
+            const progressFilter = document.getElementById('defect-progress-filter')?.value || '';
+            const categoryFilter = document.getElementById('defect-category-filter')?.value || '';
 
             // Risk filter
             if (state.currentDefectFilter && state.currentDefectFilter !== 'all') {
                 defects = defects.filter(d => d.risk === state.currentDefectFilter);
+            }
+
+            if (stationFilter) {
+                defects = defects.filter(d => d.site_name === stationFilter);
+            }
+            if (progressFilter) {
+                defects = defects.filter(d => d.progress === progressFilter);
+            }
+            if (categoryFilter) {
+                defects = defects.filter(d => d.category === categoryFilter);
             }
 
             if (search) {
@@ -3716,6 +3929,86 @@
             populate('filter-pm', opts.propertyManagers);
             populate('filter-lease-status', opts.leaseStatuses);
             populate('filter-industry', opts.industryClasses);
+
+            // Populate station dropdowns across all pages
+            const stationNames = [...new Set((state.stations || []).map(s => s.name).filter(Boolean))].sort();
+            ['filter-station', 'critical-station-filter', 'contact-station-filter'].forEach(id => {
+                populate(id, stationNames);
+            });
+
+            // Populate defect site and category dropdowns
+            const defects = state.defects || [];
+            const defectSites = [...new Set(defects.map(d => d.site_name).filter(Boolean))].sort();
+            const defectCategories = [...new Set(defects.map(d => d.category).filter(Boolean))].sort();
+            populate('defect-station-filter', defectSites);
+            populate('defect-category-filter', defectCategories);
+
+            // Render dashboard month timeline
+            renderDashboardMonthTimeline();
+        }
+
+        function renderDashboardMonthTimeline() {
+            const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            const shortMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const tenants = state.tenants || [];
+            const now = new Date();
+            const currentMonthIdx = now.getMonth();
+
+            const container = document.getElementById('dashboard-month-timeline');
+            if (!container) return;
+
+            container.innerHTML = months.map((m, i) => {
+                const count = tenants.filter(t => t.afssMonth === m).length;
+                const isCurrentMonth = i === currentMonthIdx;
+                const isPast = i < currentMonthIdx;
+                const isFuture = i > currentMonthIdx;
+
+                // Count how many in this month have outstanding FSC
+                const outstanding = tenants.filter(t => t.afssMonth === m && (t.fscStatus === 'Outstanding' || t.fscStatus === 'Pending')).length;
+                const received = tenants.filter(t => t.afssMonth === m && (t.fscStatus === 'Received' || t.fscStatus === 'Compliant')).length;
+
+                let borderColor = 'var(--border)';
+                let bgColor = 'var(--bg)';
+                if (isCurrentMonth) { borderColor = 'var(--fyre)'; bgColor = 'var(--primary-bg)'; }
+                else if (isPast && outstanding > 0) { borderColor = 'var(--danger)'; bgColor = 'var(--danger-bg)'; }
+                else if (isPast && count > 0) { borderColor = 'var(--zen)'; bgColor = 'var(--success-bg)'; }
+
+                return `<div onclick="filterTenantsByMonth('${m}')" style="flex:1;min-width:70px;border:2px solid ${borderColor};border-radius:8px;padding:8px 6px;text-align:center;cursor:pointer;background:${bgColor};transition:all 0.2s" title="${m}: ${count} tenancies (${outstanding} outstanding, ${received} received)">
+                    <div style="font-size:10px;font-weight:700;color:${isCurrentMonth ? 'var(--fyre)' : 'var(--text-muted)'}">${shortMonths[i]}</div>
+                    <div style="font-size:18px;font-weight:700;color:${count > 0 ? 'var(--text)' : 'var(--text-light)'}">${count}</div>
+                    ${count > 0 ? `<div style="display:flex;gap:2px;justify-content:center;margin-top:4px">
+                        ${outstanding > 0 ? `<span style="font-size:8px;background:var(--danger);color:#fff;border-radius:3px;padding:0 3px">${outstanding}</span>` : ''}
+                        ${received > 0 ? `<span style="font-size:8px;background:var(--zen);color:#fff;border-radius:3px;padding:0 3px">${received}</span>` : ''}
+                    </div>` : ''}
+                </div>`;
+            }).join('');
+        }
+
+        function filterTenantsByMonth(month) {
+            // Navigate to tenants page and set the AFSS month filter
+            navigateTo('tenants');
+            const monthSelect = document.getElementById('filter-afss-month');
+            if (monthSelect) {
+                monthSelect.value = month;
+                // Show advanced filters if hidden
+                document.getElementById('advanced-filters').classList.add('show');
+                state.tenantPage = 1;
+                renderTenants();
+            }
+        }
+
+        function clearAllTenantFilters() {
+            ['filter-afss-month', 'filter-station', 'filter-region', 'filter-zone', 'filter-council', 'filter-pm', 'filter-lease-status', 'filter-industry'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            const searchInput = document.getElementById('tenant-search');
+            if (searchInput) searchInput.value = '';
+            state.currentFilter = 'all';
+            document.querySelectorAll('.quick-filter[data-filter]').forEach(f => f.classList.remove('active'));
+            document.querySelector('.quick-filter[data-filter="all"]')?.classList.add('active');
+            state.tenantPage = 1;
+            renderTenants();
         }
 
         function toggleAdvancedFilters() {
@@ -4030,6 +4323,7 @@
             const tenants = state.tenants || [];
             const search = (document.getElementById('contact-search')?.value || '').toLowerCase();
             const filter = document.getElementById('contact-filter')?.value || 'all';
+            const stationFilter = document.getElementById('contact-station-filter')?.value || '';
 
             let contacts = tenants.filter(t => t.contactName || t.contactEmail || t.contactMobile);
             const allWithContact = contacts.length;
@@ -4050,6 +4344,11 @@
             else if (filter === 'no-phone') contacts = tenants.filter(t => !t.contactMobile || !t.contactMobile.trim());
             else if (filter === 'critical') contacts = tenants.filter(t => t.priority === 'Critical' && (t.contactName || t.contactEmail));
             else if (filter === 'high') contacts = tenants.filter(t => t.priority === 'High' && (t.contactName || t.contactEmail));
+
+            // Station filter
+            if (stationFilter) {
+                contacts = contacts.filter(t => t.station === stationFilter);
+            }
 
             // Apply search
             if (search) {
@@ -4539,12 +4838,36 @@ Fire Safety Compliance Team`
         loadChatbotTasks();
 
         // Email drop zone setup
+        function showEmailPasteArea() {
+            document.getElementById('email-drop-zone').style.display = 'none';
+            document.getElementById('email-paste-area').style.display = 'flex';
+            document.getElementById('email-paste-textarea').focus();
+        }
+        function hideEmailPasteArea() {
+            document.getElementById('email-paste-area').style.display = 'none';
+            document.getElementById('email-drop-zone').style.display = '';
+        }
+        function submitPastedEmail() {
+            const textarea = document.getElementById('email-paste-textarea');
+            const text = (textarea.value || '').trim();
+            if (text.length < 20) {
+                showToast('Please paste a complete email with enough content to analyse', 'error');
+                return;
+            }
+            document.getElementById('email-paste-area').style.display = 'none';
+            processEmailContent(text, 'Pasted Email');
+        }
+
         (function initEmailDropZone() {
             const dropZone = document.getElementById('email-drop-zone');
             const fileInput = document.getElementById('email-file-input');
             if (!dropZone || !fileInput) return;
 
-            dropZone.addEventListener('click', () => fileInput.click());
+            dropZone.addEventListener('click', (e) => {
+                // Don't trigger file browse if they clicked the paste button
+                if (e.target.closest('button')) return;
+                fileInput.click();
+            });
             fileInput.addEventListener('change', (e) => {
                 if (e.target.files.length > 0) handleEmailFiles(e.target.files);
             });
@@ -4574,7 +4897,16 @@ Fire Safety Compliance Team`
                 }
             });
 
-            // Also accept paste
+            // Accept paste on the whole chatbot panel (works even when input is disabled)
+            document.getElementById('chatbot-panel')?.addEventListener('paste', (e) => {
+                const text = e.clipboardData.getData('text/plain');
+                if (text && text.length > 50) {
+                    e.preventDefault();
+                    processEmailContent(text, 'Pasted Email');
+                }
+            });
+
+            // Also accept paste on chat input when active
             document.getElementById('chat-input')?.addEventListener('paste', (e) => {
                 const text = e.clipboardData.getData('text/plain');
                 if (text && text.length > 100 && (text.includes('From:') || text.includes('Subject:') || text.includes('@'))) {
@@ -4603,10 +4935,10 @@ Fire Safety Compliance Team`
             if (chatbotState.isProcessing) return;
             chatbotState.isProcessing = true;
 
-            // Show chat area, hide drop zone partially
-            const dropZone = document.getElementById('email-drop-zone');
+            // Show chat area, hide drop zone and paste area
+            document.getElementById('email-drop-zone').style.display = 'none';
+            document.getElementById('email-paste-area').style.display = 'none';
             const chatArea = document.getElementById('chat-messages');
-            dropZone.style.display = 'none';
             chatArea.style.display = 'flex';
 
             // Enable input
@@ -4681,9 +5013,14 @@ Fire Safety Compliance Team`
             email.subject = headerMatch('Subject') || extractField(raw, 'Subject');
             email.date = headerMatch('Date') || extractField(raw, 'Date');
 
-            // Extract body
+            // Extract body - if headers found, body starts after double newline; otherwise treat entire text as body
+            const hasHeaders = email.from || email.to || email.subject || email.date;
             const bodyStart = raw.indexOf('\n\n');
-            email.body = bodyStart > -1 ? raw.substring(bodyStart + 2) : raw;
+            if (hasHeaders && bodyStart > -1 && bodyStart < 2000) {
+                email.body = raw.substring(bodyStart + 2);
+            } else {
+                email.body = raw;
+            }
 
             // Strip HTML tags if present
             if (email.body.includes('<html') || email.body.includes('<HTML') || email.body.includes('<div')) {
@@ -5495,9 +5832,11 @@ Fire Safety Compliance Team`
                     addBotMessage('Tasks exported as CSV file.');
                     break;
                 case 'newEmail':
-                    const dropZone = document.getElementById('email-drop-zone');
-                    dropZone.style.display = '';
-                    addBotMessage('Ready for another email. Drag &amp; drop or click the upload zone above.');
+                    document.getElementById('email-drop-zone').style.display = '';
+                    document.getElementById('email-paste-area').style.display = 'none';
+                    chatbotState.isProcessing = false;
+                    document.getElementById('email-file-input').value = '';
+                    addBotMessage('Ready for another email. Drag &amp; drop, click to browse, or use the <strong>Paste Email Text</strong> button above.');
                     break;
                 case 'compliance':
                     const tenants = state.tenants || [];
