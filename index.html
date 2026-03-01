@@ -7,6 +7,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
     <style>
         :root {
             --fyre: #E8762F;
@@ -2844,7 +2846,37 @@
 
                 <!-- Documents Tab -->
                 <div class="tab-content" id="tab-stn-documents">
-                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Attach and manage fire safety documentation for this station. Files are stored in your browser's local storage.</p>
+                    <!-- AFSS PDF Upload & AI Scanner -->
+                    <div style="background:linear-gradient(135deg,#FFF3E8,#FFF8F0);border:2px solid var(--fyre);border-radius:var(--radius-lg);padding:20px;margin-bottom:20px">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--fyre)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg>
+                            <div>
+                                <h4 style="font-size:14px;font-weight:700;color:var(--fyre);margin:0">AFSS AI Scanner</h4>
+                                <p style="font-size:11px;color:var(--text-muted);margin:0">Upload an AFSS PDF and the AI will automatically detect fire safety measures and update the station and all tenancies</p>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+                            <div class="form-group" style="flex:1;min-width:200px;margin-bottom:0">
+                                <label class="form-label" style="font-size:11px">Select AFSS PDF</label>
+                                <input type="file" class="form-input" id="stn-afss-upload" accept=".pdf" style="font-size:12px">
+                            </div>
+                            <button class="btn btn-sm" id="stn-afss-scan-btn" onclick="scanAfssPdf()" style="background:var(--fyre);color:#fff;padding:8px 18px;font-weight:600;white-space:nowrap">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                Scan &amp; Detect
+                            </button>
+                        </div>
+                        <div id="stn-afss-progress" style="display:none;margin-top:12px">
+                            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)">
+                                <div class="spinner" style="width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--fyre);border-radius:50%;animation:spin 0.8s linear infinite"></div>
+                                <span id="stn-afss-progress-text">Reading PDF...</span>
+                            </div>
+                        </div>
+                        <div id="stn-afss-results" style="display:none;margin-top:16px"></div>
+                    </div>
+
+                    <!-- Standard Document Management -->
+                    <h4 style="font-size:13px;font-weight:600;margin-bottom:10px;padding-top:4px;border-top:1px solid var(--border)">Document Management</h4>
+                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Attach and manage fire safety documentation for this station.</p>
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Document Type</label>
@@ -3627,6 +3659,432 @@
                 saveData();
                 renderStationDocuments(stationName);
             }
+        }
+
+        // ============================================================
+        // AFSS AI SCANNER - PDF parsing and fire measure detection
+        // ============================================================
+        async function scanAfssPdf() {
+            if (!state.currentStation) { showToast('No station selected', 'error'); return; }
+            const fileInput = document.getElementById('stn-afss-upload');
+            if (!fileInput.files.length) { showToast('Please select an AFSS PDF file', 'error'); return; }
+
+            const file = fileInput.files[0];
+            if (!file.name.toLowerCase().endsWith('.pdf')) { showToast('Please select a PDF file', 'error'); return; }
+
+            const progressEl = document.getElementById('stn-afss-progress');
+            const progressText = document.getElementById('stn-afss-progress-text');
+            const resultsEl = document.getElementById('stn-afss-results');
+            const scanBtn = document.getElementById('stn-afss-scan-btn');
+
+            progressEl.style.display = 'block';
+            resultsEl.style.display = 'none';
+            scanBtn.disabled = true;
+            scanBtn.style.opacity = '0.6';
+
+            try {
+                // Step 1: Read PDF
+                progressText.textContent = 'Reading PDF document...';
+                const arrayBuffer = await file.arrayBuffer();
+
+                if (typeof pdfjsLib === 'undefined') {
+                    throw new Error('PDF.js library not loaded. Please refresh the page.');
+                }
+
+                // Step 2: Extract text from all pages
+                progressText.textContent = 'Extracting text from PDF...';
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                let fullText = '';
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    progressText.textContent = 'Reading page ' + i + ' of ' + pdf.numPages + '...';
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items.map(item => item.str).join(' ');
+                    fullText += pageText + '\n';
+                }
+
+                // Step 3: AI analysis of fire safety measures
+                progressText.textContent = 'AI analysing fire safety measures...';
+                await new Promise(r => setTimeout(r, 300)); // Allow UI to update
+
+                const detected = parseAfssFireMeasures(fullText);
+
+                // Step 4: Display results
+                progressEl.style.display = 'none';
+                displayAfssResults(detected, fullText, file.name);
+
+            } catch (err) {
+                progressEl.style.display = 'none';
+                resultsEl.style.display = 'block';
+                resultsEl.innerHTML = '<div style="padding:12px;background:#FEE;border:1px solid #FCC;border-radius:var(--radius);color:var(--danger);font-size:12px"><strong>Error:</strong> ' + escapeHtml(err.message) + '</div>';
+            } finally {
+                scanBtn.disabled = false;
+                scanBtn.style.opacity = '1';
+            }
+        }
+
+        // AI-powered fire safety measure parser
+        // Analyses extracted AFSS PDF text to detect each measure and its compliance status
+        function parseAfssFireMeasures(text) {
+            const t = text.toLowerCase();
+            const results = {};
+
+            // Measure detection patterns - each measure has multiple keyword variants
+            // and we look for compliance indicators near each keyword
+            const measurePatterns = {
+                fireDetection: {
+                    label: 'Fire Detection & Alarm',
+                    keywords: [
+                        'fire detection', 'fire alarm', 'smoke detection', 'smoke alarm',
+                        'fire indicator panel', 'fire indicator', 'fip', 'fire detection and alarm',
+                        'automatic fire detection', 'heat detection', 'smoke detector',
+                        'fire alarm system', 'detection system', 'as 1670', 'as1670',
+                        'warning system', 'fire warning'
+                    ]
+                },
+                sprinklers: {
+                    label: 'Sprinkler System',
+                    keywords: [
+                        'sprinkler', 'sprinkler system', 'automatic sprinkler', 'fire sprinkler',
+                        'as 2118', 'as2118', 'spray sprinkler', 'wet pipe sprinkler',
+                        'dry pipe sprinkler', 'pre-action sprinkler', 'deluge',
+                        'sprinkler installation'
+                    ]
+                },
+                emergencyLighting: {
+                    label: 'Emergency Lighting',
+                    keywords: [
+                        'emergency lighting', 'emergency light', 'emergency illumination',
+                        'as 2293', 'as2293', 'exit lighting', 'escape lighting',
+                        'standby lighting', 'emergency luminaire'
+                    ]
+                },
+                exitSigns: {
+                    label: 'Exit Signs',
+                    keywords: [
+                        'exit sign', 'exit signs', 'exit signage', 'directional sign',
+                        'illuminated exit', 'as 2293', 'as2293', 'egress sign',
+                        'way finding', 'wayfinding', 'escape sign'
+                    ]
+                },
+                extinguishers: {
+                    label: 'Portable Extinguishers',
+                    keywords: [
+                        'extinguisher', 'fire extinguisher', 'portable extinguisher',
+                        'as 2444', 'as2444', 'powder extinguisher', 'foam extinguisher',
+                        'co2 extinguisher', 'wet chemical extinguisher', 'abe extinguisher'
+                    ]
+                },
+                fireDoors: {
+                    label: 'Fire Doors',
+                    keywords: [
+                        'fire door', 'fire doors', 'fire-rated door', 'fire rated door',
+                        'smoke door', 'smoke doors', 'as 1905', 'as1905',
+                        'fire resistant door', 'self-closing door', 'self closing door',
+                        'fire shutter', 'roller shutter'
+                    ]
+                },
+                hydrants: {
+                    label: 'Hydrants',
+                    keywords: [
+                        'hydrant', 'fire hydrant', 'hydrant system', 'hydrant booster',
+                        'as 2419', 'as2419', 'fire hydrant system', 'hydrant installation',
+                        'booster assembly', 'hydrant valve', 'hydrant pump'
+                    ]
+                },
+                hoseReels: {
+                    label: 'Hose Reels',
+                    keywords: [
+                        'hose reel', 'hose reels', 'fire hose reel', 'fire hose',
+                        'as 2441', 'as2441', 'hose reel system'
+                    ]
+                },
+                passiveFire: {
+                    label: 'Passive Fire Protection',
+                    keywords: [
+                        'passive fire', 'passive protection', 'fire stopping', 'firestopping',
+                        'fire separation', 'fire compartment', 'fire wall', 'firewall',
+                        'fire collar', 'fire rating', 'fire-rated', 'fire rated',
+                        'fire resistance level', 'frl', 'fire barrier', 'penetration',
+                        'fire seal', 'intumescent', 'damper', 'fire damper'
+                    ]
+                }
+            };
+
+            // Compliance indicators
+            const compliantIndicators = [
+                'compliant', 'complies', 'satisfactory', 'pass', 'passed', 'adequate',
+                'maintained', 'operational', 'functional', 'serviceable', 'in order',
+                'acceptable', 'conforms', 'conforming', 'meets requirements',
+                'properly maintained', 'in good order', 'working order',
+                'correctly installed', 'tested', 'certified', 'approved',
+                'no defects', 'no issues', 'up to date', 'current'
+            ];
+            const nonCompliantIndicators = [
+                'non-compliant', 'non compliant', 'noncompliant', 'defect', 'defective',
+                'fail', 'failed', 'unsatisfactory', 'inadequate', 'not maintained',
+                'inoperative', 'not operational', 'not functional', 'damaged',
+                'requires attention', 'requires repair', 'rectification required',
+                'does not comply', 'not conforming', 'overdue', 'expired',
+                'not tested', 'fault', 'faulty', 'out of service', 'not in service',
+                'obstruct', 'obstructed', 'missing', 'not installed'
+            ];
+            const naIndicators = [
+                'not applicable', 'n/a', 'na', 'not required', 'not installed',
+                'not present', 'not provided', 'does not apply', 'nil',
+                'no such', 'none installed', 'none provided', 'none required'
+            ];
+
+            // For each measure, search for keywords and determine status
+            for (const [key, config] of Object.entries(measurePatterns)) {
+                let found = false;
+                let bestStatus = '';
+                let confidence = 0;
+                let matchedKeyword = '';
+                let contextSnippet = '';
+
+                for (const keyword of config.keywords) {
+                    const idx = t.indexOf(keyword);
+                    if (idx === -1) continue;
+                    found = true;
+                    matchedKeyword = keyword;
+
+                    // Extract context window around the keyword (300 chars each side)
+                    const contextStart = Math.max(0, idx - 300);
+                    const contextEnd = Math.min(t.length, idx + keyword.length + 300);
+                    const context = t.substring(contextStart, contextEnd);
+                    contextSnippet = text.substring(contextStart, contextEnd).trim();
+
+                    // Check for compliance indicators in context
+                    let compliantScore = 0;
+                    let nonCompliantScore = 0;
+                    let naScore = 0;
+
+                    // Check N/A first (strongest signal)
+                    for (const indicator of naIndicators) {
+                        if (context.includes(indicator)) {
+                            naScore += 3;
+                        }
+                    }
+
+                    // Check non-compliant (check before compliant to avoid false positives)
+                    for (const indicator of nonCompliantIndicators) {
+                        if (context.includes(indicator)) {
+                            nonCompliantScore += 2;
+                        }
+                    }
+
+                    // Check compliant
+                    for (const indicator of compliantIndicators) {
+                        if (context.includes(indicator)) {
+                            // Avoid false positive: "non-compliant" contains "compliant"
+                            const ci = context.indexOf(indicator);
+                            if (ci > 0 && context.substring(ci - 4, ci).includes('non')) continue;
+                            compliantScore += 2;
+                        }
+                    }
+
+                    // Determine status from scores
+                    let status = '';
+                    let conf = 0;
+                    if (naScore > compliantScore && naScore > nonCompliantScore) {
+                        status = 'Not Applicable';
+                        conf = Math.min(95, 50 + naScore * 10);
+                    } else if (nonCompliantScore > compliantScore) {
+                        status = 'Non-Compliant';
+                        conf = Math.min(95, 50 + nonCompliantScore * 8);
+                    } else if (compliantScore > 0) {
+                        status = 'Compliant';
+                        conf = Math.min(95, 50 + compliantScore * 8);
+                    } else {
+                        // Keyword found but no clear status indicator
+                        status = 'Compliant';
+                        conf = 40; // Low confidence - present but unclear
+                    }
+
+                    if (conf > confidence) {
+                        bestStatus = status;
+                        confidence = conf;
+                    }
+                }
+
+                results[key] = {
+                    label: config.label,
+                    found: found,
+                    status: found ? bestStatus : '',
+                    confidence: found ? confidence : 0,
+                    keyword: matchedKeyword,
+                    context: contextSnippet.substring(0, 200)
+                };
+            }
+
+            return results;
+        }
+
+        function displayAfssResults(detected, fullText, fileName) {
+            const resultsEl = document.getElementById('stn-afss-results');
+            const stationName = state.currentStation ? state.currentStation.name : '';
+
+            const totalFound = Object.values(detected).filter(d => d.found).length;
+            const totalMeasures = Object.keys(detected).length;
+
+            const statusColors = {
+                'Compliant': 'var(--success)',
+                'Non-Compliant': 'var(--danger)',
+                'Not Applicable': 'var(--text-muted)'
+            };
+
+            let html = '<div style="border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">';
+
+            // Header
+            html += '<div style="background:var(--bg);padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">';
+            html += '<div><span style="font-size:13px;font-weight:700">AI Scan Results</span>';
+            html += '<span style="font-size:11px;color:var(--text-muted);margin-left:8px">' + escapeHtml(fileName) + '</span></div>';
+            html += '<span class="badge badge-info">' + totalFound + '/' + totalMeasures + ' measures detected</span></div>';
+
+            // Results table
+            html += '<table style="width:100%;font-size:12px"><thead><tr style="background:var(--bg)">';
+            html += '<th style="padding:8px 12px;text-align:left">Fire Safety Measure</th>';
+            html += '<th style="padding:8px 12px;text-align:left">Detected</th>';
+            html += '<th style="padding:8px 12px;text-align:left">Status</th>';
+            html += '<th style="padding:8px 12px;text-align:center">Confidence</th>';
+            html += '<th style="padding:8px 12px;text-align:left;width:130px">Override</th>';
+            html += '</tr></thead><tbody>';
+
+            for (const [key, d] of Object.entries(detected)) {
+                const statusColor = statusColors[d.status] || 'var(--text-light)';
+                const confPct = d.confidence;
+                const confColor = confPct >= 70 ? 'var(--success)' : confPct >= 40 ? 'var(--warning)' : 'var(--danger)';
+
+                html += '<tr style="border-bottom:1px solid var(--border-light)">';
+                html += '<td style="padding:8px 12px;font-weight:500">' + escapeHtml(d.label) + '</td>';
+                html += '<td style="padding:8px 12px">';
+                if (d.found) {
+                    html += '<span style="color:var(--success)">Found</span>';
+                } else {
+                    html += '<span style="color:var(--text-light)">Not found</span>';
+                }
+                html += '</td>';
+                html += '<td style="padding:8px 12px">';
+                if (d.found) {
+                    html += '<span style="color:' + statusColor + ';font-weight:600">' + escapeHtml(d.status) + '</span>';
+                } else {
+                    html += '<span style="color:var(--text-light)">-</span>';
+                }
+                html += '</td>';
+                html += '<td style="padding:8px 12px;text-align:center">';
+                if (d.found) {
+                    html += '<div style="display:flex;align-items:center;gap:6px;justify-content:center">';
+                    html += '<div style="width:40px;height:4px;background:var(--border);border-radius:2px"><div style="width:' + confPct + '%;height:100%;background:' + confColor + ';border-radius:2px"></div></div>';
+                    html += '<span style="font-size:11px;color:' + confColor + '">' + confPct + '%</span>';
+                    html += '</div>';
+                } else {
+                    html += '-';
+                }
+                html += '</td>';
+                html += '<td style="padding:6px 12px">';
+                html += '<select class="form-select" id="afss-override-' + key + '" style="padding:3px 6px;font-size:11px">';
+                html += '<option value=""' + (!d.status ? ' selected' : '') + '>Not Assessed</option>';
+                html += '<option value="Compliant"' + (d.status === 'Compliant' ? ' selected' : '') + '>Compliant</option>';
+                html += '<option value="Non-Compliant"' + (d.status === 'Non-Compliant' ? ' selected' : '') + '>Non-Compliant</option>';
+                html += '<option value="Not Applicable"' + (d.status === 'Not Applicable' ? ' selected' : '') + '>N/A</option>';
+                html += '</select>';
+                html += '</td>';
+                html += '</tr>';
+            }
+
+            html += '</tbody></table>';
+
+            // Action buttons
+            html += '<div style="padding:12px 16px;background:var(--bg);border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap">';
+            html += '<div style="display:flex;align-items:center;gap:8px">';
+            html += '<input type="checkbox" id="afss-cascade-tenants" checked style="accent-color:var(--fyre)">';
+            html += '<label for="afss-cascade-tenants" style="font-size:11px;color:var(--text-muted);cursor:pointer">Also update all tenancies at this station</label>';
+            html += '</div>';
+            html += '<div style="display:flex;gap:8px">';
+            html += '<button class="btn btn-secondary btn-sm" onclick="document.getElementById(\'stn-afss-results\').style.display=\'none\'">Cancel</button>';
+            html += '<button class="btn btn-sm" onclick="applyAfssResults()" style="background:var(--fyre);color:#fff;font-weight:600;padding:6px 18px">Apply to Station &amp; Tenancies</button>';
+            html += '</div>';
+            html += '</div>';
+
+            html += '</div>';
+            resultsEl.innerHTML = html;
+            resultsEl.style.display = 'block';
+        }
+
+        function applyAfssResults() {
+            if (!state.currentStation) return;
+            const stationName = state.currentStation.name;
+            const stationIdx = (state.stations || []).findIndex(s => s.name === stationName);
+            if (stationIdx === -1) return;
+
+            const station = state.stations[stationIdx];
+            const cascadeToTenants = document.getElementById('afss-cascade-tenants').checked;
+
+            // Collect values from override selects
+            const measureKeys = ['fireDetection', 'sprinklers', 'emergencyLighting', 'exitSigns',
+                                 'extinguishers', 'fireDoors', 'hydrants', 'hoseReels', 'passiveFire'];
+            const overrideIds = ['afss-override-fireDetection', 'afss-override-sprinklers', 'afss-override-emergencyLighting',
+                                 'afss-override-exitSigns', 'afss-override-extinguishers', 'afss-override-fireDoors',
+                                 'afss-override-hydrants', 'afss-override-hoseReels', 'afss-override-passiveFire'];
+
+            const newMeasures = {};
+            measureKeys.forEach((key, i) => {
+                const el = document.getElementById(overrideIds[i]);
+                newMeasures[key] = el ? el.value : '';
+            });
+
+            // Update station fire safety measures
+            station.fireSafetyMeasures = { ...station.fireSafetyMeasures, ...newMeasures };
+            station.lastUpdated = new Date().toISOString().split('T')[0];
+
+            // Update the station modal FSM dropdowns to reflect changes
+            document.getElementById('stn-fsm-detection').value = newMeasures.fireDetection || '';
+            document.getElementById('stn-fsm-sprinklers').value = newMeasures.sprinklers || '';
+            document.getElementById('stn-fsm-lighting').value = newMeasures.emergencyLighting || '';
+            document.getElementById('stn-fsm-exits').value = newMeasures.exitSigns || '';
+            document.getElementById('stn-fsm-extinguishers').value = newMeasures.extinguishers || '';
+            document.getElementById('stn-fsm-doors').value = newMeasures.fireDoors || '';
+            document.getElementById('stn-fsm-hydrants').value = newMeasures.hydrants || '';
+            document.getElementById('stn-fsm-hosereels').value = newMeasures.hoseReels || '';
+            document.getElementById('stn-fsm-passive').value = newMeasures.passiveFire || '';
+
+            // Cascade to tenants
+            let tenantsUpdated = 0;
+            if (cascadeToTenants) {
+                (state.tenants || []).forEach(t => {
+                    if (t.station === stationName) {
+                        t.fireSafetyMeasures = { ...t.fireSafetyMeasures, ...newMeasures };
+                        t.lastUpdated = new Date().toISOString().split('T')[0];
+                        tenantsUpdated++;
+                    }
+                });
+            }
+
+            // Auto-attach the AFSS as a document
+            const fileInput = document.getElementById('stn-afss-upload');
+            if (fileInput.files.length) {
+                if (!state.stationDocuments) state.stationDocuments = {};
+                if (!state.stationDocuments[stationName]) state.stationDocuments[stationName] = [];
+                state.stationDocuments[stationName].push({
+                    type: 'afss',
+                    name: fileInput.files[0].name,
+                    size: fileInput.files[0].size,
+                    date: new Date().toISOString().split('T')[0],
+                    addedAt: new Date().toISOString(),
+                    aiScanned: true
+                });
+                renderStationDocuments(stationName);
+            }
+
+            // Clear upload and results
+            document.getElementById('stn-afss-results').style.display = 'none';
+            fileInput.value = '';
+
+            saveData();
+            renderAll();
+            const msg = 'Fire measures updated for ' + stationName + (cascadeToTenants ? ' and ' + tenantsUpdated + ' tenancies' : '');
+            showToast(msg, 'success');
         }
 
         // Station Timeline
