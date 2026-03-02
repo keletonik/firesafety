@@ -3827,7 +3827,7 @@
                 'requires attention', 'requires repair', 'rectification required',
                 'does not comply', 'not conforming', 'overdue', 'expired',
                 'not tested', 'fault', 'faulty', 'out of service', 'not in service',
-                'obstruct', 'obstructed', 'missing', 'not installed'
+                'obstruct', 'obstructed', 'missing'
             ];
             const naIndicators = [
                 'not applicable', 'n/a', 'na', 'not required', 'not installed',
@@ -4019,7 +4019,9 @@
             if (stationIdx === -1) return;
 
             const station = state.stations[stationIdx];
-            const cascadeToTenants = document.getElementById('afss-cascade-tenants').checked;
+            const cascadeEl = document.getElementById('afss-cascade-tenants');
+            if (!cascadeEl) return;
+            const cascadeToTenants = cascadeEl.checked;
 
             // Collect values from override selects
             const measureKeys = ['fireDetection', 'sprinklers', 'emergencyLighting', 'exitSigns',
