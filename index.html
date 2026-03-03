@@ -751,6 +751,157 @@
         .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         .grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
 
+        /* Defect Edit Modal */
+        .defect-edit-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1200; display: none;
+            align-items: center; justify-content: center;
+        }
+        .defect-edit-overlay.show { display: flex; }
+        .defect-edit-modal {
+            background: var(--card-bg); border-radius: var(--radius-lg);
+            width: 560px; max-width: 95%; max-height: 90vh; overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+        }
+        .defect-edit-modal .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .defect-edit-modal .modal-body { padding: 20px; }
+        .defect-edit-modal .modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+
+        /* Defect row edit button */
+        .defect-edit-btn {
+            background: none; border: 1px solid var(--border); border-radius: 6px;
+            padding: 4px 10px; font-size: 11px; cursor: pointer; color: var(--text-muted);
+            transition: all 0.15s ease;
+        }
+        .defect-edit-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-bg); }
+
+        /* Audit Log */
+        .audit-log-item {
+            padding: 10px 14px; border-left: 3px solid var(--border);
+            margin-bottom: 8px; background: var(--bg); border-radius: 0 var(--radius) var(--radius) 0;
+            font-size: 12px;
+        }
+        .audit-log-item.change-progress { border-left-color: var(--success); }
+        .audit-log-item.change-risk { border-left-color: var(--danger); }
+        .audit-log-item.change-category { border-left-color: var(--primary); }
+        .audit-log-item.change-defect { border-left-color: #8b5cf6; }
+        .audit-log-item .audit-time { color: var(--text-light); font-size: 10px; }
+        .audit-log-item .audit-field { font-weight: 600; color: var(--text); }
+        .audit-log-item .audit-old { color: var(--danger); text-decoration: line-through; }
+        .audit-log-item .audit-new { color: var(--success); font-weight: 500; }
+
+        /* End of Month Report Page */
+        .eom-report-container { background: var(--card-bg); border-radius: var(--radius-lg); overflow: hidden; }
+        .eom-header {
+            background: linear-gradient(135deg, #1a2332 0%, #0d1521 100%);
+            color: #fff; padding: 32px; position: relative; overflow: hidden;
+        }
+        .eom-header::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 100%;
+            background: linear-gradient(135deg, rgba(78,145,223,0.15) 0%, transparent 100%);
+        }
+        .eom-header h2 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+        .eom-header p { font-size: 13px; opacity: 0.7; }
+        .eom-body { padding: 24px; }
+
+        /* EOM KPI Row */
+        .eom-kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .eom-kpi-card {
+            background: linear-gradient(135deg, #1a2332 0%, #243447 100%);
+            border-radius: var(--radius); padding: 20px; color: #fff; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .eom-kpi-card::after {
+            content: ''; position: absolute; top: 0; right: 0; width: 60px; height: 60px;
+            background: rgba(78,145,223,0.1); border-radius: 0 0 0 60px;
+        }
+        .eom-kpi-card .kpi-value { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+        .eom-kpi-card .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.7; }
+        .eom-kpi-card .kpi-delta {
+            display: inline-flex; align-items: center; gap: 4px; font-size: 11px;
+            margin-top: 6px; padding: 2px 8px; border-radius: 10px;
+        }
+        .eom-kpi-card .kpi-delta.positive { background: rgba(34,197,94,0.2); color: #4ade80; }
+        .eom-kpi-card .kpi-delta.negative { background: rgba(239,68,68,0.2); color: #f87171; }
+        .eom-kpi-card .kpi-delta.neutral { background: rgba(148,163,184,0.2); color: #94a3b8; }
+        .eom-kpi-card.accent-blue .kpi-value { color: #60a5fa; }
+        .eom-kpi-card.accent-green .kpi-value { color: #4ade80; }
+        .eom-kpi-card.accent-orange .kpi-value { color: #fb923c; }
+        .eom-kpi-card.accent-red .kpi-value { color: #f87171; }
+        .eom-kpi-card.accent-purple .kpi-value { color: #a78bfa; }
+
+        /* EOM Section */
+        .eom-section {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: var(--radius); margin-bottom: 20px; overflow: hidden;
+        }
+        .eom-section-header {
+            background: linear-gradient(135deg, #1a2332 0%, #243447 100%);
+            color: #fff; padding: 14px 20px; font-size: 14px; font-weight: 600;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .eom-section-body { padding: 20px; }
+        .eom-section-body .chart-container { height: 280px; }
+
+        /* EOM Table */
+        .eom-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .eom-table th {
+            background: linear-gradient(135deg, #1a2332 0%, #243447 100%);
+            color: #fff; padding: 10px 12px; text-align: left; font-weight: 600; font-size: 11px;
+            text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        .eom-table td { padding: 8px 12px; border-bottom: 1px solid var(--border-light); }
+        .eom-table tr:nth-child(even) { background: var(--bg); }
+
+        /* EOM Text Block */
+        .eom-text-block {
+            border: 1px dashed var(--border); border-radius: var(--radius);
+            padding: 16px; min-height: 100px; position: relative; margin-bottom: 16px;
+        }
+        .eom-text-block textarea {
+            width: 100%; min-height: 80px; border: none; background: transparent;
+            font-family: inherit; font-size: 13px; color: var(--text); resize: vertical; outline: none;
+        }
+        .eom-text-block .text-block-label {
+            position: absolute; top: -10px; left: 12px; background: var(--card-bg);
+            padding: 0 6px; font-size: 10px; color: var(--text-muted); text-transform: uppercase;
+            font-weight: 600; letter-spacing: 0.04em;
+        }
+
+        /* EOM Insert Toolbar */
+        .eom-insert-toolbar {
+            display: flex; gap: 8px; padding: 12px 0; flex-wrap: wrap; margin-bottom: 16px;
+        }
+        .eom-insert-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px;
+            background: var(--card-bg); font-size: 12px; cursor: pointer;
+            color: var(--text-muted); transition: all 0.15s ease;
+        }
+        .eom-insert-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-bg); }
+        .eom-insert-btn svg { width: 14px; height: 14px; }
+
+        /* Monthly Snapshot Selector */
+        .month-selector {
+            display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px;
+        }
+        .month-selector .month-chip {
+            padding: 6px 14px; border-radius: 20px; font-size: 12px;
+            border: 1px solid var(--border); cursor: pointer; transition: all 0.15s;
+            background: var(--card-bg); color: var(--text-muted);
+        }
+        .month-selector .month-chip.active { background: #1a2332; color: #fff; border-color: #1a2332; }
+        .month-selector .month-chip:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+
+        /* Defect trend sparkline */
+        .trend-indicator {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;
+        }
+        .trend-indicator.down { background: rgba(34,197,94,0.1); color: #059669; }
+        .trend-indicator.up { background: rgba(239,68,68,0.1); color: #dc2626; }
+        .trend-indicator.flat { background: rgba(148,163,184,0.1); color: #64748b; }
+
         /* Report Cards */
         .report-card {
             background: var(--card-bg);
@@ -1285,6 +1436,10 @@
         <div class="nav-item" data-page="analytics" role="button" tabindex="0" aria-label="Analytics">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             <span>Analytics</span>
+        </div>
+        <div class="nav-item" data-page="eom-report" role="button" tabindex="0" aria-label="End of Month">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+            <span>End of Month</span>
         </div>
         <div class="nav-section">Tools</div>
         <div class="nav-item" data-page="notes" role="button" tabindex="0" aria-label="Notes">
@@ -2020,6 +2175,7 @@
                                         <th>Progress</th>
                                         <th>Area</th>
                                         <th>Audit Date</th>
+                                        <th style="width:60px">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="defects-table"></tbody>
@@ -2030,6 +2186,21 @@
                         <div class="pagination">
                             <span class="pagination-info" id="defects-pagination-info">Showing 0 of 0</span>
                             <div class="pagination-controls" id="defects-pagination"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Defect Audit Log -->
+                <div class="card" style="margin-top:20px">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Defect Change Log
+                        </span>
+                        <button class="btn btn-ghost btn-sm" onclick="toggleDefectAuditLog()">Show/Hide</button>
+                    </div>
+                    <div class="card-body" id="defect-audit-log-container" style="max-height:300px;overflow-y:auto;display:none">
+                        <div id="defect-audit-log-list">
+                            <div class="empty-state"><h4>No changes logged yet</h4><p>Edit a defect to see the change log</p></div>
                         </div>
                     </div>
                 </div>
@@ -2290,6 +2461,195 @@
                     </div>
                 </div>
             </div>
+            <!-- End of Month Report Page -->
+            <div class="page" id="page-eom-report">
+                <div class="page-header">
+                    <div>
+                        <h2 class="page-title">End of Month Report</h2>
+                        <p class="page-subtitle">Monthly fire compliance reporting with visual analytics</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="takeMonthlySnapshot()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            Take Snapshot
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="exportEomReport()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            Export PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Month Selector -->
+                <div class="card" style="margin-bottom:20px">
+                    <div class="card-body" style="padding:14px 20px">
+                        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                            <span style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase">Report Period:</span>
+                            <div class="month-selector" id="eom-month-selector" style="margin-bottom:0"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EOM Report Content -->
+                <div class="eom-report-container" id="eom-report-content">
+                    <!-- Header -->
+                    <div class="eom-header">
+                        <h2 id="eom-report-title">Fire Compliance Monthly Report</h2>
+                        <p id="eom-report-subtitle">JLL - Sydney Trains TAM Portfolio</p>
+                    </div>
+                    <div class="eom-body">
+
+                        <!-- KPI Cards Row -->
+                        <div class="eom-kpi-row" id="eom-kpi-row"></div>
+
+                        <!-- Charts Row -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+                            <div class="eom-section">
+                                <div class="eom-section-header">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+                                    AFSS Submissions - Rectification Progress
+                                </div>
+                                <div class="eom-section-body">
+                                    <div class="chart-container"><canvas id="eom-rectification-chart"></canvas></div>
+                                </div>
+                            </div>
+                            <div class="eom-section">
+                                <div class="eom-section-header">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                                    Defect Closure Trend
+                                </div>
+                                <div class="eom-section-body">
+                                    <div class="chart-container"><canvas id="eom-defect-trend-chart"></canvas></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Findings Table -->
+                        <div class="eom-section" style="margin-bottom:24px">
+                            <div class="eom-section-header">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                Current Findings Summary
+                            </div>
+                            <div class="eom-section-body" style="padding:0">
+                                <table class="eom-table" id="eom-findings-table">
+                                    <thead><tr><th>Station</th><th>Total Defects</th><th>Major</th><th>Medium</th><th>Minor</th><th>Outstanding</th><th>Completed</th><th>Progress %</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Monthly % Change Tracking -->
+                        <div class="eom-section" style="margin-bottom:24px">
+                            <div class="eom-section-header">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                                Defect % Change by Month
+                            </div>
+                            <div class="eom-section-body" style="padding:0">
+                                <table class="eom-table" id="eom-monthly-change-table">
+                                    <thead><tr><th>Month</th><th>Total Defects</th><th>Open</th><th>Closed</th><th>% Change</th><th>Trend</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Compliance Tracking Across All Areas -->
+                        <div class="eom-section" style="margin-bottom:24px">
+                            <div class="eom-section-header">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                Compliance Area Tracking
+                            </div>
+                            <div class="eom-section-body" style="padding:0">
+                                <table class="eom-table" id="eom-compliance-tracking-table">
+                                    <thead><tr><th>Compliance Area</th><th>Current</th><th>Previous</th><th>Change</th><th>Trend</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Charts Row 2 -->
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
+                            <div class="eom-section">
+                                <div class="eom-section-header">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+                                    FSC Status Distribution
+                                </div>
+                                <div class="eom-section-body">
+                                    <div class="chart-container"><canvas id="eom-fsc-pie-chart"></canvas></div>
+                                </div>
+                            </div>
+                            <div class="eom-section">
+                                <div class="eom-section-header">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                                    Defects by Station
+                                </div>
+                                <div class="eom-section-body">
+                                    <div class="chart-container"><canvas id="eom-station-bar-chart"></canvas></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custom Text Input Sections -->
+                        <div class="eom-section" style="margin-bottom:24px">
+                            <div class="eom-section-header">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                Report Notes &amp; Commentary
+                            </div>
+                            <div class="eom-section-body">
+                                <div class="eom-insert-toolbar">
+                                    <button class="eom-insert-btn" onclick="insertEomBlock('summary')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+                                        Executive Summary
+                                    </button>
+                                    <button class="eom-insert-btn" onclick="insertEomBlock('actions')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                        Key Actions Taken
+                                    </button>
+                                    <button class="eom-insert-btn" onclick="insertEomBlock('risks')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                                        Risks &amp; Issues
+                                    </button>
+                                    <button class="eom-insert-btn" onclick="insertEomBlock('next')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                        Next Month Plan
+                                    </button>
+                                </div>
+                                <div id="eom-custom-blocks"></div>
+                                <div class="eom-text-block">
+                                    <span class="text-block-label">Executive Summary</span>
+                                    <textarea id="eom-summary-text" placeholder="Enter executive summary for this month's report..."></textarea>
+                                </div>
+                                <div class="eom-text-block">
+                                    <span class="text-block-label">Key Actions Taken</span>
+                                    <textarea id="eom-actions-text" placeholder="List key actions completed this month..."></textarea>
+                                </div>
+                                <div class="eom-text-block">
+                                    <span class="text-block-label">Risks &amp; Escalations</span>
+                                    <textarea id="eom-risks-text" placeholder="Highlight any risks, issues, or escalations..."></textarea>
+                                </div>
+                                <div class="eom-text-block">
+                                    <span class="text-block-label">Next Month Focus</span>
+                                    <textarea id="eom-next-text" placeholder="Outline priorities and planned actions for next month..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FY Breakdown -->
+                        <div class="eom-section">
+                            <div class="eom-section-header">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+                                Financial Year Breakdown
+                            </div>
+                            <div class="eom-section-body" style="padding:0">
+                                <table class="eom-table" id="eom-fy-table">
+                                    <thead><tr><th>Financial Year</th><th>Raised</th><th>Completed</th><th>Outstanding</th><th>Closure Rate</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -2565,6 +2925,17 @@
                             <div class="stat-label">Closed</div>
                         </div>
                     </div>
+                    <h4 style="font-size:13px;font-weight:600;margin-bottom:10px">Individual Defects at this Tenancy</h4>
+                    <div class="table-container" style="max-height:250px;overflow-y:auto;margin-bottom:16px">
+                        <table>
+                            <thead><tr><th>Category</th><th>Risk</th><th>Progress</th><th>Area</th><th style="width:50px"></th></tr></thead>
+                            <tbody id="modal-defects-list"></tbody>
+                        </table>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="addDefectToTenant()" style="margin-bottom:16px">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Add Defect
+                    </button>
                     <div class="form-group">
                         <label class="form-label">Outstanding Items / Rectification Notes</label>
                         <textarea class="form-textarea" id="modal-outstanding" placeholder="Document outstanding items and rectification requirements..."></textarea>
@@ -2682,6 +3053,86 @@
 
     <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
+
+    <!-- Defect Edit Modal -->
+    <div class="defect-edit-overlay" id="defect-edit-modal">
+        <div class="defect-edit-modal">
+            <div class="modal-header">
+                <h3 style="font-size:16px;font-weight:600">Edit Defect</h3>
+                <button class="modal-close" onclick="closeDefectEdit()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="defect-edit-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Site</label>
+                        <input type="text" class="form-input" id="defect-edit-site" readonly style="background:var(--bg)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" id="defect-edit-category">
+                            <option value="Fire Safety & Emergency procedures">Fire Safety & Emergency procedures</option>
+                            <option value="Fire Protection Systems">Fire Protection Systems</option>
+                            <option value="Emergency Lighting">Emergency Lighting</option>
+                            <option value="Exit Signs">Exit Signs</option>
+                            <option value="Fire Doors">Fire Doors</option>
+                            <option value="Portable Extinguishers">Portable Extinguishers</option>
+                            <option value="Sprinkler Systems">Sprinkler Systems</option>
+                            <option value="Hydrants & Hose Reels">Hydrants & Hose Reels</option>
+                            <option value="Smoke Detection">Smoke Detection</option>
+                            <option value="Passive Fire Protection">Passive Fire Protection</option>
+                            <option value="General Compliance">General Compliance</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Risk Level</label>
+                        <select class="form-select" id="defect-edit-risk">
+                            <option value="Major">Major</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Minor">Minor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Progress</label>
+                        <select class="form-select" id="defect-edit-progress">
+                            <option value="Outstanding">Outstanding</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Area / Location</label>
+                        <input type="text" class="form-input" id="defect-edit-area" placeholder="e.g. Level 1, Kitchen">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Audit Date</label>
+                        <input type="date" class="form-input" id="defect-edit-date">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description / Notes</label>
+                    <textarea class="form-textarea" id="defect-edit-description" placeholder="Describe the defect and rectification requirements..." style="min-height:80px"></textarea>
+                </div>
+                <!-- Change History for this defect -->
+                <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px">
+                    <h4 style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px">CHANGE HISTORY</h4>
+                    <div id="defect-edit-history" style="max-height:150px;overflow-y:auto">
+                        <span style="font-size:11px;color:var(--text-light)">No changes recorded</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary btn-sm" onclick="closeDefectEdit()">Cancel</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteDefect()" id="defect-delete-btn">Delete</button>
+                <button class="btn btn-primary btn-sm" onclick="saveDefectEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Station Detail Modal -->
     <div class="modal-overlay" id="station-modal" role="dialog" aria-modal="true" aria-labelledby="stn-modal-name">
@@ -2876,6 +3327,17 @@
                             <div class="stat-label">Closed</div>
                         </div>
                     </div>
+                    <h4 style="font-size:13px;font-weight:600;margin-bottom:10px">Defects at this Station</h4>
+                    <div class="table-container" style="max-height:250px;overflow-y:auto;margin-bottom:16px">
+                        <table>
+                            <thead><tr><th>Category</th><th>Risk</th><th>Progress</th><th>Area</th><th style="width:50px"></th></tr></thead>
+                            <tbody id="stn-modal-defects-list"></tbody>
+                        </table>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="addDefectToStation()" style="margin-bottom:16px">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Add Defect
+                    </button>
                     <div class="form-group">
                         <label class="form-label">Outstanding Items / Rectification Notes</label>
                         <textarea class="form-textarea" id="stn-modal-outstanding" placeholder="Document station-level outstanding items and rectification requirements..."></textarea>
@@ -2983,7 +3445,11 @@
             defectPage: 1,
             pageSize: 50,
             defectPageSize: 100,
-            documents: {}
+            documents: {},
+            defectAuditLog: [],
+            monthlySnapshots: {},
+            eomReportData: {},
+            eomSelectedMonth: null
         };
 
         // Charts
@@ -3010,6 +3476,7 @@
             renderDefects();
             renderCharts();
             renderNotes();
+            renderEomReport();
             updateNavBadges();
         }
 
@@ -3039,10 +3506,15 @@
             state.notes = state.notes || [];
             state.documents = state.documents || {};
             state.stationDocuments = state.stationDocuments || {};
+            state.defectAuditLog = state.defectAuditLog || [];
+            state.monthlySnapshots = state.monthlySnapshots || {};
+            state.eomReportData = state.eomReportData || {};
             // Ensure FSS field on all tenants
             (state.tenants || []).forEach(t => {
                 if (t.hasFSS === undefined) t.hasFSS = t.afssLikely === 'Yes' ? 'yes' : 'unknown';
             });
+            // Ensure defect IDs
+            ensureDefectIds();
         }
 
         function saveData() {
@@ -3055,7 +3527,10 @@
                 notes: state.notes,
                 metadata: state.metadata,
                 documents: state.documents,
-                stationDocuments: state.stationDocuments
+                stationDocuments: state.stationDocuments,
+                defectAuditLog: state.defectAuditLog,
+                monthlySnapshots: state.monthlySnapshots,
+                eomReportData: state.eomReportData
             };
             localStorage.setItem('fireSafetyManager_v12', JSON.stringify(saveObj));
             updateLastSaved();
@@ -3554,6 +4029,10 @@
             document.getElementById('stn-modal-notes').value = station.notes || '';
             renderStationTimeline(stationName);
 
+            // Defects list
+            ensureDefectIds();
+            renderStationDefectsList();
+
             // Reset to first tab
             document.querySelectorAll('#station-modal .tab').forEach((t, i) => t.classList.toggle('active', i === 0));
             document.querySelectorAll('#station-modal .tab-content').forEach((c, i) => c.classList.toggle('active', i === 0));
@@ -3628,6 +4107,16 @@
             station.notes = document.getElementById('stn-modal-notes').value;
 
             station.lastUpdated = new Date().toISOString().split('T')[0];
+
+            // Log station compliance changes
+            const now = new Date().toISOString();
+            if (!state.defectAuditLog) state.defectAuditLog = [];
+            if (state.currentStation) {
+                const orig = state.currentStation;
+                if ((orig.complianceStatus || 'Not Started') !== (station.complianceStatus || 'Not Started')) {
+                    state.defectAuditLog.push({ defectId: 0, field: 'Station Compliance', oldValue: orig.complianceStatus || 'Not Started', newValue: station.complianceStatus, timestamp: now, site: stationName });
+                }
+            }
 
             saveData();
             closeStationModal();
@@ -4437,11 +4926,13 @@
                     <td class="td-tenant">${escapeHtml(d.site_name)}</td>
                     <td>${escapeHtml(d.category)}</td>
                     <td><span class="badge badge-${d.risk === 'Major' ? 'critical' : d.risk === 'Medium' ? 'high' : 'medium'}">${escapeHtml(d.risk)}</span></td>
-                    <td>${escapeHtml(d.progress)}</td>
+                    <td><span class="badge badge-${d.progress === 'Completed' ? 'success' : d.progress === 'In Progress' ? 'info' : 'high'}">${escapeHtml(d.progress)}</span></td>
                     <td>${escapeHtml(d.area) || '-'}</td>
                     <td style="font-size:12px">${escapeHtml(d.audit_date) || '-'}</td>
+                    <td><button class="defect-edit-btn" onclick="openDefectEdit(${d.id})">Edit</button></td>
                 </tr>
             `).join('');
+            renderDefectAuditLog();
         }
 
         // ============================================================
@@ -4776,6 +5267,10 @@
             document.getElementById('modal-notes').value = tenant.notes || '';
             renderTenantTimeline(tenant);
 
+            // Defects list
+            ensureDefectIds();
+            renderTenantDefectsList();
+
             // Reset to first tab
             document.querySelectorAll('#tenant-modal .tab').forEach((t, i) => t.classList.toggle('active', i === 0));
             document.querySelectorAll('#tenant-modal .tab-content').forEach((c, i) => c.classList.toggle('active', i === 0));
@@ -4939,6 +5434,24 @@
             };
 
             state.tenants[idx].lastUpdated = new Date().toISOString().split('T')[0];
+
+            // Log compliance changes to audit trail
+            const now = new Date().toISOString();
+            const tenant = state.tenants[idx];
+            if (!state.defectAuditLog) state.defectAuditLog = [];
+            const original = state.currentTenant;
+            if (original.fscStatus !== tenant.fscStatus) {
+                state.defectAuditLog.push({ defectId: 0, field: 'FSC Status', oldValue: original.fscStatus, newValue: tenant.fscStatus, timestamp: now, site: tenant.station + ' - ' + tenant.tenantName });
+            }
+            if (original.priority !== tenant.priority) {
+                state.defectAuditLog.push({ defectId: 0, field: 'Priority', oldValue: original.priority, newValue: tenant.priority, timestamp: now, site: tenant.station + ' - ' + tenant.tenantName });
+            }
+            if (original.complianceStatus !== tenant.complianceStatus) {
+                state.defectAuditLog.push({ defectId: 0, field: 'Compliance Status', oldValue: original.complianceStatus, newValue: tenant.complianceStatus, timestamp: now, site: tenant.station + ' - ' + tenant.tenantName });
+            }
+            if (original.hasFSS !== tenant.hasFSS) {
+                state.defectAuditLog.push({ defectId: 0, field: 'Fire Safety Schedule', oldValue: original.hasFSS, newValue: tenant.hasFSS, timestamp: now, site: tenant.station + ' - ' + tenant.tenantName });
+            }
 
             saveData();
             closeModal();
@@ -7031,6 +7544,1084 @@ Fire Safety Compliance Team`
         document.getElementById('compose-modal')?.addEventListener('click', (e) => {
             if (e.target.id === 'compose-modal') closeCompose();
         });
+
+        // Close defect edit modal on overlay click
+        document.getElementById('defect-edit-modal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'defect-edit-modal') closeDefectEdit();
+        });
+
+        // ============================================================
+        // DEFECT EDITING SYSTEM
+        // ============================================================
+
+        function ensureDefectIds() {
+            (state.defects || []).forEach((d, i) => {
+                if (!d.id) d.id = i + 1;
+            });
+        }
+
+        function openDefectEdit(defectId) {
+            ensureDefectIds();
+            const defect = (state.defects || []).find(d => d.id === defectId);
+            if (!defect) return;
+
+            document.getElementById('defect-edit-id').value = defectId;
+            document.getElementById('defect-edit-site').value = defect.site_name || '';
+            document.getElementById('defect-edit-category').value = defect.category || 'Other';
+            document.getElementById('defect-edit-risk').value = defect.risk || 'Minor';
+            document.getElementById('defect-edit-progress').value = defect.progress || 'Outstanding';
+            document.getElementById('defect-edit-area').value = defect.area || '';
+            document.getElementById('defect-edit-description').value = defect.description || '';
+
+            // Parse audit_date for date input
+            const dateStr = defect.audit_date || '';
+            if (dateStr) {
+                try {
+                    const d = new Date(dateStr);
+                    if (!isNaN(d)) document.getElementById('defect-edit-date').value = d.toISOString().split('T')[0];
+                    else document.getElementById('defect-edit-date').value = '';
+                } catch(e) { document.getElementById('defect-edit-date').value = ''; }
+            } else {
+                document.getElementById('defect-edit-date').value = '';
+            }
+
+            // Show change history for this defect
+            const history = (state.defectAuditLog || []).filter(l => l.defectId === defectId);
+            const histEl = document.getElementById('defect-edit-history');
+            if (history.length > 0) {
+                histEl.innerHTML = history.slice().reverse().map(h => `
+                    <div class="audit-log-item change-${h.field}">
+                        <div class="audit-time">${new Date(h.timestamp).toLocaleString()}</div>
+                        <div><span class="audit-field">${escapeHtml(h.field)}</span>: <span class="audit-old">${escapeHtml(h.oldValue || '(empty)')}</span> &rarr; <span class="audit-new">${escapeHtml(h.newValue || '(empty)')}</span></div>
+                    </div>
+                `).join('');
+            } else {
+                histEl.innerHTML = '<span style="font-size:11px;color:var(--text-light)">No changes recorded</span>';
+            }
+
+            document.getElementById('defect-edit-modal').classList.add('show');
+        }
+
+        function closeDefectEdit() {
+            document.getElementById('defect-edit-modal').classList.remove('show');
+        }
+
+        function saveDefectEdit() {
+            const defectId = parseInt(document.getElementById('defect-edit-id').value);
+            const idx = (state.defects || []).findIndex(d => d.id === defectId);
+            if (idx === -1) return;
+
+            const defect = state.defects[idx];
+            const changes = [];
+            const now = new Date().toISOString();
+
+            // Track changes
+            const newCategory = document.getElementById('defect-edit-category').value;
+            const newRisk = document.getElementById('defect-edit-risk').value;
+            const newProgress = document.getElementById('defect-edit-progress').value;
+            const newArea = document.getElementById('defect-edit-area').value;
+            const newDescription = document.getElementById('defect-edit-description').value;
+            const newDate = document.getElementById('defect-edit-date').value;
+
+            if (defect.category !== newCategory) {
+                changes.push({ defectId, field: 'category', oldValue: defect.category, newValue: newCategory, timestamp: now, site: defect.site_name });
+            }
+            if (defect.risk !== newRisk) {
+                changes.push({ defectId, field: 'risk', oldValue: defect.risk, newValue: newRisk, timestamp: now, site: defect.site_name });
+            }
+            if (defect.progress !== newProgress) {
+                changes.push({ defectId, field: 'progress', oldValue: defect.progress, newValue: newProgress, timestamp: now, site: defect.site_name });
+            }
+            if ((defect.area || '') !== newArea) {
+                changes.push({ defectId, field: 'area', oldValue: defect.area || '', newValue: newArea, timestamp: now, site: defect.site_name });
+            }
+            if ((defect.description || '') !== newDescription) {
+                changes.push({ defectId, field: 'description', oldValue: defect.description || '', newValue: newDescription, timestamp: now, site: defect.site_name });
+            }
+
+            // Apply changes
+            defect.category = newCategory;
+            defect.risk = newRisk;
+            defect.progress = newProgress;
+            defect.area = newArea;
+            defect.description = newDescription;
+            if (newDate) defect.audit_date = newDate;
+
+            // Log changes
+            if (!state.defectAuditLog) state.defectAuditLog = [];
+            state.defectAuditLog.push(...changes);
+
+            // Recalculate tenant defect counts
+            recalcTenantDefectCounts(defect.site_name);
+
+            saveData();
+            closeDefectEdit();
+            renderAll();
+            showToast(changes.length > 0 ? `Defect updated (${changes.length} change${changes.length > 1 ? 's' : ''} logged)` : 'Defect saved', 'success');
+        }
+
+        function deleteDefect() {
+            const defectId = parseInt(document.getElementById('defect-edit-id').value);
+            if (!confirm('Delete this defect? This action will be logged.')) return;
+            const idx = (state.defects || []).findIndex(d => d.id === defectId);
+            if (idx === -1) return;
+
+            const defect = state.defects[idx];
+            const now = new Date().toISOString();
+
+            if (!state.defectAuditLog) state.defectAuditLog = [];
+            state.defectAuditLog.push({
+                defectId, field: 'deleted', oldValue: `${defect.category} - ${defect.risk} - ${defect.progress}`,
+                newValue: 'DELETED', timestamp: now, site: defect.site_name
+            });
+
+            state.defects.splice(idx, 1);
+            recalcTenantDefectCounts(defect.site_name);
+
+            saveData();
+            closeDefectEdit();
+            renderAll();
+            showToast('Defect deleted and logged', 'success');
+        }
+
+        function recalcTenantDefectCounts(siteName) {
+            const siteDefects = (state.defects || []).filter(d => d.site_name === siteName);
+            // Update all tenants at this station
+            (state.tenants || []).forEach(t => {
+                if (t.station === siteName) {
+                    const tDefects = siteDefects; // Station-level defects
+                    t.defectsOpen = tDefects.filter(d => d.progress !== 'Completed').length;
+                    t.defectsClosed = tDefects.filter(d => d.progress === 'Completed').length;
+                    t.defectsTotal = tDefects.length;
+                    t.defectsMajor = tDefects.filter(d => d.risk === 'Major' && d.progress !== 'Completed').length;
+                    t.defectsMedium = tDefects.filter(d => d.risk === 'Medium' && d.progress !== 'Completed').length;
+                    t.defectsMinor = tDefects.filter(d => d.risk === 'Minor' && d.progress !== 'Completed').length;
+                }
+            });
+            // Update station counts
+            (state.stations || []).forEach(s => {
+                if (s.name === siteName) {
+                    const sDefects = siteDefects;
+                    s.defectsOpen = sDefects.filter(d => d.progress !== 'Completed').length;
+                    s.defectsClosed = sDefects.filter(d => d.progress === 'Completed').length;
+                    s.defectsMajor = sDefects.filter(d => d.risk === 'Major' && d.progress !== 'Completed').length;
+                }
+            });
+        }
+
+        function addDefectToTenant() {
+            if (!state.currentTenant) return;
+            const siteName = state.currentTenant.station;
+            ensureDefectIds();
+            const maxId = Math.max(0, ...(state.defects || []).map(d => d.id || 0));
+            const newDefect = {
+                id: maxId + 1,
+                site_name: siteName,
+                category: 'General Compliance',
+                risk: 'Minor',
+                progress: 'Outstanding',
+                area: '',
+                description: '',
+                audit_date: new Date().toISOString().split('T')[0],
+                audit_type: 'Manual',
+                financial_year: getCurrentFY(),
+                year: new Date().getFullYear().toString(),
+                quarter: Math.ceil((new Date().getMonth() + 1) / 3).toString(),
+                month: (new Date().getMonth() + 1).toString(),
+                archived: 'No',
+                fire_equipment_service_date: null
+            };
+            if (!state.defects) state.defects = [];
+            state.defects.push(newDefect);
+
+            if (!state.defectAuditLog) state.defectAuditLog = [];
+            state.defectAuditLog.push({
+                defectId: newDefect.id, field: 'created', oldValue: '', newValue: `New defect at ${siteName}`,
+                timestamp: new Date().toISOString(), site: siteName
+            });
+
+            recalcTenantDefectCounts(siteName);
+            saveData();
+            renderTenantDefectsList();
+            renderAll();
+            showToast('New defect added', 'success');
+            openDefectEdit(newDefect.id);
+        }
+
+        function addDefectToStation() {
+            if (!state.currentStation) return;
+            const siteName = state.currentStation.name;
+            ensureDefectIds();
+            const maxId = Math.max(0, ...(state.defects || []).map(d => d.id || 0));
+            const newDefect = {
+                id: maxId + 1,
+                site_name: siteName,
+                category: 'General Compliance',
+                risk: 'Minor',
+                progress: 'Outstanding',
+                area: '',
+                description: '',
+                audit_date: new Date().toISOString().split('T')[0],
+                audit_type: 'Manual',
+                financial_year: getCurrentFY(),
+                year: new Date().getFullYear().toString(),
+                quarter: Math.ceil((new Date().getMonth() + 1) / 3).toString(),
+                month: (new Date().getMonth() + 1).toString(),
+                archived: 'No',
+                fire_equipment_service_date: null
+            };
+            if (!state.defects) state.defects = [];
+            state.defects.push(newDefect);
+
+            if (!state.defectAuditLog) state.defectAuditLog = [];
+            state.defectAuditLog.push({
+                defectId: newDefect.id, field: 'created', oldValue: '', newValue: `New defect at ${siteName}`,
+                timestamp: new Date().toISOString(), site: siteName
+            });
+
+            recalcTenantDefectCounts(siteName);
+            saveData();
+            renderStationDefectsList();
+            renderAll();
+            showToast('New defect added', 'success');
+            openDefectEdit(newDefect.id);
+        }
+
+        function getCurrentFY() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            return month >= 7 ? `FY${year}-${year + 1}` : `FY${year - 1}-${year}`;
+        }
+
+        function renderTenantDefectsList() {
+            if (!state.currentTenant) return;
+            const siteName = state.currentTenant.station;
+            const defects = (state.defects || []).filter(d => d.site_name === siteName);
+            const tbody = document.getElementById('modal-defects-list');
+            if (!tbody) return;
+            if (defects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px">No defects recorded</td></tr>';
+                return;
+            }
+            tbody.innerHTML = defects.map(d => `
+                <tr>
+                    <td style="font-size:12px">${escapeHtml(d.category)}</td>
+                    <td><span class="badge badge-${d.risk === 'Major' ? 'critical' : d.risk === 'Medium' ? 'high' : 'medium'}">${escapeHtml(d.risk)}</span></td>
+                    <td><span class="badge badge-${d.progress === 'Completed' ? 'success' : d.progress === 'In Progress' ? 'info' : 'high'}">${escapeHtml(d.progress)}</span></td>
+                    <td style="font-size:12px">${escapeHtml(d.area) || '-'}</td>
+                    <td><button class="defect-edit-btn" onclick="openDefectEdit(${d.id})">Edit</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderStationDefectsList() {
+            if (!state.currentStation) return;
+            const siteName = state.currentStation.name;
+            const defects = (state.defects || []).filter(d => d.site_name === siteName);
+            const tbody = document.getElementById('stn-modal-defects-list');
+            if (!tbody) return;
+            if (defects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px">No defects recorded</td></tr>';
+                return;
+            }
+            tbody.innerHTML = defects.map(d => `
+                <tr>
+                    <td style="font-size:12px">${escapeHtml(d.category)}</td>
+                    <td><span class="badge badge-${d.risk === 'Major' ? 'critical' : d.risk === 'Medium' ? 'high' : 'medium'}">${escapeHtml(d.risk)}</span></td>
+                    <td><span class="badge badge-${d.progress === 'Completed' ? 'success' : d.progress === 'In Progress' ? 'info' : 'high'}">${escapeHtml(d.progress)}</span></td>
+                    <td style="font-size:12px">${escapeHtml(d.area) || '-'}</td>
+                    <td><button class="defect-edit-btn" onclick="openDefectEdit(${d.id})">Edit</button></td>
+                </tr>
+            `).join('');
+        }
+
+        // ============================================================
+        // DEFECT AUDIT LOG
+        // ============================================================
+
+        function toggleDefectAuditLog() {
+            const el = document.getElementById('defect-audit-log-container');
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function renderDefectAuditLog() {
+            const log = state.defectAuditLog || [];
+            const container = document.getElementById('defect-audit-log-list');
+            if (!container) return;
+            if (log.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h4>No changes logged yet</h4><p>Edit a defect to see the change log</p></div>';
+                return;
+            }
+            const recent = log.slice(-50).reverse();
+            container.innerHTML = recent.map(l => `
+                <div class="audit-log-item change-${l.field}">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <span class="audit-field">${escapeHtml(l.site || '')} - Defect #${l.defectId}</span>
+                        <span class="audit-time">${new Date(l.timestamp).toLocaleString()}</span>
+                    </div>
+                    <div style="margin-top:4px">
+                        <span style="color:var(--text-muted)">${escapeHtml(l.field)}:</span>
+                        <span class="audit-old">${escapeHtml(String(l.oldValue || '(empty)'))}</span> &rarr;
+                        <span class="audit-new">${escapeHtml(String(l.newValue || '(empty)'))}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ============================================================
+        // MONTHLY SNAPSHOTS & TRACKING
+        // ============================================================
+
+        function getMonthKey(date) {
+            const d = date || new Date();
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+        }
+
+        function getMonthLabel(key) {
+            const [y, m] = key.split('-');
+            const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            return months[parseInt(m) - 1] + ' ' + y;
+        }
+
+        function takeMonthlySnapshot() {
+            const key = getMonthKey();
+            const defects = state.defects || [];
+            const tenants = state.tenants || [];
+            const stations = state.stations || [];
+
+            const snapshot = {
+                date: new Date().toISOString(),
+                totalDefects: defects.length,
+                openDefects: defects.filter(d => d.progress !== 'Completed').length,
+                closedDefects: defects.filter(d => d.progress === 'Completed').length,
+                inProgressDefects: defects.filter(d => d.progress === 'In Progress').length,
+                majorOpen: defects.filter(d => d.risk === 'Major' && d.progress !== 'Completed').length,
+                mediumOpen: defects.filter(d => d.risk === 'Medium' && d.progress !== 'Completed').length,
+                minorOpen: defects.filter(d => d.risk === 'Minor' && d.progress !== 'Completed').length,
+                totalTenants: tenants.length,
+                fscOutstanding: tenants.filter(t => t.fscStatus === 'Outstanding').length,
+                fscPending: tenants.filter(t => t.fscStatus === 'Pending').length,
+                fscReceived: tenants.filter(t => t.fscStatus === 'Received').length,
+                fscCompliant: tenants.filter(t => t.fscStatus === 'Compliant').length,
+                criticalPriority: tenants.filter(t => t.priority === 'Critical').length,
+                highPriority: tenants.filter(t => t.priority === 'High').length,
+                fssObtained: tenants.filter(t => t.hasFSS === 'yes').length,
+                overallCompliance: (() => {
+                    const applicable = tenants.filter(t => t.fscStatus !== 'Not Applicable').length;
+                    const compliant = tenants.filter(t => t.fscStatus === 'Compliant' || t.fscStatus === 'Received').length;
+                    return applicable > 0 ? Math.round((compliant / applicable) * 100) : 0;
+                })(),
+                stationData: stations.map(s => ({
+                    name: s.name,
+                    defectsOpen: s.defectsOpen || 0,
+                    defectsMajor: s.defectsMajor || 0,
+                    tenantCount: s.tenantCount || 0,
+                    fscCompliant: s.fscCompliant || 0
+                })),
+                defectsByCategory: (() => {
+                    const cats = {};
+                    defects.forEach(d => { cats[d.category] = (cats[d.category] || 0) + 1; });
+                    return cats;
+                })(),
+                defectsByFY: (() => {
+                    const fys = {};
+                    defects.forEach(d => {
+                        const fy = d.financial_year || 'Unknown';
+                        if (!fys[fy]) fys[fy] = { raised: 0, completed: 0, outstanding: 0 };
+                        fys[fy].raised++;
+                        if (d.progress === 'Completed') fys[fy].completed++;
+                        else fys[fy].outstanding++;
+                    });
+                    return fys;
+                })(),
+                auditLogCount: (state.defectAuditLog || []).length
+            };
+
+            if (!state.monthlySnapshots) state.monthlySnapshots = {};
+            state.monthlySnapshots[key] = snapshot;
+            saveData();
+            renderEomReport();
+            showToast(`Monthly snapshot saved for ${getMonthLabel(key)}`, 'success');
+        }
+
+        // ============================================================
+        // END OF MONTH REPORT
+        // ============================================================
+
+        let eomRectificationChart, eomDefectTrendChart, eomFscPieChart, eomStationBarChart;
+
+        function renderEomReport() {
+            ensureDefectIds();
+            const snapshots = state.monthlySnapshots || {};
+            const sortedKeys = Object.keys(snapshots).sort();
+
+            // Render month selector
+            const selectorEl = document.getElementById('eom-month-selector');
+            if (selectorEl) {
+                const currentKey = getMonthKey();
+                if (sortedKeys.length === 0) {
+                    selectorEl.innerHTML = '<span style="font-size:12px;color:var(--text-muted)">No snapshots yet. Click "Take Snapshot" to capture current month data.</span>';
+                } else {
+                    // Add "Live" chip that shows current data
+                    let chips = '<div class="month-chip' + (!state.eomSelectedMonth ? ' active' : '') + '" onclick="selectEomMonth(null)">Live</div>';
+                    chips += sortedKeys.map(k => `<div class="month-chip${state.eomSelectedMonth === k ? ' active' : ''}" onclick="selectEomMonth('${k}')">${getMonthLabel(k)}</div>`).join('');
+                    selectorEl.innerHTML = chips;
+                }
+            }
+
+            // Get data source - either selected snapshot or live data
+            let data;
+            if (state.eomSelectedMonth && snapshots[state.eomSelectedMonth]) {
+                data = snapshots[state.eomSelectedMonth];
+            } else {
+                // Build live data
+                data = buildLiveSnapshot();
+            }
+
+            // Update title
+            const titleEl = document.getElementById('eom-report-title');
+            const subEl = document.getElementById('eom-report-subtitle');
+            if (titleEl) {
+                const label = state.eomSelectedMonth ? getMonthLabel(state.eomSelectedMonth) : 'Current Period';
+                titleEl.textContent = `Fire Compliance Monthly Report - ${label}`;
+            }
+            if (subEl) subEl.textContent = 'JLL - Sydney Trains TAM Portfolio';
+
+            // Render KPI cards
+            renderEomKPIs(data, sortedKeys);
+
+            // Render charts
+            renderEomCharts(data, sortedKeys);
+
+            // Render tables
+            renderEomFindingsTable(data);
+            renderEomMonthlyChangeTable(sortedKeys);
+            renderEomComplianceTrackingTable(sortedKeys);
+            renderEomFYTable(data);
+
+            // Load saved text blocks
+            loadEomTextBlocks();
+        }
+
+        function buildLiveSnapshot() {
+            const defects = state.defects || [];
+            const tenants = state.tenants || [];
+            const stations = state.stations || [];
+            return {
+                date: new Date().toISOString(),
+                totalDefects: defects.length,
+                openDefects: defects.filter(d => d.progress !== 'Completed').length,
+                closedDefects: defects.filter(d => d.progress === 'Completed').length,
+                inProgressDefects: defects.filter(d => d.progress === 'In Progress').length,
+                majorOpen: defects.filter(d => d.risk === 'Major' && d.progress !== 'Completed').length,
+                mediumOpen: defects.filter(d => d.risk === 'Medium' && d.progress !== 'Completed').length,
+                minorOpen: defects.filter(d => d.risk === 'Minor' && d.progress !== 'Completed').length,
+                totalTenants: tenants.length,
+                fscOutstanding: tenants.filter(t => t.fscStatus === 'Outstanding').length,
+                fscPending: tenants.filter(t => t.fscStatus === 'Pending').length,
+                fscReceived: tenants.filter(t => t.fscStatus === 'Received').length,
+                fscCompliant: tenants.filter(t => t.fscStatus === 'Compliant').length,
+                criticalPriority: tenants.filter(t => t.priority === 'Critical').length,
+                highPriority: tenants.filter(t => t.priority === 'High').length,
+                fssObtained: tenants.filter(t => t.hasFSS === 'yes').length,
+                overallCompliance: (() => {
+                    const applicable = tenants.filter(t => t.fscStatus !== 'Not Applicable').length;
+                    const compliant = tenants.filter(t => t.fscStatus === 'Compliant' || t.fscStatus === 'Received').length;
+                    return applicable > 0 ? Math.round((compliant / applicable) * 100) : 0;
+                })(),
+                stationData: stations.map(s => ({
+                    name: s.name, defectsOpen: s.defectsOpen || 0, defectsMajor: s.defectsMajor || 0,
+                    tenantCount: s.tenantCount || 0, fscCompliant: s.fscCompliant || 0
+                })),
+                defectsByCategory: (() => { const cats = {}; defects.forEach(d => { cats[d.category] = (cats[d.category] || 0) + 1; }); return cats; })(),
+                defectsByFY: (() => {
+                    const fys = {};
+                    defects.forEach(d => {
+                        const fy = d.financial_year || 'Unknown';
+                        if (!fys[fy]) fys[fy] = { raised: 0, completed: 0, outstanding: 0 };
+                        fys[fy].raised++;
+                        if (d.progress === 'Completed') fys[fy].completed++;
+                        else fys[fy].outstanding++;
+                    });
+                    return fys;
+                })(),
+                auditLogCount: (state.defectAuditLog || []).length
+            };
+        }
+
+        function selectEomMonth(key) {
+            state.eomSelectedMonth = key;
+            renderEomReport();
+        }
+
+        function renderEomKPIs(data, sortedKeys) {
+            const container = document.getElementById('eom-kpi-row');
+            if (!container) return;
+
+            // Calculate deltas from previous snapshot
+            let prev = null;
+            if (sortedKeys.length >= 2) {
+                const currentIdx = state.eomSelectedMonth ? sortedKeys.indexOf(state.eomSelectedMonth) : sortedKeys.length;
+                if (currentIdx > 0) prev = (state.monthlySnapshots || {})[sortedKeys[currentIdx - 1]];
+            }
+
+            function delta(current, previous, invert) {
+                if (previous === null || previous === undefined) return '<span class="kpi-delta neutral">--</span>';
+                const diff = current - previous;
+                if (diff === 0) return '<span class="kpi-delta neutral">&#9644; No change</span>';
+                const cls = invert ? (diff < 0 ? 'positive' : 'negative') : (diff > 0 ? 'positive' : 'negative');
+                const arrow = diff > 0 ? '&#9650;' : '&#9660;';
+                return `<span class="kpi-delta ${cls}">${arrow} ${Math.abs(diff)}</span>`;
+            }
+
+            container.innerHTML = `
+                <div class="eom-kpi-card accent-blue">
+                    <div class="kpi-value">${data.totalDefects}</div>
+                    <div class="kpi-label">Total Defects</div>
+                    ${delta(data.totalDefects, prev?.totalDefects, true)}
+                </div>
+                <div class="eom-kpi-card accent-red">
+                    <div class="kpi-value">${data.openDefects}</div>
+                    <div class="kpi-label">Open Defects</div>
+                    ${delta(data.openDefects, prev?.openDefects, true)}
+                </div>
+                <div class="eom-kpi-card accent-green">
+                    <div class="kpi-value">${data.closedDefects}</div>
+                    <div class="kpi-label">Completed</div>
+                    ${delta(data.closedDefects, prev?.closedDefects, false)}
+                </div>
+                <div class="eom-kpi-card accent-orange">
+                    <div class="kpi-value">${data.overallCompliance}%</div>
+                    <div class="kpi-label">Compliance Rate</div>
+                    ${delta(data.overallCompliance, prev?.overallCompliance, false)}
+                </div>
+                <div class="eom-kpi-card accent-purple">
+                    <div class="kpi-value">${data.fssObtained || 0}</div>
+                    <div class="kpi-label">FSS Obtained</div>
+                    ${delta(data.fssObtained, prev?.fssObtained, false)}
+                </div>
+            `;
+        }
+
+        function renderEomCharts(data, sortedKeys) {
+            // Rectification Progress Pie Chart
+            const rectCtx = document.getElementById('eom-rectification-chart');
+            if (rectCtx) {
+                if (eomRectificationChart) eomRectificationChart.destroy();
+                eomRectificationChart = new Chart(rectCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completed', 'In Progress', 'Outstanding'],
+                        datasets: [{
+                            data: [data.closedDefects, data.inProgressDefects || 0, data.openDefects - (data.inProgressDefects || 0)],
+                            backgroundColor: ['#22c55e', '#3b82f6', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: chartColors.fontColor, font: { size: 11 }, padding: 12, usePointStyle: true } },
+                            tooltip: { backgroundColor: '#1a2332', titleColor: '#fff', bodyColor: '#94a3b8' }
+                        },
+                        cutout: '55%'
+                    }
+                });
+            }
+
+            // Defect Closure Trend Line Chart
+            const trendCtx = document.getElementById('eom-defect-trend-chart');
+            if (trendCtx && sortedKeys.length > 0) {
+                if (eomDefectTrendChart) eomDefectTrendChart.destroy();
+                const snapshots = state.monthlySnapshots || {};
+                const labels = sortedKeys.map(k => getMonthLabel(k));
+                const openData = sortedKeys.map(k => snapshots[k].openDefects);
+                const closedData = sortedKeys.map(k => snapshots[k].closedDefects);
+
+                eomDefectTrendChart = new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [
+                            { label: 'Open Defects', data: openData, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', fill: true, tension: 0.3, borderWidth: 2 },
+                            { label: 'Completed', data: closedData, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.1)', fill: true, tension: 0.3, borderWidth: 2 }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: chartColors.fontColor, font: { size: 11 }, padding: 12, usePointStyle: true } },
+                            tooltip: { backgroundColor: '#1a2332', titleColor: '#fff', bodyColor: '#94a3b8' }
+                        },
+                        scales: {
+                            x: { grid: { color: 'rgba(90,90,110,0.08)' }, ticks: { color: chartColors.fontColor, font: { size: 10 } } },
+                            y: { beginAtZero: true, grid: { color: 'rgba(90,90,110,0.08)' }, ticks: { color: chartColors.fontColor, font: { size: 10 } } }
+                        }
+                    }
+                });
+            } else if (trendCtx) {
+                if (eomDefectTrendChart) eomDefectTrendChart.destroy();
+                eomDefectTrendChart = new Chart(trendCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Open', 'Completed', 'In Progress'],
+                        datasets: [{ data: [data.openDefects - (data.inProgressDefects || 0), data.closedDefects, data.inProgressDefects || 0], backgroundColor: ['#ef4444', '#22c55e', '#3b82f6'] }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+                });
+            }
+
+            // FSC Status Pie
+            const fscCtx = document.getElementById('eom-fsc-pie-chart');
+            if (fscCtx) {
+                if (eomFscPieChart) eomFscPieChart.destroy();
+                eomFscPieChart = new Chart(fscCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Outstanding', 'Pending', 'Received', 'Compliant'],
+                        datasets: [{
+                            data: [data.fscOutstanding, data.fscPending, data.fscReceived, data.fscCompliant],
+                            backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#22c55e'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: chartColors.fontColor, font: { size: 11 }, padding: 12, usePointStyle: true } },
+                            tooltip: { backgroundColor: '#1a2332', titleColor: '#fff', bodyColor: '#94a3b8' }
+                        }
+                    }
+                });
+            }
+
+            // Station Defects Bar
+            const stnCtx = document.getElementById('eom-station-bar-chart');
+            if (stnCtx && data.stationData) {
+                if (eomStationBarChart) eomStationBarChart.destroy();
+                const sData = data.stationData.sort((a, b) => (b.defectsOpen || 0) - (a.defectsOpen || 0)).slice(0, 15);
+                eomStationBarChart = new Chart(stnCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: sData.map(s => s.name),
+                        datasets: [{
+                            label: 'Open Defects',
+                            data: sData.map(s => s.defectsOpen),
+                            backgroundColor: sData.map((s, i) => i < 3 ? '#ef4444' : i < 6 ? '#f59e0b' : '#3b82f6'),
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+                        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1a2332' } },
+                        scales: {
+                            x: { beginAtZero: true, grid: { color: 'rgba(90,90,110,0.08)' }, ticks: { color: chartColors.fontColor } },
+                            y: { grid: { display: false }, ticks: { color: chartColors.fontColor, font: { size: 10 } } }
+                        }
+                    }
+                });
+            }
+        }
+
+        function renderEomFindingsTable(data) {
+            const table = document.getElementById('eom-findings-table');
+            if (!table) return;
+            const tbody = table.querySelector('tbody');
+            if (!data.stationData || data.stationData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted)">No station data available</td></tr>';
+                return;
+            }
+
+            // Build station defect breakdown from current defects
+            const defects = state.defects || [];
+            const stationMap = {};
+            defects.forEach(d => {
+                if (!stationMap[d.site_name]) stationMap[d.site_name] = { total: 0, major: 0, medium: 0, minor: 0, outstanding: 0, completed: 0 };
+                stationMap[d.site_name].total++;
+                if (d.risk === 'Major') stationMap[d.site_name].major++;
+                else if (d.risk === 'Medium') stationMap[d.site_name].medium++;
+                else stationMap[d.site_name].minor++;
+                if (d.progress === 'Completed') stationMap[d.site_name].completed++;
+                else stationMap[d.site_name].outstanding++;
+            });
+
+            const rows = Object.entries(stationMap).sort((a, b) => b[1].total - a[1].total);
+            tbody.innerHTML = rows.map(([name, d]) => {
+                const pct = d.total > 0 ? Math.round((d.completed / d.total) * 100) : 0;
+                return `<tr>
+                    <td style="font-weight:500">${escapeHtml(name)}</td>
+                    <td>${d.total}</td>
+                    <td style="color:#dc2626;font-weight:600">${d.major}</td>
+                    <td style="color:#d97706">${d.medium}</td>
+                    <td style="color:#059669">${d.minor}</td>
+                    <td>${d.outstanding}</td>
+                    <td>${d.completed}</td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+                                <div style="width:${pct}%;height:100%;background:${pct >= 75 ? '#22c55e' : pct >= 50 ? '#f59e0b' : '#ef4444'};border-radius:3px"></div>
+                            </div>
+                            <span style="font-weight:600;font-size:11px">${pct}%</span>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function renderEomMonthlyChangeTable(sortedKeys) {
+            const table = document.getElementById('eom-monthly-change-table');
+            if (!table) return;
+            const tbody = table.querySelector('tbody');
+            const snapshots = state.monthlySnapshots || {};
+
+            if (sortedKeys.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">Take monthly snapshots to track changes over time</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = sortedKeys.map((k, i) => {
+                const snap = snapshots[k];
+                const prev = i > 0 ? snapshots[sortedKeys[i - 1]] : null;
+                const pctChange = prev ? ((snap.openDefects - prev.openDefects) / (prev.openDefects || 1) * 100).toFixed(1) : '--';
+                const trendClass = prev ? (snap.openDefects < prev.openDefects ? 'down' : snap.openDefects > prev.openDefects ? 'up' : 'flat') : 'flat';
+                const trendArrow = trendClass === 'down' ? '&#9660;' : trendClass === 'up' ? '&#9650;' : '&#9644;';
+
+                return `<tr>
+                    <td style="font-weight:500">${getMonthLabel(k)}</td>
+                    <td>${snap.totalDefects}</td>
+                    <td style="color:#dc2626">${snap.openDefects}</td>
+                    <td style="color:#059669">${snap.closedDefects}</td>
+                    <td>${pctChange !== '--' ? pctChange + '%' : '--'}</td>
+                    <td><span class="trend-indicator ${trendClass}">${trendArrow} ${trendClass === 'down' ? 'Decreased' : trendClass === 'up' ? 'Increased' : 'Stable'}</span></td>
+                </tr>`;
+            }).join('');
+        }
+
+        function renderEomComplianceTrackingTable(sortedKeys) {
+            const table = document.getElementById('eom-compliance-tracking-table');
+            if (!table) return;
+            const tbody = table.querySelector('tbody');
+            const snapshots = state.monthlySnapshots || {};
+
+            if (sortedKeys.length === 0) {
+                const live = buildLiveSnapshot();
+                // Show current values without comparison
+                const areas = [
+                    { name: 'Overall Compliance Rate', current: live.overallCompliance + '%' },
+                    { name: 'FSC Outstanding', current: live.fscOutstanding },
+                    { name: 'FSC Received/Compliant', current: live.fscReceived + live.fscCompliant },
+                    { name: 'Fire Safety Schedules Obtained', current: live.fssObtained },
+                    { name: 'Open Defects', current: live.openDefects },
+                    { name: 'Major Open Defects', current: live.majorOpen },
+                    { name: 'Completed Defects', current: live.closedDefects },
+                    { name: 'Critical Priority Tenancies', current: live.criticalPriority },
+                    { name: 'High Priority Tenancies', current: live.highPriority }
+                ];
+                tbody.innerHTML = areas.map(a => `<tr><td style="font-weight:500">${a.name}</td><td>${a.current}</td><td>--</td><td>--</td><td><span class="trend-indicator flat">&#9644; No data</span></td></tr>`).join('');
+                return;
+            }
+
+            const currentKey = state.eomSelectedMonth || sortedKeys[sortedKeys.length - 1];
+            const current = snapshots[currentKey] || buildLiveSnapshot();
+            const prevIdx = sortedKeys.indexOf(currentKey) - 1;
+            const prev = prevIdx >= 0 ? snapshots[sortedKeys[prevIdx]] : null;
+
+            function row(name, curVal, prevVal, invert) {
+                const change = prev ? (curVal - prevVal) : null;
+                const changeStr = change !== null ? (change > 0 ? '+' + change : change.toString()) : '--';
+                const trendClass = change === null ? 'flat' : (invert ? (change < 0 ? 'down' : change > 0 ? 'up' : 'flat') : (change > 0 ? 'down' : change < 0 ? 'up' : 'flat'));
+                const trendArrow = trendClass === 'down' ? '&#9660;' : trendClass === 'up' ? '&#9650;' : '&#9644;';
+                const trendLabel = trendClass === 'down' ? 'Improved' : trendClass === 'up' ? 'Worsened' : 'Stable';
+                return `<tr>
+                    <td style="font-weight:500">${name}</td>
+                    <td>${curVal}</td>
+                    <td>${prev ? prevVal : '--'}</td>
+                    <td>${changeStr}</td>
+                    <td><span class="trend-indicator ${trendClass}">${trendArrow} ${trendLabel}</span></td>
+                </tr>`;
+            }
+
+            tbody.innerHTML = [
+                row('Overall Compliance %', current.overallCompliance + '%', prev?.overallCompliance + '%', false),
+                row('FSC Outstanding', current.fscOutstanding, prev?.fscOutstanding, true),
+                row('FSC Received + Compliant', (current.fscReceived || 0) + (current.fscCompliant || 0), (prev?.fscReceived || 0) + (prev?.fscCompliant || 0), false),
+                row('Fire Safety Schedules Obtained', current.fssObtained || 0, prev?.fssObtained || 0, false),
+                row('Total Open Defects', current.openDefects, prev?.openDefects, true),
+                row('Major Open Defects', current.majorOpen, prev?.majorOpen, true),
+                row('Medium Open Defects', current.mediumOpen, prev?.mediumOpen, true),
+                row('Minor Open Defects', current.minorOpen, prev?.minorOpen, true),
+                row('Completed Defects', current.closedDefects, prev?.closedDefects, false),
+                row('Critical Priority Tenancies', current.criticalPriority, prev?.criticalPriority, true),
+                row('High Priority Tenancies', current.highPriority, prev?.highPriority, true)
+            ].join('');
+        }
+
+        function renderEomFYTable(data) {
+            const table = document.getElementById('eom-fy-table');
+            if (!table) return;
+            const tbody = table.querySelector('tbody');
+            const fys = data.defectsByFY || {};
+            const keys = Object.keys(fys).sort();
+
+            if (keys.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted)">No financial year data</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = keys.map(fy => {
+                const d = fys[fy];
+                const rate = d.raised > 0 ? Math.round((d.completed / d.raised) * 100) : 0;
+                return `<tr>
+                    <td style="font-weight:500">${escapeHtml(fy)}</td>
+                    <td>${d.raised}</td>
+                    <td style="color:#059669">${d.completed}</td>
+                    <td style="color:#dc2626">${d.outstanding}</td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden">
+                                <div style="width:${rate}%;height:100%;background:${rate >= 75 ? '#22c55e' : rate >= 50 ? '#f59e0b' : '#ef4444'};border-radius:3px"></div>
+                            </div>
+                            <span style="font-weight:600;font-size:11px">${rate}%</span>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        // ============================================================
+        // EOM TEXT BLOCKS & INSERT
+        // ============================================================
+
+        function insertEomBlock(type) {
+            const container = document.getElementById('eom-custom-blocks');
+            if (!container) return;
+            const blockId = 'eom-custom-' + Date.now();
+            const labels = { summary: 'Custom Summary', actions: 'Additional Actions', risks: 'Additional Risks', next: 'Additional Notes' };
+            const block = document.createElement('div');
+            block.className = 'eom-text-block';
+            block.id = blockId;
+            block.innerHTML = `
+                <span class="text-block-label">${labels[type] || 'Custom Block'}</span>
+                <textarea placeholder="Enter content..." oninput="saveEomTextBlock('${blockId}', this.value)"></textarea>
+                <button class="btn btn-ghost btn-sm" onclick="this.parentElement.remove();saveEomCustomBlocks()" style="position:absolute;top:4px;right:4px;font-size:10px;padding:2px 6px">&times;</button>
+            `;
+            container.appendChild(block);
+        }
+
+        function saveEomTextBlock(id, value) {
+            if (!state.eomReportData) state.eomReportData = {};
+            state.eomReportData[id] = value;
+            saveData();
+        }
+
+        function saveEomCustomBlocks() {
+            saveData();
+        }
+
+        function loadEomTextBlocks() {
+            const data = state.eomReportData || {};
+            ['eom-summary-text', 'eom-actions-text', 'eom-risks-text', 'eom-next-text'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && data[id]) el.value = data[id];
+            });
+
+            // Save text blocks on input
+            ['eom-summary-text', 'eom-actions-text', 'eom-risks-text', 'eom-next-text'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.removeEventListener('input', el._saveHandler);
+                    el._saveHandler = () => {
+                        if (!state.eomReportData) state.eomReportData = {};
+                        state.eomReportData[id] = el.value;
+                        saveData();
+                    };
+                    el.addEventListener('input', el._saveHandler);
+                }
+            });
+        }
+
+        // ============================================================
+        // EOM PDF EXPORT
+        // ============================================================
+
+        function exportEomReport() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const navy = [26, 35, 50];
+            const accent = [78, 145, 223];
+            const white = [255, 255, 255];
+            const dark = [17, 17, 19];
+            const muted = [90, 90, 110];
+            const green = [34, 197, 94];
+            const red = [239, 68, 68];
+
+            const data = state.eomSelectedMonth && state.monthlySnapshots?.[state.eomSelectedMonth]
+                ? state.monthlySnapshots[state.eomSelectedMonth] : buildLiveSnapshot();
+            const label = state.eomSelectedMonth ? getMonthLabel(state.eomSelectedMonth) : 'Current Period';
+
+            // Page 1 - Header
+            doc.setFillColor(...navy);
+            doc.rect(0, 0, 210, 40, 'F');
+            doc.setFillColor(...accent);
+            doc.rect(0, 38, 210, 2, 'F');
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(20);
+            doc.setTextColor(...white);
+            doc.text('Fire Compliance Monthly Report', 14, 18);
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'normal');
+            doc.text(label + ' - JLL Sydney Trains TAM', 14, 28);
+            doc.setFontSize(9);
+            doc.text('Generated: ' + new Date().toLocaleDateString('en-AU', { year: 'numeric', month: 'long', day: 'numeric' }), 14, 35);
+
+            let y = 50;
+
+            // KPI Summary
+            doc.setTextColor(...dark);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            doc.text('Key Performance Indicators', 14, y);
+            y += 8;
+
+            const tableStyle = {
+                headStyles: { fillColor: navy, textColor: white, fontSize: 9, fontStyle: 'bold', cellPadding: 4 },
+                bodyStyles: { fontSize: 9, cellPadding: 3, textColor: dark },
+                alternateRowStyles: { fillColor: [240, 244, 248] },
+                styles: { lineColor: [220, 225, 235], lineWidth: 0.2 },
+                margin: { left: 14, right: 14 }
+            };
+
+            doc.autoTable({
+                head: [['Metric', 'Value']],
+                body: [
+                    ['Total Defects', data.totalDefects],
+                    ['Open Defects', data.openDefects],
+                    ['Completed Defects', data.closedDefects],
+                    ['Major Open', data.majorOpen],
+                    ['Overall Compliance', data.overallCompliance + '%'],
+                    ['FSC Outstanding', data.fscOutstanding],
+                    ['FSC Received/Compliant', (data.fscReceived || 0) + (data.fscCompliant || 0)],
+                    ['Fire Safety Schedules Obtained', data.fssObtained || 0],
+                    ['Critical Priority Tenancies', data.criticalPriority],
+                    ['High Priority Tenancies', data.highPriority]
+                ],
+                startY: y,
+                ...tableStyle,
+                columnStyles: { 0: { fontStyle: 'bold' } }
+            });
+
+            // Page 2 - Station findings
+            doc.addPage();
+            doc.setFillColor(...navy);
+            doc.rect(0, 0, 210, 14, 'F');
+            doc.setTextColor(...white);
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Current Findings by Station', 14, 10);
+
+            const defects = state.defects || [];
+            const stationMap = {};
+            defects.forEach(d => {
+                if (!stationMap[d.site_name]) stationMap[d.site_name] = { total: 0, major: 0, medium: 0, minor: 0, outstanding: 0, completed: 0 };
+                stationMap[d.site_name].total++;
+                if (d.risk === 'Major') stationMap[d.site_name].major++;
+                else if (d.risk === 'Medium') stationMap[d.site_name].medium++;
+                else stationMap[d.site_name].minor++;
+                if (d.progress === 'Completed') stationMap[d.site_name].completed++;
+                else stationMap[d.site_name].outstanding++;
+            });
+
+            doc.autoTable({
+                head: [['Station', 'Total', 'Major', 'Medium', 'Minor', 'Outstanding', 'Completed', 'Progress %']],
+                body: Object.entries(stationMap).sort((a, b) => b[1].total - a[1].total).map(([name, d]) => [
+                    name, d.total, d.major, d.medium, d.minor, d.outstanding, d.completed,
+                    d.total > 0 ? Math.round((d.completed / d.total) * 100) + '%' : '0%'
+                ]),
+                startY: 20,
+                ...tableStyle,
+                styles: { ...tableStyle.styles, fontSize: 8 }
+            });
+
+            // Page 3 - Monthly tracking
+            const sortedKeys = Object.keys(state.monthlySnapshots || {}).sort();
+            if (sortedKeys.length > 0) {
+                doc.addPage();
+                doc.setFillColor(...navy);
+                doc.rect(0, 0, 210, 14, 'F');
+                doc.setTextColor(...white);
+                doc.setFontSize(11);
+                doc.text('Monthly Defect Trend Analysis', 14, 10);
+
+                doc.autoTable({
+                    head: [['Month', 'Total Defects', 'Open', 'Closed', '% Change', 'Compliance']],
+                    body: sortedKeys.map((k, i) => {
+                        const snap = state.monthlySnapshots[k];
+                        const prev = i > 0 ? state.monthlySnapshots[sortedKeys[i - 1]] : null;
+                        const pctChange = prev ? ((snap.openDefects - prev.openDefects) / (prev.openDefects || 1) * 100).toFixed(1) + '%' : '--';
+                        return [getMonthLabel(k), snap.totalDefects, snap.openDefects, snap.closedDefects, pctChange, snap.overallCompliance + '%'];
+                    }),
+                    startY: 20,
+                    ...tableStyle
+                });
+            }
+
+            // Page 4 - Custom text
+            const summaryText = document.getElementById('eom-summary-text')?.value;
+            const actionsText = document.getElementById('eom-actions-text')?.value;
+            const risksText = document.getElementById('eom-risks-text')?.value;
+            const nextText = document.getElementById('eom-next-text')?.value;
+
+            if (summaryText || actionsText || risksText || nextText) {
+                doc.addPage();
+                doc.setFillColor(...navy);
+                doc.rect(0, 0, 210, 14, 'F');
+                doc.setTextColor(...white);
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Report Commentary', 14, 10);
+
+                let ty = 24;
+                doc.setTextColor(...dark);
+                const sections = [
+                    { title: 'Executive Summary', text: summaryText },
+                    { title: 'Key Actions Taken', text: actionsText },
+                    { title: 'Risks & Escalations', text: risksText },
+                    { title: 'Next Month Focus', text: nextText }
+                ];
+
+                sections.forEach(s => {
+                    if (s.text && s.text.trim()) {
+                        if (ty > 250) { doc.addPage(); ty = 20; }
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(12);
+                        doc.text(s.title, 14, ty);
+                        ty += 6;
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(9);
+                        doc.setTextColor(...muted);
+                        const lines = doc.splitTextToSize(s.text, 180);
+                        doc.text(lines, 14, ty);
+                        ty += lines.length * 4.5 + 8;
+                        doc.setTextColor(...dark);
+                    }
+                });
+            }
+
+            // Footer on all pages
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(...muted);
+                doc.text('FYRECOMP - Fire Compliance Monthly Report - Confidential', 14, 287);
+                doc.text('Page ' + i + ' of ' + pageCount, 196, 287, { align: 'right' });
+            }
+
+            doc.save('fire_compliance_eom_' + (state.eomSelectedMonth || getMonthKey()) + '.pdf');
+            showToast('End of Month report exported', 'success');
+        }
+
     </script>
 </body>
 </html>
