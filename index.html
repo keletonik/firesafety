@@ -2214,6 +2214,7 @@
                                 <thead>
                                     <tr>
                                         <th>Site</th>
+                                        <th>Tenant</th>
                                         <th>Category</th>
                                         <th>Risk</th>
                                         <th>Progress</th>
@@ -2959,10 +2960,14 @@
 
                 <!-- Defects Tab -->
                 <div class="tab-content" id="tab-defects">
-                    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
+                    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
                         <div class="stat-card critical" style="padding:12px 16px">
+                            <div class="stat-value" style="font-size:22px" id="modal-defects-own-open">0</div>
+                            <div class="stat-label">Tenant Defects</div>
+                        </div>
+                        <div class="stat-card high" style="padding:12px 16px">
                             <div class="stat-value" style="font-size:22px" id="modal-defects-open">0</div>
-                            <div class="stat-label">Open Defects</div>
+                            <div class="stat-label">Total Open</div>
                         </div>
                         <div class="stat-card high" style="padding:12px 16px">
                             <div class="stat-value" style="font-size:22px" id="modal-defects-major">0</div>
@@ -2973,7 +2978,7 @@
                             <div class="stat-label">Closed</div>
                         </div>
                     </div>
-                    <h4 style="font-size:13px;font-weight:600;margin-bottom:10px">Individual Defects at this Tenancy</h4>
+                    <h4 style="font-size:13px;font-weight:600;margin-bottom:10px">Individual Defects for this Tenancy</h4>
                     <div class="table-container" style="max-height:250px;overflow-y:auto;margin-bottom:16px">
                         <table>
                             <thead><tr><th>Category</th><th>Risk</th><th>Progress</th><th>Area</th><th style="width:50px"></th></tr></thead>
@@ -3116,6 +3121,14 @@
                         <label class="form-label">Site</label>
                         <input type="text" class="form-input" id="defect-edit-site" readonly style="background:var(--bg)">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Assigned Tenant</label>
+                        <select class="form-select" id="defect-edit-tenant">
+                            <option value="">Station-wide (no specific tenant)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Category</label>
                         <select class="form-select" id="defect-edit-category">
@@ -4944,6 +4957,7 @@
             if (search) {
                 defects = defects.filter(d =>
                     (d.site_name || '').toLowerCase().includes(search) ||
+                    (d.tenant_name || '').toLowerCase().includes(search) ||
                     (d.category || '').toLowerCase().includes(search) ||
                     (d.description || '').toLowerCase().includes(search) ||
                     (d.area || '').toLowerCase().includes(search)
@@ -4972,6 +4986,7 @@
             tbody.innerHTML = page.map(d => `
                 <tr>
                     <td class="td-tenant">${escapeHtml(d.site_name)}</td>
+                    <td style="font-size:12px">${escapeHtml(d.tenant_name || '') || '<span style="color:var(--text-light)">Station-wide</span>'}</td>
                     <td>${escapeHtml(d.category)}</td>
                     <td><span class="badge badge-${d.risk === 'Major' ? 'critical' : d.risk === 'Medium' ? 'high' : 'medium'}">${escapeHtml(d.risk)}</span></td>
                     <td><span class="badge badge-${d.progress === 'Completed' ? 'success' : d.progress === 'In Progress' ? 'info' : 'high'}">${escapeHtml(d.progress)}</span></td>
@@ -5303,6 +5318,7 @@
             document.getElementById('modal-fsm-passive').value = fsm.passiveFire || '';
 
             // Defects
+            document.getElementById('modal-defects-own-open').textContent = tenant.defectsOwnOpen || 0;
             document.getElementById('modal-defects-open').textContent = tenant.defectsOpen || 0;
             document.getElementById('modal-defects-major').textContent = tenant.defectsMajor || 0;
             document.getElementById('modal-defects-closed').textContent = tenant.defectsClosed || 0;
@@ -6608,7 +6624,7 @@ Fire Safety Compliance Team`
                 setTimeout(() => {
                     removeTyping();
 
-                    // Generate tasks
+                    // === PHASE 1: Generate tasks ===
                     const tasks = generateTasksFromEmail(parsed);
                     chatbotState.tasks.push(...tasks);
                     saveChatbotTasks();
@@ -6616,28 +6632,201 @@ Fire Safety Compliance Team`
                     if (tasks.length > 0) {
                         addBotMessage('<strong>I\'ve identified ' + tasks.length + ' action item' + (tasks.length > 1 ? 's' : '') + ' from this email:</strong>' + renderTaskCards(tasks));
                     }
-
                     updateTaskSummary();
 
-                    // Check for tenant/station updates
                     addBotTyping();
                     setTimeout(() => {
                         removeTyping();
-                        const updates = detectTenantStationUpdates(parsed);
-                        chatbotState.detectedUpdates = updates;
 
-                        if (updates.length > 0) {
-                            addBotMessage(renderUpdateSuggestions(updates));
-                        } else {
-                            addBotMessage('No automatic tenant/station updates detected from this email. You can ask me to update specific details if needed.');
+                        // === PHASE 2: Auto-add notes to matched tenants/stations ===
+                        const noteResults = autoAddEmailNotes(parsed, fileName);
+                        if (noteResults.length > 0) {
+                            addBotMessage('<strong>Notes auto-filed to ' + noteResults.length + ' record' + (noteResults.length > 1 ? 's' : '') + ':</strong><br>' +
+                                noteResults.map(r => '<span style="font-size:11px">&bull; ' + escapeHtml(r) + '</span>').join('<br>'));
                         }
 
-                        // Quick actions
-                        addBotMessage('What would you like to do next?' + renderQuickActions());
-                        chatbotState.isProcessing = false;
-                    }, 800);
-                }, 1000);
-            }, 600);
+                        // === PHASE 3: Auto-attach email as document ===
+                        const docResults = autoAttachEmailDocument(parsed, fileName);
+                        if (docResults.length > 0) {
+                            addBotMessage('<strong>Email attached as document to ' + docResults.length + ' record' + (docResults.length > 1 ? 's' : '') + ':</strong><br>' +
+                                docResults.map(r => '<span style="font-size:11px">&bull; ' + escapeHtml(r) + '</span>').join('<br>'));
+                        }
+
+                        // === PHASE 4: Auto-create defects if detected ===
+                        const defectResults = autoCreateDefectsFromEmail(parsed);
+                        if (defectResults.length > 0) {
+                            addBotMessage('<strong>Created ' + defectResults.length + ' defect' + (defectResults.length > 1 ? 's' : '') + ' from email:</strong><br>' +
+                                defectResults.map(r => '<span style="font-size:11px">&bull; ' + escapeHtml(r) + '</span>').join('<br>'));
+                        }
+
+                        addBotTyping();
+                        setTimeout(() => {
+                            removeTyping();
+
+                            // === PHASE 5: Detect and suggest field updates ===
+                            const updates = detectTenantStationUpdates(parsed);
+                            chatbotState.detectedUpdates = updates;
+
+                            if (updates.length > 0) {
+                                addBotMessage(renderUpdateSuggestions(updates));
+                            } else if (noteResults.length === 0 && docResults.length === 0 && defectResults.length === 0) {
+                                addBotMessage('No matching tenants or stations found. You can ask me to update specific records manually.');
+                            } else {
+                                addBotMessage('All auto-actions completed. Notes, documents, and defects have been filed.');
+                            }
+
+                            // === PHASE 6: Log to audit trail ===
+                            logEmailProcessing(parsed, fileName, tasks, noteResults, docResults, defectResults, updates);
+                            renderAll();
+
+                            addBotMessage('What would you like to do next?' + renderQuickActions());
+                            chatbotState.isProcessing = false;
+                        }, 600);
+                    }, 700);
+                }, 800);
+            }, 500);
+        }
+
+        // ============================================================
+        // AUTO-ADD EMAIL NOTES TO TENANTS/STATIONS
+        // ============================================================
+        function autoAddEmailNotes(parsed, fileName) {
+            const results = [];
+            const now = new Date().toISOString();
+            const notePrefix = '[Email: ' + (parsed.subject || fileName || 'Unknown') + ']';
+            const noteBody = notePrefix + '\nFrom: ' + (parsed.from || 'Unknown') + '\nDate: ' + (parsed.date || now.split('T')[0]) + '\n' +
+                (parsed.body || '').substring(0, 500) + (parsed.body.length > 500 ? '...' : '');
+
+            parsed.mentions.tenants.forEach(t => {
+                const idx = state.tenants.findIndex(tt => tt.id === t.id);
+                if (idx > -1) {
+                    const existing = state.tenants[idx].notes || '';
+                    const separator = existing ? '\n\n---\n\n' : '';
+                    state.tenants[idx].notes = existing + separator + '[' + now.split('T')[0] + '] ' + noteBody;
+                    state.tenants[idx].lastUpdated = now.split('T')[0];
+                    if (!state.tenants[idx].auditTrail) state.tenants[idx].auditTrail = [];
+                    state.tenants[idx].auditTrail.push({ date: now, action: 'Email note added', detail: notePrefix, user: 'AI Assistant' });
+                    results.push(t.tenantName + ' (' + t.station + ') - note added');
+                }
+            });
+
+            parsed.mentions.stations.forEach(s => {
+                const idx = state.stations.findIndex(ss => ss.name === s.name);
+                if (idx > -1) {
+                    const existing = state.stations[idx].notes || '';
+                    const separator = existing ? '\n\n---\n\n' : '';
+                    state.stations[idx].notes = existing + separator + '[' + now.split('T')[0] + '] ' + noteBody;
+                    state.stations[idx].lastUpdated = now.split('T')[0];
+                    results.push('Station: ' + s.name + ' - note added');
+                }
+            });
+
+            if (results.length > 0) saveData();
+            return results;
+        }
+
+        // ============================================================
+        // AUTO-ATTACH EMAIL AS DOCUMENT
+        // ============================================================
+        function autoAttachEmailDocument(parsed, fileName) {
+            const results = [];
+            const now = new Date().toISOString();
+            const docName = fileName || (parsed.subject ? parsed.subject.substring(0, 60) + '.eml' : 'email_' + now.split('T')[0] + '.eml');
+            const docRecord = { name: docName, type: 'Email Correspondence', date: now.split('T')[0], from: parsed.from || '', subject: parsed.subject || '', addedBy: 'AI Assistant', content: (parsed.body || '').substring(0, 2000) };
+
+            parsed.mentions.tenants.forEach(t => {
+                if (!state.documents) state.documents = {};
+                if (!state.documents[t.id]) state.documents[t.id] = [];
+                if (!state.documents[t.id].some(d => d.name === docName && d.date === docRecord.date)) {
+                    state.documents[t.id].push({ ...docRecord });
+                    results.push(t.tenantName + ' - email document attached');
+                }
+            });
+
+            parsed.mentions.stations.forEach(s => {
+                if (!state.stationDocuments) state.stationDocuments = {};
+                if (!state.stationDocuments[s.name]) state.stationDocuments[s.name] = [];
+                if (!state.stationDocuments[s.name].some(d => d.name === docName && d.date === docRecord.date)) {
+                    state.stationDocuments[s.name].push({ ...docRecord });
+                    results.push('Station: ' + s.name + ' - email document attached');
+                }
+            });
+
+            if (results.length > 0) saveData();
+            return results;
+        }
+
+        // ============================================================
+        // AUTO-CREATE DEFECTS FROM EMAIL
+        // ============================================================
+        function autoCreateDefectsFromEmail(parsed) {
+            const results = [];
+            const body = (parsed.subject + ' ' + parsed.body).toLowerCase();
+            if (!/\b(defect|fault|repair|broken|damage|malfunction|non.?compliant|failed|not\s*working|out\s*of\s*service|rectif)\b/i.test(body)) return results;
+
+            const targetStations = parsed.mentions.stations.length > 0 ? parsed.mentions.stations.map(s => s.name) : parsed.mentions.tenants.length > 0 ? [...new Set(parsed.mentions.tenants.map(t => t.station))] : [];
+            if (targetStations.length === 0) return results;
+
+            ensureDefectIds();
+            let idCounter = Math.max(0, ...(state.defects || []).map(d => d.id || 0));
+
+            const categories = [];
+            if (/\b(fire\s*detect|smoke\s*alarm|alarm\s*system|fire\s*alarm)\b/i.test(body)) categories.push('Smoke Detection');
+            if (/\b(sprinkler)\b/i.test(body)) categories.push('Sprinkler Systems');
+            if (/\b(emergency\s*light|exit\s*light)\b/i.test(body)) categories.push('Emergency Lighting');
+            if (/\b(exit\s*sign)\b/i.test(body)) categories.push('Exit Signs');
+            if (/\b(fire\s*door|smoke\s*door)\b/i.test(body)) categories.push('Fire Doors');
+            if (/\b(extinguisher)\b/i.test(body)) categories.push('Portable Extinguishers');
+            if (/\b(hydrant|hose\s*reel)\b/i.test(body)) categories.push('Hydrants & Hose Reels');
+            if (/\b(passive\s*fire|fire\s*stop|fire\s*seal|penetration)\b/i.test(body)) categories.push('Passive Fire Protection');
+            if (categories.length === 0) categories.push('Fire Safety & Emergency procedures');
+
+            let risk = 'Medium';
+            if (/\b(critical|major|serious|safety\s*risk|immediate|urgent)\b/i.test(body)) risk = 'Major';
+            else if (/\b(minor|small|cosmetic)\b/i.test(body)) risk = 'Minor';
+
+            const descSnippet = (parsed.body || '').substring(0, 300).trim();
+
+            targetStations.forEach(stationName => {
+                categories.forEach(cat => {
+                    idCounter++;
+                    if (!state.defects) state.defects = [];
+                    // Find tenant at this station if mentioned in email
+                    const matchedTenant = parsed.mentions.tenants.find(t => t.station === stationName);
+                    state.defects.push({
+                        id: idCounter, site_name: stationName,
+                        tenant_id: matchedTenant ? matchedTenant.id : '',
+                        tenant_name: matchedTenant ? (matchedTenant.tenantName || '') : '',
+                        category: cat, risk: risk, progress: 'Outstanding', area: '',
+                        description: 'Created from email: ' + (parsed.subject || 'No subject') + '\n' + descSnippet,
+                        audit_date: new Date().toISOString().split('T')[0], audit_type: 'Email Import',
+                        financial_year: getCurrentFY(), year: new Date().getFullYear().toString(),
+                        quarter: Math.ceil((new Date().getMonth() + 1) / 3).toString(),
+                        month: (new Date().getMonth() + 1).toString(), archived: 'No', fire_equipment_service_date: null
+                    });
+                    if (!state.defectAuditLog) state.defectAuditLog = [];
+                    state.defectAuditLog.push({ defectId: idCounter, field: 'created', oldValue: '', newValue: 'Created from email: ' + (parsed.subject || 'Email'), timestamp: new Date().toISOString(), site: stationName });
+                    results.push(stationName + ' - ' + cat + ' (' + risk + ')');
+                });
+                recalcTenantDefectCounts(stationName);
+            });
+
+            if (results.length > 0) saveData();
+            return results;
+        }
+
+        // ============================================================
+        // LOG EMAIL PROCESSING TO AUDIT TRAIL
+        // ============================================================
+        function logEmailProcessing(parsed, fileName, tasks, noteResults, docResults, defectResults, updates) {
+            if (!state.defectAuditLog) state.defectAuditLog = [];
+            state.defectAuditLog.push({
+                defectId: 0, field: 'Email Processed', oldValue: fileName || 'Email',
+                newValue: [tasks.length + ' tasks', noteResults.length + ' notes', docResults.length + ' docs', defectResults.length + ' defects', updates.length + ' updates'].join(', '),
+                timestamp: new Date().toISOString(),
+                site: parsed.mentions.stations.map(s => s.name).join(', ') || parsed.mentions.tenants.map(t => t.station).join(', ') || 'Portfolio'
+            });
+            saveData();
         }
 
         // ---- Email Parser ----
@@ -6682,26 +6871,85 @@ Fire Safety Compliance Team`
                 try { return String.fromCharCode(parseInt(hex, 16)); } catch(e) { return m; }
             }).trim();
 
-            // Match against existing data
+            // Match against existing data - ENHANCED fuzzy/partial matching
             const lowerBody = (email.subject + ' ' + email.body).toLowerCase();
             const tenants = state.tenants || [];
             const stations = state.stations || [];
+            const matchedTenantIds = new Set();
+            const matchedStationNames = new Set();
 
-            // Find mentioned tenants
+            // Helper: normalize string for matching
+            const normalize = (s) => (s || '').toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+            // Helper: fuzzy includes (handles partial matches with word boundary awareness)
+            const fuzzyMatch = (haystack, needle) => {
+                if (!needle || needle.length < 3) return false;
+                const n = normalize(needle);
+                const h = normalize(haystack);
+                if (h.includes(n)) return true;
+                // Also try individual significant words (3+ chars)
+                const words = n.split(/\s+/).filter(w => w.length >= 3);
+                if (words.length >= 2) {
+                    const matchCount = words.filter(w => h.includes(w)).length;
+                    return matchCount >= Math.ceil(words.length * 0.7);
+                }
+                return false;
+            };
+
+            // Find mentioned tenants - multi-field matching
             tenants.forEach(t => {
-                if (t.tenantName && lowerBody.includes(t.tenantName.toLowerCase())) {
-                    email.mentions.tenants.push(t);
-                } else if (t.tradingName && lowerBody.includes(t.tradingName.toLowerCase())) {
+                if (matchedTenantIds.has(t.id)) return;
+                let matched = false;
+                // Exact and fuzzy name matches
+                if (t.tenantName && fuzzyMatch(lowerBody, t.tenantName)) matched = true;
+                if (!matched && t.tradingName && fuzzyMatch(lowerBody, t.tradingName)) matched = true;
+                // Lease ID match (e.g., "110119.0")
+                if (!matched && t.leaseId && t.leaseId.length >= 4 && lowerBody.includes(t.leaseId.toLowerCase())) matched = true;
+                // File number match (e.g., "311314")
+                if (!matched && t.fileNumber && t.fileNumber.length >= 4 && lowerBody.includes(t.fileNumber.toLowerCase())) matched = true;
+                // Agreement number match
+                if (!matched && t.agreementNumber && t.agreementNumber.length >= 4 && lowerBody.includes(t.agreementNumber.toLowerCase())) matched = true;
+                // Contact name match (first + last name)
+                if (!matched && t.contactName && t.contactName.length >= 5 && fuzzyMatch(lowerBody, t.contactName)) matched = true;
+                // Contact email match
+                if (!matched && t.contactEmail && lowerBody.includes(t.contactEmail.toLowerCase())) matched = true;
+
+                if (matched) {
+                    matchedTenantIds.add(t.id);
                     email.mentions.tenants.push(t);
                 }
             });
 
-            // Find mentioned stations
+            // Find mentioned stations - enhanced matching
             stations.forEach(s => {
-                if (s.name && lowerBody.includes(s.name.toLowerCase())) {
+                if (matchedStationNames.has(s.name)) return;
+                let matched = false;
+                if (s.name && fuzzyMatch(lowerBody, s.name)) matched = true;
+                // Also match by station code if available
+                if (!matched && s.code && s.code.length >= 2 && new RegExp('\\b' + s.code.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(lowerBody)) matched = true;
+                // Match station by zone or region reference + partial name
+                if (!matched && s.name) {
+                    const parts = s.name.toLowerCase().split(/\s+/);
+                    if (parts.length >= 1 && parts.some(p => p.length >= 4 && lowerBody.includes(p + ' station'))) matched = true;
+                }
+
+                if (matched) {
+                    matchedStationNames.add(s.name);
                     email.mentions.stations.push(s);
                 }
             });
+
+            // Auto-link tenants to their stations if stations not explicitly mentioned
+            if (email.mentions.tenants.length > 0 && email.mentions.stations.length === 0) {
+                email.mentions.tenants.forEach(t => {
+                    if (t.station && !matchedStationNames.has(t.station)) {
+                        const stn = stations.find(s => s.name === t.station);
+                        if (stn) {
+                            matchedStationNames.add(stn.name);
+                            email.mentions.stations.push(stn);
+                        }
+                    }
+                });
+            }
 
             // Detect priority keywords
             if (/\b(urgent|critical|immediate|emergency|asap)\b/i.test(lowerBody)) email.mentions.priorities.push('Critical');
@@ -6949,6 +7197,63 @@ Fire Safety Compliance Team`
                             fieldLabel: 'Compliance Status',
                             oldValue: tenant.complianceStatus || 'Not Started',
                             newValue: newCompStatus
+                        });
+                    }
+                }
+
+                // Detect FSS (Fire Safety Schedule) status changes
+                if (/\b(fire\s*safety\s*schedule|FSS)\b/i.test(combined)) {
+                    let newFSS = '';
+                    if (/\b(received|obtained|attached|provided|enclosed|submitted)\b/i.test(combined)) newFSS = 'Yes';
+                    else if (/\b(not\s*received|outstanding|missing|not\s*obtained|awaiting|pending)\b/i.test(combined)) newFSS = 'No';
+                    if (newFSS && tenant.hasFSS !== newFSS) {
+                        updates.push({
+                            type: 'tenant',
+                            tenantId: tenant.id,
+                            tenantName: tenant.tenantName,
+                            station: tenant.station,
+                            field: 'hasFSS',
+                            fieldLabel: 'Fire Safety Schedule Obtained',
+                            oldValue: tenant.hasFSS || 'No',
+                            newValue: newFSS
+                        });
+                    }
+                }
+
+                // Detect AFSS month reference
+                const afssMonthMatch = combined.match(/\bAFSS\b.*?\b(January|February|March|April|May|June|July|August|September|October|November|December)\b/i);
+                if (afssMonthMatch) {
+                    const newMonth = afssMonthMatch[1].charAt(0).toUpperCase() + afssMonthMatch[1].slice(1).toLowerCase();
+                    if (tenant.afssMonth !== newMonth) {
+                        updates.push({
+                            type: 'tenant',
+                            tenantId: tenant.id,
+                            tenantName: tenant.tenantName,
+                            station: tenant.station,
+                            field: 'afssMonth',
+                            fieldLabel: 'AFSS Month',
+                            oldValue: tenant.afssMonth || 'Not Set',
+                            newValue: newMonth
+                        });
+                    }
+                }
+
+                // Detect lease status changes
+                if (/\b(lease|tenancy)\b/i.test(combined)) {
+                    let newLeaseStatus = '';
+                    if (/\b(vacate|vacated|move.?out|terminated|expired|surrendered)\b/i.test(combined)) newLeaseStatus = 'Vacant';
+                    else if (/\b(new\s*lease|commence|move.?in|signed|active|renewed)\b/i.test(combined)) newLeaseStatus = 'Active';
+                    else if (/\b(holdover|month.?to.?month)\b/i.test(combined)) newLeaseStatus = 'Holdover';
+                    if (newLeaseStatus && tenant.leaseStatus !== newLeaseStatus) {
+                        updates.push({
+                            type: 'tenant',
+                            tenantId: tenant.id,
+                            tenantName: tenant.tenantName,
+                            station: tenant.station,
+                            field: 'leaseStatus',
+                            fieldLabel: 'Lease Status',
+                            oldValue: tenant.leaseStatus || 'Not Set',
+                            newValue: newLeaseStatus
                         });
                     }
                 }
@@ -7615,6 +7920,14 @@ Fire Safety Compliance Team`
 
             document.getElementById('defect-edit-id').value = defectId;
             document.getElementById('defect-edit-site').value = defect.site_name || '';
+
+            // Populate tenant dropdown with tenants at this site
+            const tenantSelect = document.getElementById('defect-edit-tenant');
+            const siteTenants = (state.tenants || []).filter(t => t.station === defect.site_name);
+            tenantSelect.innerHTML = '<option value="">Station-wide (no specific tenant)</option>' +
+                siteTenants.map(t => '<option value="' + t.id + '">' + escapeHtml(t.tenantName) + (t.tradingName ? ' (' + escapeHtml(t.tradingName) + ')' : '') + '</option>').join('');
+            tenantSelect.value = defect.tenant_id || '';
+
             document.getElementById('defect-edit-category').value = defect.category || 'Other';
             document.getElementById('defect-edit-risk').value = defect.risk || 'Minor';
             document.getElementById('defect-edit-progress').value = defect.progress || 'Outstanding';
@@ -7670,6 +7983,8 @@ Fire Safety Compliance Team`
             const newArea = document.getElementById('defect-edit-area').value;
             const newDescription = document.getElementById('defect-edit-description').value;
             const newDate = document.getElementById('defect-edit-date').value;
+            const newTenantId = document.getElementById('defect-edit-tenant').value;
+            const newTenantName = newTenantId ? ((state.tenants || []).find(t => String(t.id) === String(newTenantId)) || {}).tenantName || '' : '';
 
             if (defect.category !== newCategory) {
                 changes.push({ defectId, field: 'category', oldValue: defect.category, newValue: newCategory, timestamp: now, site: defect.site_name });
@@ -7686,6 +8001,9 @@ Fire Safety Compliance Team`
             if ((defect.description || '') !== newDescription) {
                 changes.push({ defectId, field: 'description', oldValue: defect.description || '', newValue: newDescription, timestamp: now, site: defect.site_name });
             }
+            if (String(defect.tenant_id || '') !== String(newTenantId)) {
+                changes.push({ defectId, field: 'tenant', oldValue: defect.tenant_name || '(Station-wide)', newValue: newTenantName || '(Station-wide)', timestamp: now, site: defect.site_name });
+            }
 
             // Apply changes
             defect.category = newCategory;
@@ -7693,6 +8011,8 @@ Fire Safety Compliance Team`
             defect.progress = newProgress;
             defect.area = newArea;
             defect.description = newDescription;
+            defect.tenant_id = newTenantId || '';
+            defect.tenant_name = newTenantName || '';
             if (newDate) defect.audit_date = newDate;
 
             // Log changes
@@ -7734,37 +8054,46 @@ Fire Safety Compliance Team`
 
         function recalcTenantDefectCounts(siteName) {
             const siteDefects = (state.defects || []).filter(d => d.site_name === siteName);
-            // Update all tenants at this station
+            // Update all tenants at this station - per-tenant counts include tenant-specific + station-wide defects
             (state.tenants || []).forEach(t => {
                 if (t.station === siteName) {
-                    const tDefects = siteDefects; // Station-level defects
+                    // Tenant-specific defects (assigned to this tenant) + station-wide defects (no tenant_id)
+                    const tDefects = siteDefects.filter(d => String(d.tenant_id) === String(t.id) || !d.tenant_id);
+                    // Also track only tenant-own defects for individual reporting
+                    const ownDefects = siteDefects.filter(d => String(d.tenant_id) === String(t.id));
                     t.defectsOpen = tDefects.filter(d => d.progress !== 'Completed').length;
                     t.defectsClosed = tDefects.filter(d => d.progress === 'Completed').length;
                     t.defectsTotal = tDefects.length;
                     t.defectsMajor = tDefects.filter(d => d.risk === 'Major' && d.progress !== 'Completed').length;
                     t.defectsMedium = tDefects.filter(d => d.risk === 'Medium' && d.progress !== 'Completed').length;
                     t.defectsMinor = tDefects.filter(d => d.risk === 'Minor' && d.progress !== 'Completed').length;
+                    // Individual tenant defect counts (own defects only, for per-tenancy reporting)
+                    t.defectsOwnOpen = ownDefects.filter(d => d.progress !== 'Completed').length;
+                    t.defectsOwnClosed = ownDefects.filter(d => d.progress === 'Completed').length;
+                    t.defectsOwnTotal = ownDefects.length;
                 }
             });
-            // Update station counts
+            // Update station counts (all defects at the station)
             (state.stations || []).forEach(s => {
                 if (s.name === siteName) {
-                    const sDefects = siteDefects;
-                    s.defectsOpen = sDefects.filter(d => d.progress !== 'Completed').length;
-                    s.defectsClosed = sDefects.filter(d => d.progress === 'Completed').length;
-                    s.defectsMajor = sDefects.filter(d => d.risk === 'Major' && d.progress !== 'Completed').length;
+                    s.defectsOpen = siteDefects.filter(d => d.progress !== 'Completed').length;
+                    s.defectsClosed = siteDefects.filter(d => d.progress === 'Completed').length;
+                    s.defectsMajor = siteDefects.filter(d => d.risk === 'Major' && d.progress !== 'Completed').length;
                 }
             });
         }
 
         function addDefectToTenant() {
             if (!state.currentTenant) return;
-            const siteName = state.currentTenant.station;
+            const tenant = state.currentTenant;
+            const siteName = tenant.station;
             ensureDefectIds();
             const maxId = Math.max(0, ...(state.defects || []).map(d => d.id || 0));
             const newDefect = {
                 id: maxId + 1,
                 site_name: siteName,
+                tenant_id: tenant.id,
+                tenant_name: tenant.tenantName || '',
                 category: 'General Compliance',
                 risk: 'Minor',
                 progress: 'Outstanding',
@@ -7784,7 +8113,7 @@ Fire Safety Compliance Team`
 
             if (!state.defectAuditLog) state.defectAuditLog = [];
             state.defectAuditLog.push({
-                defectId: newDefect.id, field: 'created', oldValue: '', newValue: `New defect at ${siteName}`,
+                defectId: newDefect.id, field: 'created', oldValue: '', newValue: `New defect for ${tenant.tenantName} at ${siteName}`,
                 timestamp: new Date().toISOString(), site: siteName
             });
 
@@ -7844,23 +8173,51 @@ Fire Safety Compliance Team`
 
         function renderTenantDefectsList() {
             if (!state.currentTenant) return;
-            const siteName = state.currentTenant.station;
-            const defects = (state.defects || []).filter(d => d.site_name === siteName);
+            const tenant = state.currentTenant;
+            const siteName = tenant.station;
+            const allSiteDefects = (state.defects || []).filter(d => d.site_name === siteName);
+            // Tenant-specific defects (assigned to this tenant)
+            const tenantDefects = allSiteDefects.filter(d => String(d.tenant_id) === String(tenant.id));
+            // Station-wide defects (not assigned to any tenant)
+            const stationDefects = allSiteDefects.filter(d => !d.tenant_id);
             const tbody = document.getElementById('modal-defects-list');
             if (!tbody) return;
-            if (defects.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px">No defects recorded</td></tr>';
+
+            let html = '';
+            if (tenantDefects.length === 0 && stationDefects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px">No defects recorded for this tenancy</td></tr>';
                 return;
             }
-            tbody.innerHTML = defects.map(d => `
-                <tr>
-                    <td style="font-size:12px">${escapeHtml(d.category)}</td>
-                    <td><span class="badge badge-${d.risk === 'Major' ? 'critical' : d.risk === 'Medium' ? 'high' : 'medium'}">${escapeHtml(d.risk)}</span></td>
-                    <td><span class="badge badge-${d.progress === 'Completed' ? 'success' : d.progress === 'In Progress' ? 'info' : 'high'}">${escapeHtml(d.progress)}</span></td>
-                    <td style="font-size:12px">${escapeHtml(d.area) || '-'}</td>
-                    <td><button class="defect-edit-btn" onclick="openDefectEdit(${d.id})">Edit</button></td>
-                </tr>
-            `).join('');
+
+            // Show tenant-specific defects first
+            if (tenantDefects.length > 0) {
+                html += '<tr><td colspan="5" style="background:var(--bg);font-weight:600;font-size:11px;color:var(--primary);padding:6px 12px;text-transform:uppercase;letter-spacing:0.5px">Tenant-Specific Defects (' + tenantDefects.length + ')</td></tr>';
+                html += tenantDefects.map(d => `
+                    <tr>
+                        <td style="font-size:12px">${escapeHtml(d.category)}</td>
+                        <td><span class="badge badge-${d.risk === 'Major' ? 'critical' : d.risk === 'Medium' ? 'high' : 'medium'}">${escapeHtml(d.risk)}</span></td>
+                        <td><span class="badge badge-${d.progress === 'Completed' ? 'success' : d.progress === 'In Progress' ? 'info' : 'high'}">${escapeHtml(d.progress)}</span></td>
+                        <td style="font-size:12px">${escapeHtml(d.area) || '-'}</td>
+                        <td><button class="defect-edit-btn" onclick="openDefectEdit(${d.id})">Edit</button></td>
+                    </tr>
+                `).join('');
+            }
+
+            // Show station-wide defects
+            if (stationDefects.length > 0) {
+                html += '<tr><td colspan="5" style="background:var(--bg);font-weight:600;font-size:11px;color:var(--text-muted);padding:6px 12px;text-transform:uppercase;letter-spacing:0.5px">Station-Wide Defects (' + stationDefects.length + ')</td></tr>';
+                html += stationDefects.map(d => `
+                    <tr style="opacity:0.8">
+                        <td style="font-size:12px">${escapeHtml(d.category)}</td>
+                        <td><span class="badge badge-${d.risk === 'Major' ? 'critical' : d.risk === 'Medium' ? 'high' : 'medium'}">${escapeHtml(d.risk)}</span></td>
+                        <td><span class="badge badge-${d.progress === 'Completed' ? 'success' : d.progress === 'In Progress' ? 'info' : 'high'}">${escapeHtml(d.progress)}</span></td>
+                        <td style="font-size:12px">${escapeHtml(d.area) || '-'}</td>
+                        <td><button class="defect-edit-btn" onclick="openDefectEdit(${d.id})">Edit</button></td>
+                    </tr>
+                `).join('');
+            }
+
+            tbody.innerHTML = html;
         }
 
         function renderStationDefectsList() {
