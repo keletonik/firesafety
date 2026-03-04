@@ -2699,352 +2699,606 @@
                 </div>
             </div>
 
+            <!-- Tenant Detail Page -->
+            <div class="page" id="page-tenant-detail">
+                <div class="page-header">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <button class="btn btn-ghost btn-sm" onclick="closeModal()" style="padding:6px 10px">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                            Back
+                        </button>
+                        <div>
+                            <h2 class="page-title" id="modal-tenant-name">Tenant Details</h2>
+                            <p class="page-subtitle">View and manage tenant fire safety compliance</p>
+                        </div>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-success btn-sm" onclick="emailCurrentTenant()" id="modal-email-btn" style="display:none">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            Email Tenant
+                        </button>
+                        <button class="btn btn-primary" onclick="saveTenant()">Save Changes</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="tabs" id="tenant-detail-tabs">
+                            <div class="tab active" data-tab="details">Details</div>
+                            <div class="tab" data-tab="identifiers">Identifiers</div>
+                            <div class="tab" data-tab="compliance">Compliance</div>
+                            <div class="tab" data-tab="fsm">Fire Safety</div>
+                            <div class="tab" data-tab="defects">Defects</div>
+                            <div class="tab" data-tab="documents">Documents</div>
+                            <div class="tab" data-tab="notes">Notes</div>
+                        </div>
+
+                        <!-- Details Tab -->
+                        <div class="tab-content active" id="tab-details">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Tenant Name</label>
+                                    <input type="text" class="form-input" id="modal-name" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Trading Name</label>
+                                    <input type="text" class="form-input" id="modal-trading-name" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Station</label>
+                                    <input type="text" class="form-input" id="modal-station" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Property Manager</label>
+                                    <input type="text" class="form-input" id="modal-pm" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Contact Name</label>
+                                    <input type="text" class="form-input" id="modal-contact-name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Contact Mobile</label>
+                                    <input type="text" class="form-input" id="modal-contact-mobile">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Contact Email</label>
+                                <input type="text" class="form-input" id="modal-contact-email">
+                            </div>
+                        </div>
+
+                        <!-- Identifiers Tab -->
+                        <div class="tab-content" id="tab-identifiers">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Lease ID</label>
+                                    <input type="text" class="form-input" id="modal-lease-id" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">File Number</label>
+                                    <input type="text" class="form-input" id="modal-file-number" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Agreement Number</label>
+                                    <input type="text" class="form-input" id="modal-agreement-number" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Previous File Number</label>
+                                    <input type="text" class="form-input" id="modal-prev-file-number" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Region</label>
+                                    <input type="text" class="form-input" id="modal-region" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Zone</label>
+                                    <input type="text" class="form-input" id="modal-zone" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Council</label>
+                                    <input type="text" class="form-input" id="modal-council" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Industry Class</label>
+                                    <input type="text" class="form-input" id="modal-industry" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Lease Start</label>
+                                    <input type="text" class="form-input" id="modal-lease-start" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Lease Expiry</label>
+                                    <input type="text" class="form-input" id="modal-lease-expiry" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Compliance Tab -->
+                        <div class="tab-content" id="tab-compliance">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Priority</label>
+                                    <select class="form-select" id="modal-priority">
+                                        <option value="Critical">Critical</option>
+                                        <option value="High">High</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="Low">Low</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">FSC Status</label>
+                                    <select class="form-select" id="modal-fsc-status">
+                                        <option value="Outstanding">Outstanding</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Received">Received</option>
+                                        <option value="Compliant">Compliant</option>
+                                        <option value="Not Applicable">Not Applicable</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Fire Safety Schedule (FSS)</label>
+                                    <select class="form-select" id="modal-has-fss">
+                                        <option value="unknown">Not Assessed</option>
+                                        <option value="yes">Has FSS</option>
+                                        <option value="no">No FSS</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">AFSS Month</label>
+                                    <select class="form-select" id="modal-afss-month">
+                                        <option value="">Not Set</option>
+                                        <option value="January">January</option><option value="February">February</option><option value="March">March</option>
+                                        <option value="April">April</option><option value="May">May</option><option value="June">June</option>
+                                        <option value="July">July</option><option value="August">August</option><option value="September">September</option>
+                                        <option value="October">October</option><option value="November">November</option><option value="December">December</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">FSC Due Month</label>
+                                    <select class="form-select" id="modal-fsc-due">
+                                        <option value="">Not Set</option>
+                                        <option value="January">January</option><option value="February">February</option><option value="March">March</option>
+                                        <option value="April">April</option><option value="May">May</option><option value="June">June</option>
+                                        <option value="July">July</option><option value="August">August</option><option value="September">September</option>
+                                        <option value="October">October</option><option value="November">November</option><option value="December">December</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Compliance Status</label>
+                                    <select class="form-select" id="modal-compliance-status">
+                                        <option value="Not Started">Not Started</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Compliant">Compliant</option>
+                                        <option value="Non-Compliant">Non-Compliant</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">FSC Requested Date</label>
+                                    <input type="date" class="form-input" id="modal-fsc-requested">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">FSC Received Date</label>
+                                    <input type="date" class="form-input" id="modal-fsc-received">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fire Safety Measures Tab -->
+                        <div class="tab-content" id="tab-fsm">
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Record the status of each applicable fire safety measure for this tenancy as per the EP&amp;A Regulation 2021 (NSW).</p>
+                            <div class="form-row-3">
+                                <div class="form-group">
+                                    <label class="form-label">Fire Detection &amp; Alarm</label>
+                                    <select class="form-select" id="modal-fsm-detection">
+                                        <option value="">Not Assessed</option>
+                                        <option value="Compliant">Compliant</option>
+                                        <option value="Non-Compliant">Non-Compliant</option>
+                                        <option value="Not Applicable">N/A</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Sprinkler System</label>
+                                    <select class="form-select" id="modal-fsm-sprinklers">
+                                        <option value="">Not Assessed</option>
+                                        <option value="Compliant">Compliant</option>
+                                        <option value="Non-Compliant">Non-Compliant</option>
+                                        <option value="Not Applicable">N/A</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Emergency Lighting</label>
+                                    <select class="form-select" id="modal-fsm-lighting">
+                                        <option value="">Not Assessed</option>
+                                        <option value="Compliant">Compliant</option>
+                                        <option value="Non-Compliant">Non-Compliant</option>
+                                        <option value="Not Applicable">N/A</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Exit Signs</label>
+                                    <select class="form-select" id="modal-fsm-exits">
+                                        <option value="">Not Assessed</option>
+                                        <option value="Compliant">Compliant</option>
+                                        <option value="Non-Compliant">Non-Compliant</option>
+                                        <option value="Not Applicable">N/A</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Portable Extinguishers</label>
+                                    <select class="form-select" id="modal-fsm-extinguishers">
+                                        <option value="">Not Assessed</option>
+                                        <option value="Compliant">Compliant</option>
+                                        <option value="Non-Compliant">Non-Compliant</option>
+                                        <option value="Not Applicable">N/A</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Fire Doors</label>
+                                    <select class="form-select" id="modal-fsm-doors">
+                                        <option value="">Not Assessed</option>
+                                        <option value="Compliant">Compliant</option>
+                                        <option value="Non-Compliant">Non-Compliant</option>
+                                        <option value="Not Applicable">N/A</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Hydrants</label>
+                                    <select class="form-select" id="modal-fsm-hydrants">
+                                        <option value="">Not Assessed</option>
+                                        <option value="Compliant">Compliant</option>
+                                        <option value="Non-Compliant">Non-Compliant</option>
+                                        <option value="Not Applicable">N/A</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Hose Reels</label>
+                                    <select class="form-select" id="modal-fsm-hosereels">
+                                        <option value="">Not Assessed</option>
+                                        <option value="Compliant">Compliant</option>
+                                        <option value="Non-Compliant">Non-Compliant</option>
+                                        <option value="Not Applicable">N/A</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Passive Fire</label>
+                                    <select class="form-select" id="modal-fsm-passive">
+                                        <option value="">Not Assessed</option>
+                                        <option value="Compliant">Compliant</option>
+                                        <option value="Non-Compliant">Non-Compliant</option>
+                                        <option value="Not Applicable">N/A</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Defects Tab -->
+                        <div class="tab-content" id="tab-defects">
+                            <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
+                                <div class="stat-card critical" style="padding:12px 16px">
+                                    <div class="stat-value" style="font-size:22px" id="modal-defects-own-open">0</div>
+                                    <div class="stat-label">Tenant Defects</div>
+                                </div>
+                                <div class="stat-card high" style="padding:12px 16px">
+                                    <div class="stat-value" style="font-size:22px" id="modal-defects-open">0</div>
+                                    <div class="stat-label">Total Open</div>
+                                </div>
+                                <div class="stat-card high" style="padding:12px 16px">
+                                    <div class="stat-value" style="font-size:22px" id="modal-defects-major">0</div>
+                                    <div class="stat-label">Major</div>
+                                </div>
+                                <div class="stat-card success" style="padding:12px 16px">
+                                    <div class="stat-value" style="font-size:22px" id="modal-defects-closed">0</div>
+                                    <div class="stat-label">Closed</div>
+                                </div>
+                            </div>
+                            <h4 style="font-size:13px;font-weight:600;margin-bottom:10px">Individual Defects for this Tenancy</h4>
+                            <div class="table-container" style="max-height:400px;overflow-y:auto;margin-bottom:16px">
+                                <table>
+                                    <thead><tr><th>Category</th><th>Risk</th><th>Progress</th><th>Area</th><th style="width:50px"></th></tr></thead>
+                                    <tbody id="modal-defects-list"></tbody>
+                                </table>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="addDefectToTenant()" style="margin-bottom:16px">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                Add Defect
+                            </button>
+                            <div class="form-group">
+                                <label class="form-label">Outstanding Items / Rectification Notes</label>
+                                <textarea class="form-textarea" id="modal-outstanding" placeholder="Document outstanding items and rectification requirements..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Documents Tab -->
+                        <div class="tab-content" id="tab-documents">
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Attach and manage fire safety documentation for this tenancy. Files are stored in your browser's local storage.</p>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Document Type</label>
+                                    <select class="form-select" id="modal-doc-type">
+                                        <option value="fss">Fire Safety Schedule (FSS)</option>
+                                        <option value="afss">Annual Fire Safety Statement (AFSS)</option>
+                                        <option value="fsc">Fire Safety Certificate (FSC)</option>
+                                        <option value="inspection">Inspection Certificate</option>
+                                        <option value="maintenance">Maintenance Report</option>
+                                        <option value="defect-report">Defect Report</option>
+                                        <option value="insurance">Insurance Certificate</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Document Date</label>
+                                    <input type="date" class="form-input" id="modal-doc-date">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">File</label>
+                                <input type="file" class="form-input" id="modal-doc-file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="attachDocument()">Attach Document</button>
+                            <div id="modal-doc-list" style="margin-top:16px"></div>
+                        </div>
+
+                        <!-- Notes Tab -->
+                        <div class="tab-content" id="tab-notes">
+                            <div class="form-group">
+                                <label class="form-label">Notes &amp; Timeline</label>
+                                <textarea class="form-textarea" id="modal-notes" placeholder="Enter notes, inspection observations, communications..." style="min-height:160px"></textarea>
+                            </div>
+                            <div id="modal-tenant-timeline" style="margin-top:16px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Station Detail Page -->
+            <div class="page" id="page-station-detail">
+                <div class="page-header">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <button class="btn btn-ghost btn-sm" onclick="closeStationModal()" style="padding:6px 10px">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                            Back
+                        </button>
+                        <div>
+                            <h2 class="page-title" id="stn-modal-name">Station Details</h2>
+                            <p class="page-subtitle">View and manage station fire safety compliance</p>
+                        </div>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-primary" onclick="saveStation()">Save Changes</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="tabs" id="station-detail-tabs">
+                            <div class="tab active" data-tab="stn-overview" data-modal="station-detail">Overview</div>
+                            <div class="tab" data-tab="stn-compliance" data-modal="station-detail">Compliance</div>
+                            <div class="tab" data-tab="stn-fsm" data-modal="station-detail">Fire Safety</div>
+                            <div class="tab" data-tab="stn-defects" data-modal="station-detail">Defects</div>
+                            <div class="tab" data-tab="stn-documents" data-modal="station-detail">Documents</div>
+                            <div class="tab" data-tab="stn-notes" data-modal="station-detail">Notes</div>
+                        </div>
+
+                        <!-- Overview Tab -->
+                        <div class="tab-content active" id="tab-stn-overview">
+                            <div class="stats-grid" id="stn-modal-stats" style="margin-bottom:16px"></div>
+                            <h4 style="font-size:14px;font-weight:600;margin-bottom:12px">Tenancies at this Station</h4>
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Tenant</th>
+                                            <th>Trading Name</th>
+                                            <th>Priority</th>
+                                            <th>FSC Status</th>
+                                            <th>Defects</th>
+                                            <th>FSS</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stn-modal-tenants"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Compliance / AFSS Tab -->
+                        <div class="tab-content" id="tab-stn-compliance">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">AFSS Month</label>
+                                    <select class="form-select" id="stn-modal-afss-month">
+                                        <option value="">Not Set</option>
+                                        <option value="January">January</option><option value="February">February</option><option value="March">March</option>
+                                        <option value="April">April</option><option value="May">May</option><option value="June">June</option>
+                                        <option value="July">July</option><option value="August">August</option><option value="September">September</option>
+                                        <option value="October">October</option><option value="November">November</option><option value="December">December</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">FSC Due Month</label>
+                                    <select class="form-select" id="stn-modal-fsc-due">
+                                        <option value="">Not Set</option>
+                                        <option value="January">January</option><option value="February">February</option><option value="March">March</option>
+                                        <option value="April">April</option><option value="May">May</option><option value="June">June</option>
+                                        <option value="July">July</option><option value="August">August</option><option value="September">September</option>
+                                        <option value="October">October</option><option value="November">November</option><option value="December">December</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">AFSS Status</label>
+                                    <select class="form-select" id="stn-modal-afss-status">
+                                        <option value="">Pending</option>
+                                        <option value="Submitted">Submitted</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Overall Compliance</label>
+                                    <select class="form-select" id="stn-modal-compliance">
+                                        <option value="Not Started">Not Started</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Compliant">Compliant</option>
+                                        <option value="Non-Compliant">Non-Compliant</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Inspection Date</label>
+                                    <input type="date" class="form-input" id="stn-modal-last-inspection">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Next Inspection Due</label>
+                                    <input type="date" class="form-input" id="stn-modal-next-inspection">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fire Safety Measures Tab -->
+                        <div class="tab-content" id="tab-stn-fsm">
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Record the status of each fire safety measure for this station as per the EP&amp;A Regulation 2021 (NSW).</p>
+                            <div class="form-row-3">
+                                <div class="form-group">
+                                    <label class="form-label">Fire Detection &amp; Alarm</label>
+                                    <select class="form-select" id="stn-fsm-detection"><option value="">Not Assessed</option><option value="Compliant">Compliant</option><option value="Non-Compliant">Non-Compliant</option><option value="Not Applicable">N/A</option></select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Sprinkler System</label>
+                                    <select class="form-select" id="stn-fsm-sprinklers"><option value="">Not Assessed</option><option value="Compliant">Compliant</option><option value="Non-Compliant">Non-Compliant</option><option value="Not Applicable">N/A</option></select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Emergency Lighting</label>
+                                    <select class="form-select" id="stn-fsm-lighting"><option value="">Not Assessed</option><option value="Compliant">Compliant</option><option value="Non-Compliant">Non-Compliant</option><option value="Not Applicable">N/A</option></select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Exit Signs</label>
+                                    <select class="form-select" id="stn-fsm-exits"><option value="">Not Assessed</option><option value="Compliant">Compliant</option><option value="Non-Compliant">Non-Compliant</option><option value="Not Applicable">N/A</option></select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Portable Extinguishers</label>
+                                    <select class="form-select" id="stn-fsm-extinguishers"><option value="">Not Assessed</option><option value="Compliant">Compliant</option><option value="Non-Compliant">Non-Compliant</option><option value="Not Applicable">N/A</option></select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Fire Doors</label>
+                                    <select class="form-select" id="stn-fsm-doors"><option value="">Not Assessed</option><option value="Compliant">Compliant</option><option value="Non-Compliant">Non-Compliant</option><option value="Not Applicable">N/A</option></select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Hydrants</label>
+                                    <select class="form-select" id="stn-fsm-hydrants"><option value="">Not Assessed</option><option value="Compliant">Compliant</option><option value="Non-Compliant">Non-Compliant</option><option value="Not Applicable">N/A</option></select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Hose Reels</label>
+                                    <select class="form-select" id="stn-fsm-hosereels"><option value="">Not Assessed</option><option value="Compliant">Compliant</option><option value="Non-Compliant">Non-Compliant</option><option value="Not Applicable">N/A</option></select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Passive Fire</label>
+                                    <select class="form-select" id="stn-fsm-passive"><option value="">Not Assessed</option><option value="Compliant">Compliant</option><option value="Non-Compliant">Non-Compliant</option><option value="Not Applicable">N/A</option></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Defects Tab -->
+                        <div class="tab-content" id="tab-stn-defects">
+                            <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
+                                <div class="stat-card critical" style="padding:12px 16px">
+                                    <div class="stat-value" style="font-size:22px" id="stn-modal-defects-open">0</div>
+                                    <div class="stat-label">Open Defects</div>
+                                </div>
+                                <div class="stat-card high" style="padding:12px 16px">
+                                    <div class="stat-value" style="font-size:22px" id="stn-modal-defects-major">0</div>
+                                    <div class="stat-label">Major</div>
+                                </div>
+                                <div class="stat-card success" style="padding:12px 16px">
+                                    <div class="stat-value" style="font-size:22px" id="stn-modal-defects-closed">0</div>
+                                    <div class="stat-label">Closed</div>
+                                </div>
+                            </div>
+                            <h4 style="font-size:13px;font-weight:600;margin-bottom:10px">Defects at this Station</h4>
+                            <div class="table-container" style="max-height:400px;overflow-y:auto;margin-bottom:16px">
+                                <table>
+                                    <thead><tr><th>Category</th><th>Risk</th><th>Progress</th><th>Area</th><th style="width:50px"></th></tr></thead>
+                                    <tbody id="stn-modal-defects-list"></tbody>
+                                </table>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="addDefectToStation()" style="margin-bottom:16px">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                Add Defect
+                            </button>
+                            <div class="form-group">
+                                <label class="form-label">Outstanding Items / Rectification Notes</label>
+                                <textarea class="form-textarea" id="stn-modal-outstanding" placeholder="Document station-level outstanding items and rectification requirements..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Documents Tab -->
+                        <div class="tab-content" id="tab-stn-documents">
+                            <div style="background:linear-gradient(135deg,#FFF3E8,#FFF8F0);border:2px solid var(--fyre);border-radius:var(--radius-lg);padding:20px;margin-bottom:20px">
+                                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--fyre)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg>
+                                    <div>
+                                        <h4 style="font-size:14px;font-weight:700;color:var(--fyre);margin:0">AFSS AI Scanner</h4>
+                                        <p style="font-size:11px;color:var(--text-muted);margin:0">Upload an AFSS PDF and the AI will automatically detect fire safety measures and update the station and all tenancies</p>
+                                    </div>
+                                </div>
+                                <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+                                    <div class="form-group" style="flex:1;min-width:200px;margin-bottom:0">
+                                        <label class="form-label" style="font-size:11px">Select AFSS PDF</label>
+                                        <input type="file" class="form-input" id="stn-afss-upload" accept=".pdf" style="font-size:12px">
+                                    </div>
+                                    <button class="btn btn-sm" id="stn-afss-scan-btn" onclick="scanAfssPdf()" style="background:var(--fyre);color:#fff;padding:8px 18px;font-weight:600;white-space:nowrap">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                        Scan &amp; Detect
+                                    </button>
+                                </div>
+                                <div id="stn-afss-progress" style="display:none;margin-top:12px">
+                                    <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)">
+                                        <div class="spinner" style="width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--fyre);border-radius:50%;animation:spin 0.8s linear infinite"></div>
+                                        <span id="stn-afss-progress-text">Reading PDF...</span>
+                                    </div>
+                                </div>
+                                <div id="stn-afss-results" style="display:none;margin-top:16px"></div>
+                            </div>
+                            <h4 style="font-size:13px;font-weight:600;margin-bottom:10px;padding-top:4px;border-top:1px solid var(--border)">Document Management</h4>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Attach and manage fire safety documentation for this station.</p>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Document Type</label>
+                                    <select class="form-select" id="stn-doc-type">
+                                        <option value="fss">Fire Safety Schedule (FSS)</option>
+                                        <option value="afss">Annual Fire Safety Statement (AFSS)</option>
+                                        <option value="fsc">Fire Safety Certificate (FSC)</option>
+                                        <option value="inspection">Inspection Certificate</option>
+                                        <option value="maintenance">Maintenance Report</option>
+                                        <option value="defect-report">Defect Report</option>
+                                        <option value="insurance">Insurance Certificate</option>
+                                        <option value="essential-services">Essential Services Report</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Document Date</label>
+                                    <input type="date" class="form-input" id="stn-doc-date">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">File</label>
+                                <input type="file" class="form-input" id="stn-doc-file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="attachStationDocument()">Attach Document</button>
+                            <div id="stn-doc-list" style="margin-top:16px"></div>
+                        </div>
+
+                        <!-- Notes Tab -->
+                        <div class="tab-content" id="tab-stn-notes">
+                            <div class="form-group">
+                                <label class="form-label">Station Notes &amp; Timeline</label>
+                                <textarea class="form-textarea" id="stn-modal-notes" placeholder="Enter station notes, inspection observations, communications..." style="min-height:160px"></textarea>
+                            </div>
+                            <div id="stn-modal-timeline" style="margin-top:16px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
-
-    <!-- Tenant Detail Modal -->
-    <div class="modal-overlay" id="tenant-modal" role="dialog" aria-modal="true" aria-labelledby="modal-tenant-name">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modal-tenant-name">Tenant Details</h3>
-                <button class="modal-close" onclick="closeModal()" aria-label="Close modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="tabs">
-                    <div class="tab active" data-tab="details">Details</div>
-                    <div class="tab" data-tab="identifiers">Identifiers</div>
-                    <div class="tab" data-tab="compliance">Compliance</div>
-                    <div class="tab" data-tab="fsm">Fire Safety</div>
-                    <div class="tab" data-tab="defects">Defects</div>
-                    <div class="tab" data-tab="documents">Documents</div>
-                    <div class="tab" data-tab="notes">Notes</div>
-                </div>
-
-                <!-- Details Tab -->
-                <div class="tab-content active" id="tab-details">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Tenant Name</label>
-                            <input type="text" class="form-input" id="modal-name" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Trading Name</label>
-                            <input type="text" class="form-input" id="modal-trading-name" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Station</label>
-                            <input type="text" class="form-input" id="modal-station" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Property Manager</label>
-                            <input type="text" class="form-input" id="modal-pm" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Contact Name</label>
-                            <input type="text" class="form-input" id="modal-contact-name">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Contact Mobile</label>
-                            <input type="text" class="form-input" id="modal-contact-mobile">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Contact Email</label>
-                        <input type="text" class="form-input" id="modal-contact-email">
-                    </div>
-                </div>
-
-                <!-- Identifiers Tab -->
-                <div class="tab-content" id="tab-identifiers">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Lease ID</label>
-                            <input type="text" class="form-input" id="modal-lease-id" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">File Number</label>
-                            <input type="text" class="form-input" id="modal-file-number" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Agreement Number</label>
-                            <input type="text" class="form-input" id="modal-agreement-number" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Previous File Number</label>
-                            <input type="text" class="form-input" id="modal-prev-file-number" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Region</label>
-                            <input type="text" class="form-input" id="modal-region" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Zone</label>
-                            <input type="text" class="form-input" id="modal-zone" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Council</label>
-                            <input type="text" class="form-input" id="modal-council" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Industry Class</label>
-                            <input type="text" class="form-input" id="modal-industry" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Lease Start</label>
-                            <input type="text" class="form-input" id="modal-lease-start" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Lease Expiry</label>
-                            <input type="text" class="form-input" id="modal-lease-expiry" readonly>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Compliance Tab -->
-                <div class="tab-content" id="tab-compliance">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Priority</label>
-                            <select class="form-select" id="modal-priority">
-                                <option value="Critical">Critical</option>
-                                <option value="High">High</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Low">Low</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">FSC Status</label>
-                            <select class="form-select" id="modal-fsc-status">
-                                <option value="Outstanding">Outstanding</option>
-                                <option value="Pending">Pending</option>
-                                <option value="Received">Received</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Not Applicable">Not Applicable</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Fire Safety Schedule (FSS)</label>
-                            <select class="form-select" id="modal-has-fss">
-                                <option value="unknown">Not Assessed</option>
-                                <option value="yes">Has FSS</option>
-                                <option value="no">No FSS</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">AFSS Month</label>
-                            <select class="form-select" id="modal-afss-month">
-                                <option value="">Not Set</option>
-                                <option value="January">January</option><option value="February">February</option><option value="March">March</option>
-                                <option value="April">April</option><option value="May">May</option><option value="June">June</option>
-                                <option value="July">July</option><option value="August">August</option><option value="September">September</option>
-                                <option value="October">October</option><option value="November">November</option><option value="December">December</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">FSC Due Month</label>
-                            <select class="form-select" id="modal-fsc-due">
-                                <option value="">Not Set</option>
-                                <option value="January">January</option><option value="February">February</option><option value="March">March</option>
-                                <option value="April">April</option><option value="May">May</option><option value="June">June</option>
-                                <option value="July">July</option><option value="August">August</option><option value="September">September</option>
-                                <option value="October">October</option><option value="November">November</option><option value="December">December</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Compliance Status</label>
-                            <select class="form-select" id="modal-compliance-status">
-                                <option value="Not Started">Not Started</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">FSC Requested Date</label>
-                            <input type="date" class="form-input" id="modal-fsc-requested">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">FSC Received Date</label>
-                            <input type="date" class="form-input" id="modal-fsc-received">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Fire Safety Measures Tab -->
-                <div class="tab-content" id="tab-fsm">
-                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Record the status of each applicable fire safety measure for this tenancy as per the EP&amp;A Regulation 2021 (NSW).</p>
-                    <div class="form-row-3">
-                        <div class="form-group">
-                            <label class="form-label">Fire Detection &amp; Alarm</label>
-                            <select class="form-select" id="modal-fsm-detection">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Sprinkler System</label>
-                            <select class="form-select" id="modal-fsm-sprinklers">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Emergency Lighting</label>
-                            <select class="form-select" id="modal-fsm-lighting">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Exit Signs</label>
-                            <select class="form-select" id="modal-fsm-exits">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Portable Extinguishers</label>
-                            <select class="form-select" id="modal-fsm-extinguishers">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Fire Doors</label>
-                            <select class="form-select" id="modal-fsm-doors">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Hydrants</label>
-                            <select class="form-select" id="modal-fsm-hydrants">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Hose Reels</label>
-                            <select class="form-select" id="modal-fsm-hosereels">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Passive Fire</label>
-                            <select class="form-select" id="modal-fsm-passive">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Defects Tab -->
-                <div class="tab-content" id="tab-defects">
-                    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
-                        <div class="stat-card critical" style="padding:12px 16px">
-                            <div class="stat-value" style="font-size:22px" id="modal-defects-own-open">0</div>
-                            <div class="stat-label">Tenant Defects</div>
-                        </div>
-                        <div class="stat-card high" style="padding:12px 16px">
-                            <div class="stat-value" style="font-size:22px" id="modal-defects-open">0</div>
-                            <div class="stat-label">Total Open</div>
-                        </div>
-                        <div class="stat-card high" style="padding:12px 16px">
-                            <div class="stat-value" style="font-size:22px" id="modal-defects-major">0</div>
-                            <div class="stat-label">Major</div>
-                        </div>
-                        <div class="stat-card success" style="padding:12px 16px">
-                            <div class="stat-value" style="font-size:22px" id="modal-defects-closed">0</div>
-                            <div class="stat-label">Closed</div>
-                        </div>
-                    </div>
-                    <h4 style="font-size:13px;font-weight:600;margin-bottom:10px">Individual Defects for this Tenancy</h4>
-                    <div class="table-container" style="max-height:250px;overflow-y:auto;margin-bottom:16px">
-                        <table>
-                            <thead><tr><th>Category</th><th>Risk</th><th>Progress</th><th>Area</th><th style="width:50px"></th></tr></thead>
-                            <tbody id="modal-defects-list"></tbody>
-                        </table>
-                    </div>
-                    <button class="btn btn-primary btn-sm" onclick="addDefectToTenant()" style="margin-bottom:16px">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        Add Defect
-                    </button>
-                    <div class="form-group">
-                        <label class="form-label">Outstanding Items / Rectification Notes</label>
-                        <textarea class="form-textarea" id="modal-outstanding" placeholder="Document outstanding items and rectification requirements..."></textarea>
-                    </div>
-                </div>
-
-                <!-- Documents Tab -->
-                <div class="tab-content" id="tab-documents">
-                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Attach and manage fire safety documentation for this tenancy. Files are stored in your browser's local storage.</p>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Document Type</label>
-                            <select class="form-select" id="modal-doc-type">
-                                <option value="fss">Fire Safety Schedule (FSS)</option>
-                                <option value="afss">Annual Fire Safety Statement (AFSS)</option>
-                                <option value="fsc">Fire Safety Certificate (FSC)</option>
-                                <option value="inspection">Inspection Certificate</option>
-                                <option value="maintenance">Maintenance Report</option>
-                                <option value="defect-report">Defect Report</option>
-                                <option value="insurance">Insurance Certificate</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Document Date</label>
-                            <input type="date" class="form-input" id="modal-doc-date">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">File</label>
-                        <input type="file" class="form-input" id="modal-doc-file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
-                    </div>
-                    <button class="btn btn-primary btn-sm" onclick="attachDocument()">Attach Document</button>
-                    <div id="modal-doc-list" style="margin-top:16px"></div>
-                </div>
-
-                <!-- Notes Tab -->
-                <div class="tab-content" id="tab-notes">
-                    <div class="form-group">
-                        <label class="form-label">Notes &amp; Timeline</label>
-                        <textarea class="form-textarea" id="modal-notes" placeholder="Enter notes, inspection observations, communications..." style="min-height:160px"></textarea>
-                    </div>
-                    <div id="modal-tenant-timeline" style="margin-top:16px"></div>
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-success btn-sm" onclick="emailCurrentTenant()" id="modal-email-btn" style="display:none">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                    Email Tenant
-                </button>
-                <button class="btn btn-primary" onclick="saveTenant()">Save Changes</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Email Compose Modal -->
     <div class="modal-overlay" id="compose-modal">
@@ -3069,11 +3323,12 @@
                 <div style="padding:8px 0;margin-bottom:8px">
                     <label style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;display:block;margin-bottom:8px">Templates</label>
                     <div style="display:flex;gap:6px;flex-wrap:wrap">
-                        <span class="template-chip" onclick="applyTemplate('fsc-request')">FSC Request</span>
-                        <span class="template-chip" onclick="applyTemplate('fsc-followup')">FSC Follow-up</span>
-                        <span class="template-chip" onclick="applyTemplate('defect-notice')">Defect Notice</span>
-                        <span class="template-chip" onclick="applyTemplate('afss-reminder')">AFSS Reminder</span>
-                        <span class="template-chip" onclick="applyTemplate('general')">General</span>
+                        <span class="template-chip" onclick="applyTemplate('afss-tenant-request', state._composeEmailTenant)">AFSS Tenant Request</span>
+                        <span class="template-chip" onclick="applyTemplate('fsc-request', state._composeEmailTenant)">FSC Request</span>
+                        <span class="template-chip" onclick="applyTemplate('fsc-followup', state._composeEmailTenant)">FSC Follow-up</span>
+                        <span class="template-chip" onclick="applyTemplate('defect-notice', state._composeEmailTenant)">Defect Notice</span>
+                        <span class="template-chip" onclick="applyTemplate('afss-reminder', state._composeEmailTenant)">AFSS Reminder</span>
+                        <span class="template-chip" onclick="applyTemplate('general', state._composeEmailTenant)">General</span>
                     </div>
                 </div>
                 <textarea class="compose-editor" id="compose-body" placeholder="Write your email..."></textarea>
@@ -3195,293 +3450,7 @@
         </div>
     </div>
 
-    <!-- Station Detail Modal -->
-    <div class="modal-overlay" id="station-modal" role="dialog" aria-modal="true" aria-labelledby="stn-modal-name">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title" id="stn-modal-name">Station Details</h3>
-                <button class="modal-close" onclick="closeStationModal()" aria-label="Close modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="tabs">
-                    <div class="tab active" data-tab="stn-overview" data-modal="station-modal">Overview</div>
-                    <div class="tab" data-tab="stn-compliance" data-modal="station-modal">Compliance</div>
-                    <div class="tab" data-tab="stn-fsm" data-modal="station-modal">Fire Safety</div>
-                    <div class="tab" data-tab="stn-defects" data-modal="station-modal">Defects</div>
-                    <div class="tab" data-tab="stn-documents" data-modal="station-modal">Documents</div>
-                    <div class="tab" data-tab="stn-notes" data-modal="station-modal">Notes</div>
-                </div>
-
-                <!-- Overview Tab -->
-                <div class="tab-content active" id="tab-stn-overview">
-                    <div class="stats-grid" id="stn-modal-stats" style="margin-bottom:16px"></div>
-                    <h4 style="font-size:14px;font-weight:600;margin-bottom:12px">Tenancies at this Station</h4>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Tenant</th>
-                                    <th>Trading Name</th>
-                                    <th>Priority</th>
-                                    <th>FSC Status</th>
-                                    <th>Defects</th>
-                                    <th>FSS</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="stn-modal-tenants"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Compliance / AFSS Tab -->
-                <div class="tab-content" id="tab-stn-compliance">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">AFSS Month</label>
-                            <select class="form-select" id="stn-modal-afss-month">
-                                <option value="">Not Set</option>
-                                <option value="January">January</option><option value="February">February</option><option value="March">March</option>
-                                <option value="April">April</option><option value="May">May</option><option value="June">June</option>
-                                <option value="July">July</option><option value="August">August</option><option value="September">September</option>
-                                <option value="October">October</option><option value="November">November</option><option value="December">December</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">FSC Due Month</label>
-                            <select class="form-select" id="stn-modal-fsc-due">
-                                <option value="">Not Set</option>
-                                <option value="January">January</option><option value="February">February</option><option value="March">March</option>
-                                <option value="April">April</option><option value="May">May</option><option value="June">June</option>
-                                <option value="July">July</option><option value="August">August</option><option value="September">September</option>
-                                <option value="October">October</option><option value="November">November</option><option value="December">December</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">AFSS Status</label>
-                            <select class="form-select" id="stn-modal-afss-status">
-                                <option value="">Pending</option>
-                                <option value="Submitted">Submitted</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Overall Compliance</label>
-                            <select class="form-select" id="stn-modal-compliance">
-                                <option value="Not Started">Not Started</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Last Inspection Date</label>
-                            <input type="date" class="form-input" id="stn-modal-last-inspection">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Next Inspection Due</label>
-                            <input type="date" class="form-input" id="stn-modal-next-inspection">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Fire Safety Measures Tab -->
-                <div class="tab-content" id="tab-stn-fsm">
-                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Record the status of each fire safety measure for this station as per the EP&amp;A Regulation 2021 (NSW).</p>
-                    <div class="form-row-3">
-                        <div class="form-group">
-                            <label class="form-label">Fire Detection &amp; Alarm</label>
-                            <select class="form-select" id="stn-fsm-detection">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Sprinkler System</label>
-                            <select class="form-select" id="stn-fsm-sprinklers">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Emergency Lighting</label>
-                            <select class="form-select" id="stn-fsm-lighting">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Exit Signs</label>
-                            <select class="form-select" id="stn-fsm-exits">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Portable Extinguishers</label>
-                            <select class="form-select" id="stn-fsm-extinguishers">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Fire Doors</label>
-                            <select class="form-select" id="stn-fsm-doors">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Hydrants</label>
-                            <select class="form-select" id="stn-fsm-hydrants">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Hose Reels</label>
-                            <select class="form-select" id="stn-fsm-hosereels">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Passive Fire</label>
-                            <select class="form-select" id="stn-fsm-passive">
-                                <option value="">Not Assessed</option>
-                                <option value="Compliant">Compliant</option>
-                                <option value="Non-Compliant">Non-Compliant</option>
-                                <option value="Not Applicable">N/A</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Defects Tab -->
-                <div class="tab-content" id="tab-stn-defects">
-                    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
-                        <div class="stat-card critical" style="padding:12px 16px">
-                            <div class="stat-value" style="font-size:22px" id="stn-modal-defects-open">0</div>
-                            <div class="stat-label">Open Defects</div>
-                        </div>
-                        <div class="stat-card high" style="padding:12px 16px">
-                            <div class="stat-value" style="font-size:22px" id="stn-modal-defects-major">0</div>
-                            <div class="stat-label">Major</div>
-                        </div>
-                        <div class="stat-card success" style="padding:12px 16px">
-                            <div class="stat-value" style="font-size:22px" id="stn-modal-defects-closed">0</div>
-                            <div class="stat-label">Closed</div>
-                        </div>
-                    </div>
-                    <h4 style="font-size:13px;font-weight:600;margin-bottom:10px">Defects at this Station</h4>
-                    <div class="table-container" style="max-height:250px;overflow-y:auto;margin-bottom:16px">
-                        <table>
-                            <thead><tr><th>Category</th><th>Risk</th><th>Progress</th><th>Area</th><th style="width:50px"></th></tr></thead>
-                            <tbody id="stn-modal-defects-list"></tbody>
-                        </table>
-                    </div>
-                    <button class="btn btn-primary btn-sm" onclick="addDefectToStation()" style="margin-bottom:16px">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        Add Defect
-                    </button>
-                    <div class="form-group">
-                        <label class="form-label">Outstanding Items / Rectification Notes</label>
-                        <textarea class="form-textarea" id="stn-modal-outstanding" placeholder="Document station-level outstanding items and rectification requirements..."></textarea>
-                    </div>
-                </div>
-
-                <!-- Documents Tab -->
-                <div class="tab-content" id="tab-stn-documents">
-                    <!-- AFSS PDF Upload & AI Scanner -->
-                    <div style="background:linear-gradient(135deg,#FFF3E8,#FFF8F0);border:2px solid var(--fyre);border-radius:var(--radius-lg);padding:20px;margin-bottom:20px">
-                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--fyre)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg>
-                            <div>
-                                <h4 style="font-size:14px;font-weight:700;color:var(--fyre);margin:0">AFSS AI Scanner</h4>
-                                <p style="font-size:11px;color:var(--text-muted);margin:0">Upload an AFSS PDF and the AI will automatically detect fire safety measures and update the station and all tenancies</p>
-                            </div>
-                        </div>
-                        <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
-                            <div class="form-group" style="flex:1;min-width:200px;margin-bottom:0">
-                                <label class="form-label" style="font-size:11px">Select AFSS PDF</label>
-                                <input type="file" class="form-input" id="stn-afss-upload" accept=".pdf" style="font-size:12px">
-                            </div>
-                            <button class="btn btn-sm" id="stn-afss-scan-btn" onclick="scanAfssPdf()" style="background:var(--fyre);color:#fff;padding:8px 18px;font-weight:600;white-space:nowrap">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                                Scan &amp; Detect
-                            </button>
-                        </div>
-                        <div id="stn-afss-progress" style="display:none;margin-top:12px">
-                            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)">
-                                <div class="spinner" style="width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--fyre);border-radius:50%;animation:spin 0.8s linear infinite"></div>
-                                <span id="stn-afss-progress-text">Reading PDF...</span>
-                            </div>
-                        </div>
-                        <div id="stn-afss-results" style="display:none;margin-top:16px"></div>
-                    </div>
-
-                    <!-- Standard Document Management -->
-                    <h4 style="font-size:13px;font-weight:600;margin-bottom:10px;padding-top:4px;border-top:1px solid var(--border)">Document Management</h4>
-                    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Attach and manage fire safety documentation for this station.</p>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Document Type</label>
-                            <select class="form-select" id="stn-doc-type">
-                                <option value="fss">Fire Safety Schedule (FSS)</option>
-                                <option value="afss">Annual Fire Safety Statement (AFSS)</option>
-                                <option value="fsc">Fire Safety Certificate (FSC)</option>
-                                <option value="inspection">Inspection Certificate</option>
-                                <option value="maintenance">Maintenance Report</option>
-                                <option value="defect-report">Defect Report</option>
-                                <option value="insurance">Insurance Certificate</option>
-                                <option value="essential-services">Essential Services Report</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Document Date</label>
-                            <input type="date" class="form-input" id="stn-doc-date">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">File</label>
-                        <input type="file" class="form-input" id="stn-doc-file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
-                    </div>
-                    <button class="btn btn-primary btn-sm" onclick="attachStationDocument()">Attach Document</button>
-                    <div id="stn-doc-list" style="margin-top:16px"></div>
-                </div>
-
-                <!-- Notes Tab -->
-                <div class="tab-content" id="tab-stn-notes">
-                    <div class="form-group">
-                        <label class="form-label">Station Notes</label>
-                        <textarea class="form-textarea" id="stn-modal-notes" placeholder="Enter station notes, inspection observations, communications..." style="min-height:160px"></textarea>
-                    </div>
-                    <div id="stn-modal-timeline" style="margin-top:16px"></div>
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeStationModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveStation()">Save Changes</button>
-            </div>
-        </div>
-    </div>
+    <!-- Station Detail Modal (removed - now a full page inside page-container) -->
 
     <script>
         // Embedded Data
@@ -3705,7 +3674,7 @@
                     const tabId = tab.dataset.tab;
                     tabGroup.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
-                    const parentModal = tab.closest('.modal-body') || tab.closest('.page-container') || document;
+                    const parentModal = tab.closest('.modal-body') || tab.closest('.card-body') || tab.closest('.page-container') || document;
                     parentModal.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                     const target = document.getElementById('tab-' + tabId);
                     if (target) target.classList.add('active');
@@ -3729,10 +3698,8 @@
                 });
             });
 
-            // Close modal on overlay click
-            document.getElementById('tenant-modal').addEventListener('click', e => {
-                if (e.target === document.getElementById('tenant-modal')) closeModal();
-            });
+            // Tenant detail page tabs (re-bind for dynamic content)
+            // (overlay click no longer needed - now a full page)
 
         }
 
@@ -4053,7 +4020,7 @@
                     <td><span class="badge badge-${getBadgeClass(t.fscStatus)}">${escapeHtml(t.fscStatus)}</span></td>
                     <td>${t.defectsOpen || 0}</td>
                     <td><span class="fss-indicator"><span class="fss-dot ${t.hasFSS === 'yes' ? 'has-fss' : t.hasFSS === 'no' ? 'no-fss' : ''}" style="${t.hasFSS === 'unknown' ? 'background:var(--text-light)' : ''}"></span>${t.hasFSS === 'yes' ? 'Yes' : t.hasFSS === 'no' ? 'No' : '-'}</span></td>
-                    <td><button class="btn btn-ghost btn-sm" onclick="closeStationModal();openTenant(${t.id})">View</button></td>
+                    <td><button class="btn btn-ghost btn-sm" onclick="openTenant(${t.id})">View</button></td>
                 </tr>
             `).join('');
 
@@ -4095,11 +4062,15 @@
             renderStationDefectsList();
 
             // Reset to first tab
-            document.querySelectorAll('#station-modal .tab').forEach((t, i) => t.classList.toggle('active', i === 0));
-            document.querySelectorAll('#station-modal .tab-content').forEach((c, i) => c.classList.toggle('active', i === 0));
+            document.querySelectorAll('#page-station-detail .tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+            document.querySelectorAll('#page-station-detail .tab-content').forEach((c, i) => c.classList.toggle('active', i === 0));
 
-            document.getElementById('station-modal').classList.add('show');
-            document.body.style.overflow = 'hidden';
+            // Navigate to station detail page
+            state._previousPage = document.querySelector('.page.active')?.id?.replace('page-', '') || 'stations';
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-station-detail').classList.add('active');
+            document.getElementById('breadcrumb-page').textContent = stationName;
+            window.scrollTo(0, 0);
         }
 
         function closeStationDetail() {
@@ -4107,8 +4078,9 @@
         }
 
         function closeStationModal() {
-            document.getElementById('station-modal').classList.remove('show');
-            document.body.style.overflow = '';
+            // Navigate back to previous page
+            const prevPage = state._previousPage || 'stations';
+            navigateTo(prevPage);
             state.currentStation = null;
         }
 
@@ -5336,8 +5308,8 @@
             renderTenantDefectsList();
 
             // Reset to first tab
-            document.querySelectorAll('#tenant-modal .tab').forEach((t, i) => t.classList.toggle('active', i === 0));
-            document.querySelectorAll('#tenant-modal .tab-content').forEach((c, i) => c.classList.toggle('active', i === 0));
+            document.querySelectorAll('#page-tenant-detail .tab').forEach((t, i) => t.classList.toggle('active', i === 0));
+            document.querySelectorAll('#page-tenant-detail .tab-content').forEach((c, i) => c.classList.toggle('active', i === 0));
 
             // Show/hide email button based on contact email
             const emailBtn = document.getElementById('modal-email-btn');
@@ -5345,14 +5317,20 @@
                 emailBtn.style.display = (tenant.contactEmail && tenant.contactEmail.trim()) ? 'inline-flex' : 'none';
             }
 
-            document.getElementById('tenant-modal').classList.add('show');
-            document.body.style.overflow = 'hidden';
+            // Navigate to tenant detail page
+            state._previousPage = document.querySelector('.page.active')?.id?.replace('page-', '') || 'tenants';
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-tenant-detail').classList.add('active');
+            document.getElementById('breadcrumb-page').textContent = tenant.tenantName || 'Tenant Details';
+            window.scrollTo(0, 0);
         }
 
         function emailCurrentTenant() {
             if (!state.currentTenant || !state.currentTenant.contactEmail) return;
-            closeModal();
-            openComposeEmailTo(state.currentTenant.contactEmail, state.currentTenant.tenantName);
+            const tenant = state.currentTenant;
+            openComposeEmailTo(tenant.contactEmail, tenant.tenantName);
+            // Auto-apply the AFSS request template with tenant details
+            applyTemplate('afss-tenant-request', tenant);
         }
 
         function renderTenantDocuments(tenantId) {
@@ -5445,8 +5423,9 @@
         }
 
         function closeModal() {
-            document.getElementById('tenant-modal').classList.remove('show');
-            document.body.style.overflow = '';
+            // Navigate back to previous page
+            const prevPage = state._previousPage || 'tenants';
+            navigateTo(prevPage);
             state.currentTenant = null;
         }
 
@@ -6094,6 +6073,9 @@
             openComposeEmail();
             document.getElementById('compose-to').value = email;
             document.getElementById('compose-subject').value = 'Fire Safety Compliance - ' + (tenantName || '');
+            // Store the current tenant context for template use
+            const matchedTenant = (state.tenants || []).find(t => t.contactEmail === email);
+            state._composeEmailTenant = matchedTenant || state.currentTenant || null;
         }
 
         function closeCompose() {
@@ -6101,17 +6083,51 @@
             document.body.style.overflow = '';
         }
 
-        function applyTemplate(templateType) {
+        function applyTemplate(templateType, tenant) {
             const to = document.getElementById('compose-to').value;
             const subjectEl = document.getElementById('compose-subject');
             const bodyEl = document.getElementById('compose-body');
 
-            const templates = {
-                'fsc-request': {
-                    subject: 'Fire Safety Certificate (FSC) Request - Action Required',
-                    body: `Dear Tenant,
+            // Helper to get tenant greeting name
+            const tenantGreeting = tenant ? (tenant.contactName || 'Tenant') : 'Tenant';
+            const tenantName = tenant ? (tenant.tenantName || '') : '';
+            const tradingName = tenant ? (tenant.tradingName || '') : '';
+            const stationName = tenant ? (tenant.station || '') : '';
+            const leaseId = tenant ? (tenant.leaseId || '') : '';
 
-I am writing to you regarding the fire safety compliance requirements for your tenancy at Sydney Trains.
+            // Calculate a due date (16th of next month from today)
+            const today = new Date();
+            const dueDate = new Date(today.getFullYear(), today.getMonth() + 1, 16);
+            const dueDateStr = dueDate.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            const templates = {
+                'afss-tenant-request': {
+                    subject: 'Fire Safety Compliance - Annual Fire Safety Statement - ' + (tenantName || tradingName || ''),
+                    body: `Dear ${tenantGreeting},
+
+We are writing to remind you of your fire safety compliance obligations under your tenancy agreement${stationName ? ' at ' + stationName : ''}${leaseId ? ' (Lease: ' + leaseId + ')' : ''}.
+
+As part of the building's Annual Fire Safety Statement process, all tenants are required to provide current fire safety documentation for their premises. This means you need to supply a valid Fire Safety Certificate issued by an accredited fire safety practitioner, confirming that all essential fire safety measures within your tenancy have been inspected and maintained to the relevant Australian Standards.
+
+Your tenancy agreement requires you to maintain fire safety compliance at your own cost and to provide this documentation when requested. This is not optional. It exists to ensure the safety of everyone in the building and to meet statutory requirements under the Environmental Planning and Assessment Regulation 2021.
+
+Please provide your current Annual Fire Safety Statement pertaining to your tenancy by the ${dueDateStr}. The certificate must cover all fire safety equipment within your tenancy, including fire extinguishers, emergency lighting, exit signage, smoke detectors, and any other applicable systems.
+
+If you do not currently hold a valid certificate, you will need to engage a licensed fire safety contractor to inspect and certify your premises. We are unable to recommend specific contractors; however any accredited practitioner registered with the Fire Protection Association Australia will be able to assist you.
+
+Please be aware that failure to provide the required documentation by the specified date may constitute a breach of your tenancy agreement. Please note that if these works are not completed within the specified timeframe, the landlord reserves the right under the lease terms to arrange for the works to be carried out at the tenant's expense. Should non-compliance continue, we may need to take additional steps as outlined in your lease agreement, which could include issuing formal notices and pursuing other available remedies.
+
+We appreciate your prompt attention to this matter. If you have any questions or need clarification on your obligations, please contact me directly.
+
+Kind regards,
+FYRECOMP | JLL - Sydney Trains TAM
+Fire Safety Compliance Team`
+                },
+                'fsc-request': {
+                    subject: 'Fire Safety Certificate (FSC) Request - Action Required' + (tenantName ? ' - ' + tenantName : ''),
+                    body: `Dear ${tenantGreeting},
+
+I am writing to you regarding the fire safety compliance requirements for your tenancy${stationName ? ' at ' + stationName : ''}.
 
 As part of our Annual Fire Safety Statement (AFSS) obligations under the Environmental Planning and Assessment Act 1979 (NSW), we require you to provide a current Fire Safety Certificate (FSC) for your premises.
 
@@ -6129,10 +6145,10 @@ FYRECOMP | JLL - Sydney Trains TAM
 Fire Safety Compliance Team`
                 },
                 'fsc-followup': {
-                    subject: 'URGENT: Fire Safety Certificate Follow-up - Outstanding',
-                    body: `Dear Tenant,
+                    subject: 'URGENT: Fire Safety Certificate Follow-up - Outstanding' + (tenantName ? ' - ' + tenantName : ''),
+                    body: `Dear ${tenantGreeting},
 
-This is a follow-up regarding our previous request for your Fire Safety Certificate (FSC).
+This is a follow-up regarding our previous request for your Fire Safety Certificate (FSC)${stationName ? ' for your tenancy at ' + stationName : ''}.
 
 Our records indicate that we have not yet received the required FSC documentation for your tenancy. This matter is now overdue and requires your immediate attention.
 
@@ -6150,10 +6166,10 @@ FYRECOMP | JLL - Sydney Trains TAM
 Fire Safety Compliance Team`
                 },
                 'defect-notice': {
-                    subject: 'Fire Safety Defect Notice - Rectification Required',
-                    body: `Dear Tenant,
+                    subject: 'Fire Safety Defect Notice - Rectification Required' + (tenantName ? ' - ' + tenantName : ''),
+                    body: `Dear ${tenantGreeting},
 
-Following a recent fire safety inspection of your tenancy, the following defect(s) have been identified that require rectification:
+Following a recent fire safety inspection of your tenancy${stationName ? ' at ' + stationName : ''}, the following defect(s) have been identified that require rectification:
 
 [DEFECT DETAILS - Please update before sending]
 
@@ -6166,10 +6182,10 @@ FYRECOMP | JLL - Sydney Trains TAM
 Fire Safety Compliance Team`
                 },
                 'afss-reminder': {
-                    subject: 'Annual Fire Safety Statement (AFSS) - Upcoming Due Date',
-                    body: `Dear Tenant,
+                    subject: 'Annual Fire Safety Statement (AFSS) - Upcoming Due Date' + (tenantName ? ' - ' + tenantName : ''),
+                    body: `Dear ${tenantGreeting},
 
-This is a reminder that the Annual Fire Safety Statement (AFSS) for your building is due for submission.
+This is a reminder that the Annual Fire Safety Statement (AFSS) for your building${stationName ? ' at ' + stationName : ''} is due for submission.
 
 To ensure timely submission, please ensure the following are in order:
 - All essential fire safety measures have been inspected and maintained
@@ -6183,8 +6199,8 @@ FYRECOMP | JLL - Sydney Trains TAM
 Fire Safety Compliance Team`
                 },
                 'general': {
-                    subject: 'Fire Safety Compliance - ',
-                    body: `Dear Tenant,
+                    subject: 'Fire Safety Compliance - ' + (tenantName || ''),
+                    body: `Dear ${tenantGreeting},
 
 [Your message here]
 
@@ -7844,8 +7860,12 @@ Fire Safety Compliance Team`
                     closeCompose();
                     return;
                 }
-                if (document.getElementById('tenant-modal').classList.contains('show')) {
+                if (document.getElementById('page-tenant-detail')?.classList.contains('active')) {
                     closeModal();
+                    return;
+                }
+                if (document.getElementById('page-station-detail')?.classList.contains('active')) {
+                    closeStationModal();
                     return;
                 }
             }
