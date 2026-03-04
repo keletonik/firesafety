@@ -790,116 +790,160 @@
         .audit-log-item .audit-old { color: var(--danger); text-decoration: line-through; }
         .audit-log-item .audit-new { color: var(--success); font-weight: 500; }
 
-        /* End of Month Report Page */
-        .eom-report-container { background: var(--card-bg); border-radius: var(--radius-lg); overflow: hidden; }
-        .eom-header {
-            background: linear-gradient(135deg, #1a2332 0%, #0d1521 100%);
-            color: #fff; padding: 32px; position: relative; overflow: hidden;
-        }
-        .eom-header::before {
-            content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 100%;
-            background: linear-gradient(135deg, rgba(78,145,223,0.15) 0%, transparent 100%);
-        }
-        .eom-header h2 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
-        .eom-header p { font-size: 13px; opacity: 0.7; }
-        .eom-body { padding: 24px; }
+        /* End of Month Report Page - PowerPoint Presentation Style */
+        #page-eom-report { background: #0b1120; padding: 0 !important; }
+        #page-eom-report .page-header { padding: 20px 28px; background: #0b1120; }
+        #page-eom-report .page-title { color: #fff; }
+        #page-eom-report .page-subtitle { color: #64748b; }
 
-        /* EOM KPI Row */
-        .eom-kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .eom-kpi-card {
-            background: linear-gradient(135deg, #1a2332 0%, #243447 100%);
-            border-radius: var(--radius); padding: 20px; color: #fff; text-align: center;
-            position: relative; overflow: hidden;
+        /* Slide Container */
+        .slide-nav { display: flex; gap: 8px; padding: 0 28px 16px; background: #0b1120; }
+        .slide-nav-btn {
+            padding: 8px 20px; border-radius: 6px; font-size: 12px; font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
+            background: transparent; color: #94a3b8; transition: all 0.15s;
+            text-transform: uppercase; letter-spacing: 0.06em;
         }
-        .eom-kpi-card::after {
-            content: ''; position: absolute; top: 0; right: 0; width: 60px; height: 60px;
-            background: rgba(78,145,223,0.1); border-radius: 0 0 0 60px;
-        }
-        .eom-kpi-card .kpi-value { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
-        .eom-kpi-card .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.7; }
-        .eom-kpi-card .kpi-delta {
-            display: inline-flex; align-items: center; gap: 4px; font-size: 11px;
-            margin-top: 6px; padding: 2px 8px; border-radius: 10px;
-        }
-        .eom-kpi-card .kpi-delta.positive { background: rgba(34,197,94,0.2); color: #4ade80; }
-        .eom-kpi-card .kpi-delta.negative { background: rgba(239,68,68,0.2); color: #f87171; }
-        .eom-kpi-card .kpi-delta.neutral { background: rgba(148,163,184,0.2); color: #94a3b8; }
-        .eom-kpi-card.accent-blue .kpi-value { color: #60a5fa; }
-        .eom-kpi-card.accent-green .kpi-value { color: #4ade80; }
-        .eom-kpi-card.accent-orange .kpi-value { color: #fb923c; }
-        .eom-kpi-card.accent-red .kpi-value { color: #f87171; }
-        .eom-kpi-card.accent-purple .kpi-value { color: #a78bfa; }
+        .slide-nav-btn.active { background: #4e91df; color: #fff; border-color: #4e91df; }
+        .slide-nav-btn:hover:not(.active) { border-color: #4e91df; color: #4e91df; }
 
-        /* EOM Section */
-        .eom-section {
-            background: var(--card-bg); border: 1px solid var(--border);
-            border-radius: var(--radius); margin-bottom: 20px; overflow: hidden;
-        }
-        .eom-section-header {
-            background: linear-gradient(135deg, #1a2332 0%, #243447 100%);
-            color: #fff; padding: 14px 20px; font-size: 14px; font-weight: 600;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .eom-section-body { padding: 20px; }
-        .eom-section-body .chart-container { height: 280px; }
+        .slide-container { padding: 0 28px 28px; }
+        .slide { display: none; }
+        .slide.active { display: block; }
 
-        /* EOM Table */
-        .eom-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        .eom-table th {
-            background: linear-gradient(135deg, #1a2332 0%, #243447 100%);
-            color: #fff; padding: 10px 12px; text-align: left; font-weight: 600; font-size: 11px;
+        /* Presentation Slide */
+        .ppt-slide {
+            background: linear-gradient(180deg, #101b2e 0%, #0d1521 100%);
+            border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .ppt-slide-header {
+            padding: 28px 32px 20px;
+            border-bottom: 2px solid #4e91df;
+        }
+        .ppt-slide-header h2 {
+            font-size: 22px; font-weight: 800; color: #fff;
             text-transform: uppercase; letter-spacing: 0.04em;
         }
-        .eom-table td { padding: 8px 12px; border-bottom: 1px solid var(--border-light); }
-        .eom-table tr:nth-child(even) { background: var(--bg); }
-
-        /* EOM Text Block */
-        .eom-text-block {
-            border: 1px dashed var(--border); border-radius: var(--radius);
-            padding: 16px; min-height: 100px; position: relative; margin-bottom: 16px;
+        .ppt-slide-header p {
+            font-size: 12px; color: #4e91df; margin-top: 4px;
+            font-weight: 500; letter-spacing: 0.02em;
         }
-        .eom-text-block textarea {
+        .ppt-slide-body { padding: 24px 32px 32px; }
+
+        /* PPT Charts Grid */
+        .ppt-charts-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+        .ppt-charts-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+        .ppt-chart-box {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px; padding: 16px; position: relative;
+        }
+        .ppt-chart-box .chart-label {
+            font-size: 11px; font-weight: 600; color: #4e91df;
+            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px;
+        }
+        .ppt-chart-box .chart-container { height: 220px; }
+
+        /* PPT KPI Cards */
+        .ppt-kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .ppt-kpi-card {
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px; padding: 20px; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .ppt-kpi-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+        }
+        .ppt-kpi-card.blue::before { background: #4e91df; }
+        .ppt-kpi-card.green::before { background: #22c55e; }
+        .ppt-kpi-card.red::before { background: #ef4444; }
+        .ppt-kpi-card.orange::before { background: #f59e0b; }
+        .ppt-kpi-card .kpi-value {
+            font-size: 32px; font-weight: 800; margin-bottom: 4px;
+        }
+        .ppt-kpi-card.blue .kpi-value { color: #4e91df; }
+        .ppt-kpi-card.green .kpi-value { color: #22c55e; }
+        .ppt-kpi-card.red .kpi-value { color: #ef4444; }
+        .ppt-kpi-card.orange .kpi-value { color: #f59e0b; }
+        .ppt-kpi-card .kpi-label {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+            color: #64748b; font-weight: 600;
+        }
+        .ppt-kpi-card .kpi-delta {
+            display: inline-flex; align-items: center; gap: 4px; font-size: 11px;
+            margin-top: 8px; padding: 2px 10px; border-radius: 10px;
+        }
+        .ppt-kpi-card .kpi-delta.positive { background: rgba(34,197,94,0.15); color: #4ade80; }
+        .ppt-kpi-card .kpi-delta.negative { background: rgba(239,68,68,0.15); color: #f87171; }
+        .ppt-kpi-card .kpi-delta.neutral { background: rgba(148,163,184,0.1); color: #64748b; }
+
+        /* PPT Table */
+        .ppt-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .ppt-table th {
+            background: #1a2d47; color: #94c4f5; padding: 10px 14px;
+            text-align: left; font-weight: 600; font-size: 11px;
+            text-transform: uppercase; letter-spacing: 0.04em;
+            border-bottom: 2px solid #4e91df;
+        }
+        .ppt-table td {
+            padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: #cbd5e1;
+        }
+        .ppt-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+        .ppt-table tr:hover { background: rgba(78,145,223,0.06); }
+
+        /* PPT Section Header */
+        .ppt-section-title {
+            font-size: 13px; font-weight: 700; color: #4e91df;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            margin-bottom: 12px; padding-bottom: 8px;
+            border-bottom: 1px solid rgba(78,145,223,0.2);
+        }
+
+        /* PPT Text Block */
+        .ppt-text-block {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px; padding: 16px; margin-bottom: 16px; position: relative;
+        }
+        .ppt-text-block textarea {
             width: 100%; min-height: 80px; border: none; background: transparent;
-            font-family: inherit; font-size: 13px; color: var(--text); resize: vertical; outline: none;
+            font-family: inherit; font-size: 13px; color: #e2e8f0; resize: vertical; outline: none;
         }
-        .eom-text-block .text-block-label {
-            position: absolute; top: -10px; left: 12px; background: var(--card-bg);
-            padding: 0 6px; font-size: 10px; color: var(--text-muted); text-transform: uppercase;
-            font-weight: 600; letter-spacing: 0.04em;
+        .ppt-text-block textarea::placeholder { color: #475569; }
+        .ppt-text-block .text-block-label {
+            position: absolute; top: -10px; left: 12px; background: #101b2e;
+            padding: 0 8px; font-size: 10px; color: #4e91df; text-transform: uppercase;
+            font-weight: 700; letter-spacing: 0.06em;
         }
 
-        /* EOM Insert Toolbar */
-        .eom-insert-toolbar {
-            display: flex; gap: 8px; padding: 12px 0; flex-wrap: wrap; margin-bottom: 16px;
-        }
-        .eom-insert-btn {
+        /* PPT Insert Toolbar */
+        .ppt-insert-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+        .ppt-insert-btn {
             display: inline-flex; align-items: center; gap: 6px;
-            padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px;
-            background: var(--card-bg); font-size: 12px; cursor: pointer;
-            color: var(--text-muted); transition: all 0.15s ease;
+            padding: 6px 14px; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+            background: transparent; font-size: 12px; cursor: pointer;
+            color: #64748b; transition: all 0.15s ease;
         }
-        .eom-insert-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-bg); }
-        .eom-insert-btn svg { width: 14px; height: 14px; }
+        .ppt-insert-btn:hover { border-color: #4e91df; color: #4e91df; }
+        .ppt-insert-btn svg { width: 14px; height: 14px; }
 
-        /* Monthly Snapshot Selector */
-        .month-selector {
-            display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px;
-        }
+        /* Month Selector - dark theme */
+        .month-selector { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
         .month-selector .month-chip {
             padding: 6px 14px; border-radius: 20px; font-size: 12px;
-            border: 1px solid var(--border); cursor: pointer; transition: all 0.15s;
-            background: var(--card-bg); color: var(--text-muted);
+            border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all 0.15s;
+            background: transparent; color: #64748b;
         }
-        .month-selector .month-chip.active { background: #1a2332; color: #fff; border-color: #1a2332; }
-        .month-selector .month-chip:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+        .month-selector .month-chip.active { background: #4e91df; color: #fff; border-color: #4e91df; }
+        .month-selector .month-chip:hover:not(.active) { border-color: #4e91df; color: #4e91df; }
 
-        /* Defect trend sparkline */
+        /* Trend Indicator */
         .trend-indicator {
             display: inline-flex; align-items: center; gap: 4px;
             font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;
         }
-        .trend-indicator.down { background: rgba(34,197,94,0.1); color: #059669; }
-        .trend-indicator.up { background: rgba(239,68,68,0.1); color: #dc2626; }
+        .trend-indicator.down { background: rgba(34,197,94,0.15); color: #4ade80; }
+        .trend-indicator.up { background: rgba(239,68,68,0.15); color: #f87171; }
         .trend-indicator.flat { background: rgba(148,163,184,0.1); color: #64748b; }
 
         /* Report Cards */
@@ -2461,19 +2505,19 @@
                     </div>
                 </div>
             </div>
-            <!-- End of Month Report Page -->
+            <!-- End of Month Report Page - PowerPoint Presentation Style -->
             <div class="page" id="page-eom-report">
                 <div class="page-header">
                     <div>
                         <h2 class="page-title">End of Month Report</h2>
-                        <p class="page-subtitle">Monthly fire compliance reporting with visual analytics</p>
+                        <p class="page-subtitle">Monthly fire compliance presentation</p>
                     </div>
                     <div class="page-actions">
-                        <button class="btn btn-secondary btn-sm" onclick="takeMonthlySnapshot()">
+                        <button class="btn btn-secondary btn-sm" onclick="takeMonthlySnapshot()" style="border-color:rgba(255,255,255,0.15);color:#94a3b8;background:transparent">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                             Take Snapshot
                         </button>
-                        <button class="btn btn-primary btn-sm" onclick="exportEomReport()">
+                        <button class="btn btn-primary btn-sm" onclick="exportEomReport()" style="background:#4e91df;border-color:#4e91df">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                             Export PDF
                         </button>
@@ -2481,172 +2525,176 @@
                 </div>
 
                 <!-- Month Selector -->
-                <div class="card" style="margin-bottom:20px">
-                    <div class="card-body" style="padding:14px 20px">
-                        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-                            <span style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase">Report Period:</span>
-                            <div class="month-selector" id="eom-month-selector" style="margin-bottom:0"></div>
-                        </div>
-                    </div>
+                <div style="padding:0 28px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                    <span style="font-size:10px;font-weight:700;color:#4e91df;text-transform:uppercase;letter-spacing:0.08em">Period:</span>
+                    <div class="month-selector" id="eom-month-selector" style="margin-bottom:0"></div>
                 </div>
 
-                <!-- EOM Report Content -->
-                <div class="eom-report-container" id="eom-report-content">
-                    <!-- Header -->
-                    <div class="eom-header">
-                        <h2 id="eom-report-title">Fire Compliance Monthly Report</h2>
-                        <p id="eom-report-subtitle">JLL - Sydney Trains TAM Portfolio</p>
+                <!-- Slide Navigation -->
+                <div class="slide-nav">
+                    <button class="slide-nav-btn active" onclick="switchSlide(0, this)">Fire Compliance</button>
+                    <button class="slide-nav-btn" onclick="switchSlide(1, this)">Defect Closure Trend</button>
+                    <button class="slide-nav-btn" onclick="switchSlide(2, this)">Compliance Tracking</button>
+                    <button class="slide-nav-btn" onclick="switchSlide(3, this)">Commentary &amp; Notes</button>
+                </div>
+
+                <div class="slide-container">
+
+                    <!-- SLIDE 1: Fire Compliance -->
+                    <div class="slide active" id="eom-slide-0">
+                        <div class="ppt-slide">
+                            <div class="ppt-slide-header">
+                                <h2 id="eom-report-title">FIRE COMPLIANCE</h2>
+                                <p>AFSS Submissions &bull; Rectification Progress &bull; Findings per Year</p>
+                            </div>
+                            <div class="ppt-slide-body">
+                                <!-- 3 Charts Row -->
+                                <div class="ppt-charts-row">
+                                    <div class="ppt-chart-box">
+                                        <div class="chart-label">AFSS Submissions by Month</div>
+                                        <div class="chart-container"><canvas id="eom-afss-bar-chart"></canvas></div>
+                                    </div>
+                                    <div class="ppt-chart-box">
+                                        <div class="chart-label">Rectification Progress</div>
+                                        <div class="chart-container"><canvas id="eom-rectification-chart"></canvas></div>
+                                    </div>
+                                    <div class="ppt-chart-box">
+                                        <div class="chart-label">Findings per Year</div>
+                                        <div class="chart-container"><canvas id="eom-findings-year-chart"></canvas></div>
+                                    </div>
+                                </div>
+
+                                <!-- Current Findings Table -->
+                                <div class="ppt-section-title">CURRENT FINDINGS</div>
+                                <div style="overflow-x:auto">
+                                    <table class="ppt-table" id="eom-findings-table">
+                                        <thead><tr><th>Station</th><th>Total</th><th>Major</th><th>Medium</th><th>Minor</th><th>Outstanding</th><th>Completed</th><th>Progress</th></tr></thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="eom-body">
 
-                        <!-- KPI Cards Row -->
-                        <div class="eom-kpi-row" id="eom-kpi-row"></div>
-
-                        <!-- Charts Row -->
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
-                            <div class="eom-section">
-                                <div class="eom-section-header">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
-                                    AFSS Submissions - Rectification Progress
-                                </div>
-                                <div class="eom-section-body">
-                                    <div class="chart-container"><canvas id="eom-rectification-chart"></canvas></div>
-                                </div>
+                    <!-- SLIDE 2: Defect Closure Trend Analysis -->
+                    <div class="slide" id="eom-slide-1">
+                        <div class="ppt-slide">
+                            <div class="ppt-slide-header">
+                                <h2>DEFECT CLOSURE TREND ANALYSIS</h2>
+                                <p>Monthly Performance &bull; Raised vs Completed &bull; Financial Year Breakdown</p>
                             </div>
-                            <div class="eom-section">
-                                <div class="eom-section-header">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                                    Defect Closure Trend
+                            <div class="ppt-slide-body">
+                                <!-- KPI Cards -->
+                                <div class="ppt-kpi-row" id="eom-kpi-row"></div>
+
+                                <!-- Defect Trend Chart -->
+                                <div class="ppt-charts-row-2" style="margin-bottom:24px">
+                                    <div class="ppt-chart-box">
+                                        <div class="chart-label">Monthly Defects - Raised vs Completed</div>
+                                        <div class="chart-container" style="height:260px"><canvas id="eom-defect-trend-chart"></canvas></div>
+                                    </div>
+                                    <div class="ppt-chart-box">
+                                        <div class="chart-label">Defects by Station (Top 15)</div>
+                                        <div class="chart-container" style="height:260px"><canvas id="eom-station-bar-chart"></canvas></div>
+                                    </div>
                                 </div>
-                                <div class="eom-section-body">
-                                    <div class="chart-container"><canvas id="eom-defect-trend-chart"></canvas></div>
+
+                                <!-- FY Breakdown Table -->
+                                <div class="ppt-section-title">FINANCIAL YEAR BREAKDOWN</div>
+                                <div style="overflow-x:auto">
+                                    <table class="ppt-table" id="eom-fy-table">
+                                        <thead><tr><th>Financial Year</th><th>Raised</th><th>Completed</th><th>Outstanding</th><th>Closure Rate</th></tr></thead>
+                                        <tbody></tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Findings Table -->
-                        <div class="eom-section" style="margin-bottom:24px">
-                            <div class="eom-section-header">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                                Current Findings Summary
+                    <!-- SLIDE 3: Compliance Tracking -->
+                    <div class="slide" id="eom-slide-2">
+                        <div class="ppt-slide">
+                            <div class="ppt-slide-header">
+                                <h2>COMPLIANCE AREA TRACKING</h2>
+                                <p>Month-over-Month Changes &bull; FSC Status &bull; Fire Safety Schedules &bull; Defect Trends</p>
                             </div>
-                            <div class="eom-section-body" style="padding:0">
-                                <table class="eom-table" id="eom-findings-table">
-                                    <thead><tr><th>Station</th><th>Total Defects</th><th>Major</th><th>Medium</th><th>Minor</th><th>Outstanding</th><th>Completed</th><th>Progress %</th></tr></thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Monthly % Change Tracking -->
-                        <div class="eom-section" style="margin-bottom:24px">
-                            <div class="eom-section-header">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                                Defect % Change by Month
-                            </div>
-                            <div class="eom-section-body" style="padding:0">
-                                <table class="eom-table" id="eom-monthly-change-table">
-                                    <thead><tr><th>Month</th><th>Total Defects</th><th>Open</th><th>Closed</th><th>% Change</th><th>Trend</th></tr></thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Compliance Tracking Across All Areas -->
-                        <div class="eom-section" style="margin-bottom:24px">
-                            <div class="eom-section-header">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                                Compliance Area Tracking
-                            </div>
-                            <div class="eom-section-body" style="padding:0">
-                                <table class="eom-table" id="eom-compliance-tracking-table">
-                                    <thead><tr><th>Compliance Area</th><th>Current</th><th>Previous</th><th>Change</th><th>Trend</th></tr></thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Charts Row 2 -->
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">
-                            <div class="eom-section">
-                                <div class="eom-section-header">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
-                                    FSC Status Distribution
+                            <div class="ppt-slide-body">
+                                <!-- Charts -->
+                                <div class="ppt-charts-row-2" style="margin-bottom:24px">
+                                    <div class="ppt-chart-box">
+                                        <div class="chart-label">FSC Status Distribution</div>
+                                        <div class="chart-container"><canvas id="eom-fsc-pie-chart"></canvas></div>
+                                    </div>
+                                    <div class="ppt-chart-box">
+                                        <div class="chart-label">Defect Category Breakdown</div>
+                                        <div class="chart-container"><canvas id="eom-category-pie-chart"></canvas></div>
+                                    </div>
                                 </div>
-                                <div class="eom-section-body">
-                                    <div class="chart-container"><canvas id="eom-fsc-pie-chart"></canvas></div>
+
+                                <!-- Compliance Areas Table -->
+                                <div class="ppt-section-title">COMPLIANCE AREA CHANGES</div>
+                                <div style="overflow-x:auto;margin-bottom:24px">
+                                    <table class="ppt-table" id="eom-compliance-tracking-table">
+                                        <thead><tr><th>Compliance Area</th><th>Current</th><th>Previous</th><th>Change</th><th>Trend</th></tr></thead>
+                                        <tbody></tbody>
+                                    </table>
                                 </div>
-                            </div>
-                            <div class="eom-section">
-                                <div class="eom-section-header">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                                    Defects by Station
-                                </div>
-                                <div class="eom-section-body">
-                                    <div class="chart-container"><canvas id="eom-station-bar-chart"></canvas></div>
+
+                                <!-- Monthly Change Table -->
+                                <div class="ppt-section-title">DEFECT % CHANGE BY MONTH</div>
+                                <div style="overflow-x:auto">
+                                    <table class="ppt-table" id="eom-monthly-change-table">
+                                        <thead><tr><th>Month</th><th>Total Defects</th><th>Open</th><th>Closed</th><th>% Change</th><th>Trend</th></tr></thead>
+                                        <tbody></tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Custom Text Input Sections -->
-                        <div class="eom-section" style="margin-bottom:24px">
-                            <div class="eom-section-header">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                                Report Notes &amp; Commentary
+                    <!-- SLIDE 4: Commentary & Notes -->
+                    <div class="slide" id="eom-slide-3">
+                        <div class="ppt-slide">
+                            <div class="ppt-slide-header">
+                                <h2>REPORT COMMENTARY</h2>
+                                <p>Executive Summary &bull; Actions &bull; Risks &bull; Next Month Focus</p>
                             </div>
-                            <div class="eom-section-body">
-                                <div class="eom-insert-toolbar">
-                                    <button class="eom-insert-btn" onclick="insertEomBlock('summary')">
+                            <div class="ppt-slide-body">
+                                <div class="ppt-insert-toolbar">
+                                    <button class="ppt-insert-btn" onclick="insertEomBlock('summary')">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
-                                        Executive Summary
+                                        Add Custom Block
                                     </button>
-                                    <button class="eom-insert-btn" onclick="insertEomBlock('actions')">
+                                    <button class="ppt-insert-btn" onclick="insertEomBlock('actions')">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                                        Key Actions Taken
+                                        Add Action Items
                                     </button>
-                                    <button class="eom-insert-btn" onclick="insertEomBlock('risks')">
+                                    <button class="ppt-insert-btn" onclick="insertEomBlock('risks')">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-                                        Risks &amp; Issues
-                                    </button>
-                                    <button class="eom-insert-btn" onclick="insertEomBlock('next')">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                        Next Month Plan
+                                        Add Risk Item
                                     </button>
                                 </div>
                                 <div id="eom-custom-blocks"></div>
-                                <div class="eom-text-block">
+                                <div class="ppt-text-block">
                                     <span class="text-block-label">Executive Summary</span>
                                     <textarea id="eom-summary-text" placeholder="Enter executive summary for this month's report..."></textarea>
                                 </div>
-                                <div class="eom-text-block">
+                                <div class="ppt-text-block">
                                     <span class="text-block-label">Key Actions Taken</span>
                                     <textarea id="eom-actions-text" placeholder="List key actions completed this month..."></textarea>
                                 </div>
-                                <div class="eom-text-block">
+                                <div class="ppt-text-block">
                                     <span class="text-block-label">Risks &amp; Escalations</span>
                                     <textarea id="eom-risks-text" placeholder="Highlight any risks, issues, or escalations..."></textarea>
                                 </div>
-                                <div class="eom-text-block">
+                                <div class="ppt-text-block">
                                     <span class="text-block-label">Next Month Focus</span>
                                     <textarea id="eom-next-text" placeholder="Outline priorities and planned actions for next month..."></textarea>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- FY Breakdown -->
-                        <div class="eom-section">
-                            <div class="eom-section-header">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
-                                Financial Year Breakdown
-                            </div>
-                            <div class="eom-section-body" style="padding:0">
-                                <table class="eom-table" id="eom-fy-table">
-                                    <thead><tr><th>Financial Year</th><th>Raised</th><th>Completed</th><th>Outstanding</th><th>Closure Rate</th></tr></thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
                     </div>
+
                 </div>
             </div>
 
@@ -7949,7 +7997,15 @@ Fire Safety Compliance Team`
         // END OF MONTH REPORT
         // ============================================================
 
-        let eomRectificationChart, eomDefectTrendChart, eomFscPieChart, eomStationBarChart;
+        let eomRectificationChart, eomDefectTrendChart, eomFscPieChart, eomStationBarChart, eomAfssBarChart, eomFindingsYearChart, eomCategoryPieChart;
+
+        function switchSlide(idx, btn) {
+            document.querySelectorAll('.slide-nav-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            const slide = document.getElementById('eom-slide-' + idx);
+            if (slide) slide.classList.add('active');
+        }
 
         function renderEomReport() {
             ensureDefectIds();
@@ -8075,37 +8131,65 @@ Fire Safety Compliance Team`
                 return `<span class="kpi-delta ${cls}">${arrow} ${Math.abs(diff)}</span>`;
             }
 
+            const closureRate = data.totalDefects > 0 ? Math.round((data.closedDefects / data.totalDefects) * 100) : 0;
             container.innerHTML = `
-                <div class="eom-kpi-card accent-blue">
+                <div class="ppt-kpi-card blue">
                     <div class="kpi-value">${data.totalDefects}</div>
-                    <div class="kpi-label">Total Defects</div>
+                    <div class="kpi-label">Total Raised</div>
                     ${delta(data.totalDefects, prev?.totalDefects, true)}
                 </div>
-                <div class="eom-kpi-card accent-red">
-                    <div class="kpi-value">${data.openDefects}</div>
-                    <div class="kpi-label">Open Defects</div>
-                    ${delta(data.openDefects, prev?.openDefects, true)}
-                </div>
-                <div class="eom-kpi-card accent-green">
+                <div class="ppt-kpi-card green">
                     <div class="kpi-value">${data.closedDefects}</div>
                     <div class="kpi-label">Completed</div>
                     ${delta(data.closedDefects, prev?.closedDefects, false)}
                 </div>
-                <div class="eom-kpi-card accent-orange">
-                    <div class="kpi-value">${data.overallCompliance}%</div>
-                    <div class="kpi-label">Compliance Rate</div>
-                    ${delta(data.overallCompliance, prev?.overallCompliance, false)}
+                <div class="ppt-kpi-card red">
+                    <div class="kpi-value">${data.openDefects}</div>
+                    <div class="kpi-label">Outstanding</div>
+                    ${delta(data.openDefects, prev?.openDefects, true)}
                 </div>
-                <div class="eom-kpi-card accent-purple">
-                    <div class="kpi-value">${data.fssObtained || 0}</div>
-                    <div class="kpi-label">FSS Obtained</div>
-                    ${delta(data.fssObtained, prev?.fssObtained, false)}
+                <div class="ppt-kpi-card orange">
+                    <div class="kpi-value">${closureRate}%</div>
+                    <div class="kpi-label">Closure Rate</div>
+                    ${delta(closureRate, prev ? (prev.totalDefects > 0 ? Math.round((prev.closedDefects / prev.totalDefects) * 100) : 0) : null, false)}
                 </div>
             `;
         }
 
+        // Dark theme chart defaults for presentation slides
+        const pptChartOpts = {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10, family: '-apple-system, sans-serif' }, padding: 10, usePointStyle: true, pointStyle: 'circle' } },
+                tooltip: { backgroundColor: '#1a2d47', titleColor: '#fff', bodyColor: '#cbd5e1', borderColor: '#4e91df', borderWidth: 1, padding: 10, cornerRadius: 6 }
+            },
+            scales: {
+                x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748b', font: { size: 10 } } },
+                y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748b', font: { size: 10 } }, beginAtZero: true }
+            }
+        };
+
         function renderEomCharts(data, sortedKeys) {
-            // Rectification Progress Pie Chart
+            // -- SLIDE 1 CHARTS --
+
+            // AFSS Submissions by Month bar chart
+            const afssCtx = document.getElementById('eom-afss-bar-chart');
+            if (afssCtx) {
+                if (eomAfssBarChart) eomAfssBarChart.destroy();
+                const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                const tenants = state.tenants || [];
+                const monthCounts = months.map((m, i) => tenants.filter(t => t.afssMonthNum === (i + 1)).length);
+                eomAfssBarChart = new Chart(afssCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: months,
+                        datasets: [{ label: 'AFSS Due', data: monthCounts, backgroundColor: '#4e91df', borderRadius: 3, barPercentage: 0.7 }]
+                    },
+                    options: { ...pptChartOpts, plugins: { ...pptChartOpts.plugins, legend: { display: false } } }
+                });
+            }
+
+            // Rectification Progress Donut
             const rectCtx = document.getElementById('eom-rectification-chart');
             if (rectCtx) {
                 if (eomRectificationChart) eomRectificationChart.destroy();
@@ -8115,88 +8199,74 @@ Fire Safety Compliance Team`
                         labels: ['Completed', 'In Progress', 'Outstanding'],
                         datasets: [{
                             data: [data.closedDefects, data.inProgressDefects || 0, data.openDefects - (data.inProgressDefects || 0)],
-                            backgroundColor: ['#22c55e', '#3b82f6', '#ef4444'],
+                            backgroundColor: ['#22c55e', '#4e91df', '#ef4444'],
                             borderWidth: 0
                         }]
                     },
                     options: {
                         responsive: true, maintainAspectRatio: false,
+                        cutout: '60%',
                         plugins: {
-                            legend: { position: 'bottom', labels: { color: chartColors.fontColor, font: { size: 11 }, padding: 12, usePointStyle: true } },
-                            tooltip: { backgroundColor: '#1a2332', titleColor: '#fff', bodyColor: '#94a3b8' }
-                        },
-                        cutout: '55%'
+                            legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 }, padding: 10, usePointStyle: true } },
+                            tooltip: { backgroundColor: '#1a2d47', titleColor: '#fff', bodyColor: '#cbd5e1' }
+                        }
                     }
                 });
             }
 
-            // Defect Closure Trend Line Chart
-            const trendCtx = document.getElementById('eom-defect-trend-chart');
-            if (trendCtx && sortedKeys.length > 0) {
-                if (eomDefectTrendChart) eomDefectTrendChart.destroy();
-                const snapshots = state.monthlySnapshots || {};
-                const labels = sortedKeys.map(k => getMonthLabel(k));
-                const openData = sortedKeys.map(k => snapshots[k].openDefects);
-                const closedData = sortedKeys.map(k => snapshots[k].closedDefects);
-
-                eomDefectTrendChart = new Chart(trendCtx, {
-                    type: 'line',
-                    data: {
-                        labels,
-                        datasets: [
-                            { label: 'Open Defects', data: openData, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', fill: true, tension: 0.3, borderWidth: 2 },
-                            { label: 'Completed', data: closedData, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.1)', fill: true, tension: 0.3, borderWidth: 2 }
-                        ]
-                    },
-                    options: {
-                        responsive: true, maintainAspectRatio: false,
-                        plugins: {
-                            legend: { position: 'bottom', labels: { color: chartColors.fontColor, font: { size: 11 }, padding: 12, usePointStyle: true } },
-                            tooltip: { backgroundColor: '#1a2332', titleColor: '#fff', bodyColor: '#94a3b8' }
-                        },
-                        scales: {
-                            x: { grid: { color: 'rgba(90,90,110,0.08)' }, ticks: { color: chartColors.fontColor, font: { size: 10 } } },
-                            y: { beginAtZero: true, grid: { color: 'rgba(90,90,110,0.08)' }, ticks: { color: chartColors.fontColor, font: { size: 10 } } }
-                        }
-                    }
-                });
-            } else if (trendCtx) {
-                if (eomDefectTrendChart) eomDefectTrendChart.destroy();
-                eomDefectTrendChart = new Chart(trendCtx, {
+            // Findings per Year bar chart
+            const fyChartCtx = document.getElementById('eom-findings-year-chart');
+            if (fyChartCtx) {
+                if (eomFindingsYearChart) eomFindingsYearChart.destroy();
+                const fys = data.defectsByFY || {};
+                const fyKeys = Object.keys(fys).sort();
+                eomFindingsYearChart = new Chart(fyChartCtx, {
                     type: 'bar',
                     data: {
-                        labels: ['Open', 'Completed', 'In Progress'],
-                        datasets: [{ data: [data.openDefects - (data.inProgressDefects || 0), data.closedDefects, data.inProgressDefects || 0], backgroundColor: ['#ef4444', '#22c55e', '#3b82f6'] }]
+                        labels: fyKeys,
+                        datasets: [
+                            { label: 'Raised', data: fyKeys.map(k => fys[k].raised), backgroundColor: '#4e91df', borderRadius: 3 },
+                            { label: 'Completed', data: fyKeys.map(k => fys[k].completed), backgroundColor: '#22c55e', borderRadius: 3 },
+                            { label: 'Outstanding', data: fyKeys.map(k => fys[k].outstanding), backgroundColor: '#ef4444', borderRadius: 3 }
+                        ]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+                    options: pptChartOpts
                 });
             }
 
-            // FSC Status Pie
-            const fscCtx = document.getElementById('eom-fsc-pie-chart');
-            if (fscCtx) {
-                if (eomFscPieChart) eomFscPieChart.destroy();
-                eomFscPieChart = new Chart(fscCtx, {
-                    type: 'pie',
-                    data: {
-                        labels: ['Outstanding', 'Pending', 'Received', 'Compliant'],
-                        datasets: [{
-                            data: [data.fscOutstanding, data.fscPending, data.fscReceived, data.fscCompliant],
-                            backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#22c55e'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        responsive: true, maintainAspectRatio: false,
-                        plugins: {
-                            legend: { position: 'bottom', labels: { color: chartColors.fontColor, font: { size: 11 }, padding: 12, usePointStyle: true } },
-                            tooltip: { backgroundColor: '#1a2332', titleColor: '#fff', bodyColor: '#94a3b8' }
-                        }
-                    }
-                });
+            // -- SLIDE 2 CHARTS --
+
+            // Defect Closure Trend
+            const trendCtx = document.getElementById('eom-defect-trend-chart');
+            if (trendCtx) {
+                if (eomDefectTrendChart) eomDefectTrendChart.destroy();
+                if (sortedKeys.length > 0) {
+                    const snapshots = state.monthlySnapshots || {};
+                    const labels = sortedKeys.map(k => getMonthLabel(k));
+                    eomDefectTrendChart = new Chart(trendCtx, {
+                        type: 'bar',
+                        data: {
+                            labels,
+                            datasets: [
+                                { label: 'Open', data: sortedKeys.map(k => snapshots[k].openDefects), backgroundColor: '#ef4444', borderRadius: 3 },
+                                { label: 'Completed', data: sortedKeys.map(k => snapshots[k].closedDefects), backgroundColor: '#22c55e', borderRadius: 3 }
+                            ]
+                        },
+                        options: pptChartOpts
+                    });
+                } else {
+                    eomDefectTrendChart = new Chart(trendCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Outstanding', 'Completed', 'In Progress'],
+                            datasets: [{ data: [data.openDefects - (data.inProgressDefects || 0), data.closedDefects, data.inProgressDefects || 0], backgroundColor: ['#ef4444', '#22c55e', '#4e91df'], borderRadius: 3 }]
+                        },
+                        options: { ...pptChartOpts, plugins: { ...pptChartOpts.plugins, legend: { display: false } } }
+                    });
+                }
             }
 
-            // Station Defects Bar
+            // Station Defects horizontal bar
             const stnCtx = document.getElementById('eom-station-bar-chart');
             if (stnCtx && data.stationData) {
                 if (eomStationBarChart) eomStationBarChart.destroy();
@@ -8205,20 +8275,47 @@ Fire Safety Compliance Team`
                     type: 'bar',
                     data: {
                         labels: sData.map(s => s.name),
-                        datasets: [{
-                            label: 'Open Defects',
-                            data: sData.map(s => s.defectsOpen),
-                            backgroundColor: sData.map((s, i) => i < 3 ? '#ef4444' : i < 6 ? '#f59e0b' : '#3b82f6'),
-                            borderRadius: 4
-                        }]
+                        datasets: [{ label: 'Open Defects', data: sData.map(s => s.defectsOpen), backgroundColor: sData.map((_, i) => i < 3 ? '#ef4444' : i < 7 ? '#f59e0b' : '#4e91df'), borderRadius: 3 }]
+                    },
+                    options: { ...pptChartOpts, indexAxis: 'y', plugins: { ...pptChartOpts.plugins, legend: { display: false } } }
+                });
+            }
+
+            // -- SLIDE 3 CHARTS --
+
+            // FSC Status Pie
+            const fscCtx = document.getElementById('eom-fsc-pie-chart');
+            if (fscCtx) {
+                if (eomFscPieChart) eomFscPieChart.destroy();
+                eomFscPieChart = new Chart(fscCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Outstanding', 'Pending', 'Received', 'Compliant'],
+                        datasets: [{ data: [data.fscOutstanding, data.fscPending, data.fscReceived, data.fscCompliant], backgroundColor: ['#ef4444', '#f59e0b', '#4e91df', '#22c55e'], borderWidth: 0 }]
                     },
                     options: {
-                        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-                        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1a2332' } },
-                        scales: {
-                            x: { beginAtZero: true, grid: { color: 'rgba(90,90,110,0.08)' }, ticks: { color: chartColors.fontColor } },
-                            y: { grid: { display: false }, ticks: { color: chartColors.fontColor, font: { size: 10 } } }
-                        }
+                        responsive: true, maintainAspectRatio: false, cutout: '55%',
+                        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 }, padding: 10, usePointStyle: true } }, tooltip: { backgroundColor: '#1a2d47', titleColor: '#fff', bodyColor: '#cbd5e1' } }
+                    }
+                });
+            }
+
+            // Category Pie
+            const catCtx = document.getElementById('eom-category-pie-chart');
+            if (catCtx) {
+                if (eomCategoryPieChart) eomCategoryPieChart.destroy();
+                const cats = data.defectsByCategory || {};
+                const catKeys = Object.keys(cats).sort((a, b) => cats[b] - cats[a]).slice(0, 8);
+                const catColors = ['#4e91df', '#22c55e', '#f59e0b', '#ef4444', '#a78bfa', '#06b6d4', '#f97316', '#ec4899'];
+                eomCategoryPieChart = new Chart(catCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: catKeys,
+                        datasets: [{ data: catKeys.map(k => cats[k]), backgroundColor: catColors.slice(0, catKeys.length), borderWidth: 0 }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false, cutout: '50%',
+                        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 9 }, padding: 8, usePointStyle: true } }, tooltip: { backgroundColor: '#1a2d47', titleColor: '#fff', bodyColor: '#cbd5e1' } }
                     }
                 });
             }
@@ -8399,12 +8496,12 @@ Fire Safety Compliance Team`
             const blockId = 'eom-custom-' + Date.now();
             const labels = { summary: 'Custom Summary', actions: 'Additional Actions', risks: 'Additional Risks', next: 'Additional Notes' };
             const block = document.createElement('div');
-            block.className = 'eom-text-block';
+            block.className = 'ppt-text-block';
             block.id = blockId;
             block.innerHTML = `
                 <span class="text-block-label">${labels[type] || 'Custom Block'}</span>
                 <textarea placeholder="Enter content..." oninput="saveEomTextBlock('${blockId}', this.value)"></textarea>
-                <button class="btn btn-ghost btn-sm" onclick="this.parentElement.remove();saveEomCustomBlocks()" style="position:absolute;top:4px;right:4px;font-size:10px;padding:2px 6px">&times;</button>
+                <button class="btn btn-ghost btn-sm" onclick="this.parentElement.remove();saveEomCustomBlocks()" style="position:absolute;top:4px;right:4px;font-size:10px;padding:2px 6px;color:#64748b">&times;</button>
             `;
             container.appendChild(block);
         }
