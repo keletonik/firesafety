@@ -1539,7 +1539,7 @@
                 <div class="page-header">
                     <div>
                         <h2 class="page-title">Dashboard</h2>
-                        <p class="page-subtitle">Portfolio compliance overview - Sydney Trains TAM</p>
+                        <p class="page-subtitle">Fire Safety Compliance Overview - Sydney Trains TAM Portfolio</p>
                     </div>
                     <div class="page-actions">
                         <button class="btn btn-secondary btn-sm" onclick="generateReport('executive')">
@@ -1549,6 +1549,7 @@
                     </div>
                 </div>
 
+                <!-- ===== PRIMARY KPI ROW ===== -->
                 <div class="stats-grid" style="grid-template-columns: repeat(6, 1fr)">
                     <div class="stat-card primary">
                         <div class="stat-icon primary">
@@ -1594,7 +1595,46 @@
                     </div>
                 </div>
 
-                <!-- Monthly Due Date Timeline -->
+                <!-- ===== FIRE SAFETY KPI ROW ===== -->
+                <div class="stats-grid" style="grid-template-columns: repeat(5, 1fr);margin-top:-8px">
+                    <div class="stat-card" style="--card-accent:#059669">
+                        <div class="stat-icon" style="background:#ecfdf5">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                        </div>
+                        <div class="stat-value" id="kpi-afss-received">0</div>
+                        <div class="stat-label">AFSS Received</div>
+                    </div>
+                    <div class="stat-card" style="--card-accent:#d97706">
+                        <div class="stat-icon" style="background:#fffbeb">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <div class="stat-value" id="kpi-afss-overdue">0</div>
+                        <div class="stat-label">AFSS Overdue</div>
+                    </div>
+                    <div class="stat-card" style="--card-accent:#dc2626">
+                        <div class="stat-icon" style="background:#fef2f2">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </div>
+                        <div class="stat-value" id="kpi-major-defects">0</div>
+                        <div class="stat-label">Major Defects</div>
+                    </div>
+                    <div class="stat-card" style="--card-accent:#0ea5e9">
+                        <div class="stat-icon" style="background:#f0f9ff">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <div class="stat-value" id="kpi-fss-coverage">0%</div>
+                        <div class="stat-label">FSS Coverage</div>
+                    </div>
+                    <div class="stat-card" style="--card-accent:#7c3aed">
+                        <div class="stat-icon" style="background:#f5f3ff">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div class="stat-value" id="kpi-avg-close-days">-</div>
+                        <div class="stat-label">Avg Defect Age (days)</div>
+                    </div>
+                </div>
+
+                <!-- ===== MONTHLY AFSS TIMELINE ===== -->
                 <div class="card" style="margin-bottom:20px">
                     <div class="card-header">
                         <span class="card-title">
@@ -1608,7 +1648,7 @@
                     </div>
                 </div>
 
-                <!-- Compliance Summary Bar -->
+                <!-- ===== COMPLIANCE SUMMARY BAR ===== -->
                 <div class="card" style="margin-bottom:20px">
                     <div class="card-body" style="padding:16px 20px">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
@@ -1625,45 +1665,147 @@
                     </div>
                 </div>
 
-                <!-- AI Scanner Card - Dashboard -->
-                <div class="card" style="margin-bottom:20px">
-                    <div class="card-header">
-                        <span class="card-title">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--fyre)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg>
-                            AFSS AI Scanner
+                <!-- ===== FYRECOMP AI COMMAND CENTRE ===== -->
+                <div class="card" style="margin-bottom:20px;border:2px solid var(--fyre);overflow:hidden">
+                    <div class="card-header" style="background:linear-gradient(135deg,#E8762F,#d4691e);border-bottom:none">
+                        <span class="card-title" style="color:#fff">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>
+                            FYRECOMP AI Command Centre
                         </span>
-                        <span style="font-size:11px;color:var(--text-muted)">Upload AFSS PDFs to auto-detect fire safety measures</span>
+                        <span style="font-size:11px;color:rgba(255,255,255,0.85)">Drop emails, upload AFSS PDFs, or give instructions</span>
                     </div>
-                    <div class="card-body">
-                        <div style="background:linear-gradient(135deg,#FFF3E8,#FFF8F0);border:2px solid var(--fyre);border-radius:var(--radius-lg);padding:20px">
-                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--fyre)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg>
-                                <div>
-                                    <h4 style="font-size:14px;font-weight:700;color:var(--fyre);margin:0">Bulk AFSS PDF Scanner</h4>
-                                    <p style="font-size:11px;color:var(--text-muted);margin:0">Upload one or more AFSS PDFs. The AI will detect fire safety measures and match them to stations and tenancies automatically.</p>
+                    <div class="card-body" style="padding:0">
+                        <!-- AI Tabs -->
+                        <div style="display:flex;border-bottom:1px solid var(--border);background:var(--bg)">
+                            <button class="btn btn-ghost btn-sm dash-ai-tab active" data-tab="dash-ai-email" onclick="switchDashAiTab(this)" style="flex:1;border-radius:0;padding:10px;font-size:12px;font-weight:600;border-bottom:2px solid var(--fyre)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                Email Analyser
+                            </button>
+                            <button class="btn btn-ghost btn-sm dash-ai-tab" data-tab="dash-ai-scanner" onclick="switchDashAiTab(this)" style="flex:1;border-radius:0;padding:10px;font-size:12px;font-weight:600;border-bottom:2px solid transparent">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                AFSS PDF Scanner
+                            </button>
+                            <button class="btn btn-ghost btn-sm dash-ai-tab" data-tab="dash-ai-instruct" onclick="switchDashAiTab(this)" style="flex:1;border-radius:0;padding:10px;font-size:12px;font-weight:600;border-bottom:2px solid transparent">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                                AI Instructions
+                            </button>
+                        </div>
+
+                        <!-- Email Tab -->
+                        <div class="dash-ai-content active" id="dash-ai-email">
+                            <div class="chatbot-body" style="min-height:200px">
+                                <div class="email-drop-zone" id="email-drop-zone" style="margin:16px;border:2px dashed var(--border);border-radius:var(--radius-lg);padding:24px;text-align:center;cursor:pointer;transition:all 0.2s">
+                                    <input type="file" id="email-file-input" accept=".eml,.msg,.txt,.html,.htm" style="display:none" multiple>
+                                    <div class="drop-icon" style="margin-bottom:8px">
+                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--fyre)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                    </div>
+                                    <h4 style="font-size:13px;font-weight:700;margin:0 0 4px">Drag &amp; drop emails here</h4>
+                                    <p style="font-size:11px;color:var(--text-muted);margin:0 0 10px">Or click to browse. Supports Outlook (.eml, .msg), text files and HTML.</p>
+                                    <div class="drop-formats" style="display:flex;gap:4px;justify-content:center;margin-bottom:10px">
+                                        <span class="drop-format-tag" style="font-size:10px;padding:2px 8px;background:var(--bg);border:1px solid var(--border);border-radius:3px">.eml</span>
+                                        <span class="drop-format-tag" style="font-size:10px;padding:2px 8px;background:var(--bg);border:1px solid var(--border);border-radius:3px">.msg</span>
+                                        <span class="drop-format-tag" style="font-size:10px;padding:2px 8px;background:var(--bg);border:1px solid var(--border);border-radius:3px">.txt</span>
+                                        <span class="drop-format-tag" style="font-size:10px;padding:2px 8px;background:var(--bg);border:1px solid var(--border);border-radius:3px">.html</span>
+                                    </div>
+                                    <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();showEmailPasteArea()" style="font-size:11px">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                        Paste Email Text
+                                    </button>
                                 </div>
+                                <div id="email-paste-area" style="display:none;padding:16px;flex-direction:column;gap:10px">
+                                    <div style="font-size:12px;font-weight:600;color:var(--text)">Paste your email content below:</div>
+                                    <textarea id="email-paste-textarea" placeholder="Paste the full email text here including headers (From, To, Subject, Date) and body content..." style="width:100%;min-height:140px;border:1px solid var(--border);border-radius:var(--radius);padding:12px;font-size:12px;font-family:inherit;resize:vertical;background:var(--bg);color:var(--text)"></textarea>
+                                    <div style="display:flex;gap:8px;justify-content:flex-end">
+                                        <button class="btn btn-secondary btn-sm" onclick="hideEmailPasteArea()" style="font-size:11px">Cancel</button>
+                                        <button class="btn btn-primary btn-sm" onclick="submitPastedEmail()" style="font-size:11px">Analyse Email</button>
+                                    </div>
+                                </div>
+                                <div class="chat-messages" id="chat-messages" style="display:none;max-height:400px;overflow-y:auto;padding:16px"></div>
                             </div>
-                            <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
-                                <div class="form-group" style="flex:1;min-width:200px;margin-bottom:0">
-                                    <label class="form-label" style="font-size:11px">Select AFSS PDF(s)</label>
-                                    <input type="file" class="form-input" id="dashboard-afss-upload" accept=".pdf" multiple style="font-size:12px">
+                            <div class="task-summary-bar" id="task-summary-bar" style="display:none;padding:8px 16px;background:var(--bg);border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;font-size:11px">
+                                <div class="task-summary-stat" style="display:flex;align-items:center;gap:4px">
+                                    <span class="task-summary-dot total" style="width:8px;height:8px;border-radius:50%;background:var(--fyre);display:inline-block"></span>
+                                    <span id="task-count-total">0</span> tasks
                                 </div>
-                                <button class="btn btn-sm" id="dashboard-afss-scan-btn" onclick="scanAfssPdfDashboard()" style="background:var(--fyre);color:#fff;padding:8px 18px;font-weight:600;white-space:nowrap">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                                    Scan &amp; Detect
+                                <div class="task-summary-stat" style="display:flex;align-items:center;gap:4px">
+                                    <span class="task-summary-dot pending" style="width:8px;height:8px;border-radius:50%;background:var(--warning);display:inline-block"></span>
+                                    <span id="task-count-pending">0</span> pending
+                                </div>
+                                <div class="task-summary-stat" style="display:flex;align-items:center;gap:4px">
+                                    <span class="task-summary-dot done" style="width:8px;height:8px;border-radius:50%;background:var(--success);display:inline-block"></span>
+                                    <span id="task-count-done">0</span> done
+                                </div>
+                                <button class="btn btn-ghost btn-sm" onclick="exportChatbotTasks()" style="margin-left:auto;font-size:10px">Export Tasks</button>
+                            </div>
+                            <div class="chat-input-bar" style="display:flex;gap:8px;padding:10px 16px;border-top:1px solid var(--border);background:var(--surface)">
+                                <input type="text" class="chat-input" id="chat-input" placeholder="Ask about the email or type a command..." disabled style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:12px;background:var(--bg);color:var(--text)">
+                                <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" disabled style="background:var(--fyre);color:#fff;border:none;border-radius:var(--radius);padding:8px 12px;cursor:pointer">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                                 </button>
                             </div>
-                            <div id="dashboard-afss-progress" style="display:none;margin-top:12px">
-                                <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)">
-                                    <div class="spinner" style="width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--fyre);border-radius:50%;animation:spin 0.8s linear infinite"></div>
-                                    <span id="dashboard-afss-progress-text">Reading PDF...</span>
+                        </div>
+
+                        <!-- Scanner Tab -->
+                        <div class="dash-ai-content" id="dash-ai-scanner" style="display:none">
+                            <div style="padding:20px">
+                                <div style="background:linear-gradient(135deg,#FFF3E8,#FFF8F0);border:2px solid var(--fyre);border-radius:var(--radius-lg);padding:20px">
+                                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--fyre)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg>
+                                        <div>
+                                            <h4 style="font-size:14px;font-weight:700;color:var(--fyre);margin:0">Bulk AFSS PDF Scanner</h4>
+                                            <p style="font-size:11px;color:var(--text-muted);margin:0">Upload AFSS PDFs and the AI will detect fire safety measures, match them to stations and cascade updates to all tenancies.</p>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+                                        <div class="form-group" style="flex:1;min-width:200px;margin-bottom:0">
+                                            <label class="form-label" style="font-size:11px">Select AFSS PDF(s)</label>
+                                            <input type="file" class="form-input" id="dashboard-afss-upload" accept=".pdf" multiple style="font-size:12px">
+                                        </div>
+                                        <button class="btn btn-sm" id="dashboard-afss-scan-btn" onclick="scanAfssPdfDashboard()" style="background:var(--fyre);color:#fff;padding:8px 18px;font-weight:600;white-space:nowrap">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                            Scan &amp; Detect
+                                        </button>
+                                    </div>
+                                    <div id="dashboard-afss-progress" style="display:none;margin-top:12px">
+                                        <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)">
+                                            <div class="spinner" style="width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--fyre);border-radius:50%;animation:spin 0.8s linear infinite"></div>
+                                            <span id="dashboard-afss-progress-text">Reading PDF...</span>
+                                        </div>
+                                    </div>
+                                    <div id="dashboard-afss-results" style="display:none;margin-top:16px"></div>
                                 </div>
                             </div>
-                            <div id="dashboard-afss-results" style="display:none;margin-top:16px"></div>
+                        </div>
+
+                        <!-- Instructions Tab -->
+                        <div class="dash-ai-content" id="dash-ai-instruct" style="display:none">
+                            <div style="padding:20px">
+                                <div style="margin-bottom:12px">
+                                    <p style="font-size:12px;color:var(--text-muted);margin:0 0 10px">Tell the AI what to do with your portfolio data. Examples:</p>
+                                    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
+                                        <button class="btn btn-ghost btn-sm ai-prompt-chip" onclick="fillDashAiInstruction(this.textContent)" style="font-size:10px;padding:4px 10px;background:var(--bg);border:1px solid var(--border);border-radius:12px">Mark all Arncliffe tenants as High priority</button>
+                                        <button class="btn btn-ghost btn-sm ai-prompt-chip" onclick="fillDashAiInstruction(this.textContent)" style="font-size:10px;padding:4px 10px;background:var(--bg);border:1px solid var(--border);border-radius:12px">Set FSC status to Received for Central station</button>
+                                        <button class="btn btn-ghost btn-sm ai-prompt-chip" onclick="fillDashAiInstruction(this.textContent)" style="font-size:10px;padding:4px 10px;background:var(--bg);border:1px solid var(--border);border-radius:12px">Add a defect for Hurstville - fire door non-compliant</button>
+                                        <button class="btn btn-ghost btn-sm ai-prompt-chip" onclick="fillDashAiInstruction(this.textContent)" style="font-size:10px;padding:4px 10px;background:var(--bg);border:1px solid var(--border);border-radius:12px">Show me all tenants with overdue AFSS</button>
+                                        <button class="btn btn-ghost btn-sm ai-prompt-chip" onclick="fillDashAiInstruction(this.textContent)" style="font-size:10px;padding:4px 10px;background:var(--bg);border:1px solid var(--border);border-radius:12px">Update compliance status for all March AFSS tenants</button>
+                                    </div>
+                                </div>
+                                <div style="display:flex;gap:8px">
+                                    <textarea id="dash-ai-instruction-input" placeholder="Type your instruction here... e.g. 'Update all Hornsby tenants FSC status to Pending'" style="flex:1;min-height:80px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius);font-size:12px;font-family:inherit;resize:vertical;background:var(--bg);color:var(--text)"></textarea>
+                                </div>
+                                <div style="display:flex;justify-content:flex-end;margin-top:10px;gap:8px">
+                                    <button class="btn btn-sm" onclick="executeDashAiInstruction()" style="background:var(--fyre);color:#fff;font-weight:600;padding:8px 20px">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                        Execute
+                                    </button>
+                                </div>
+                                <div id="dash-ai-instruction-results" style="display:none;margin-top:16px"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- ===== CHARTS ===== -->
                 <div class="grid-2-1">
                     <div class="card">
                         <div class="card-header">
@@ -1689,6 +1831,21 @@
                     </div>
                 </div>
 
+                <!-- ===== COMPLIANCE ACTIVITY TIMELINE ===== -->
+                <div class="card" style="margin-bottom:20px">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Compliance Activity Timeline
+                        </span>
+                        <span style="font-size:11px;color:var(--text-muted)">Recent actions, updates &amp; events</span>
+                    </div>
+                    <div class="card-body" style="padding:16px 20px;max-height:400px;overflow-y:auto">
+                        <div id="dashboard-activity-timeline"></div>
+                    </div>
+                </div>
+
+                <!-- ===== PRIORITY ACTIONS TABLE ===== -->
                 <div class="card" style="margin-top:0">
                     <div class="card-header">
                         <span class="card-title">
@@ -1715,78 +1872,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- AI Email Chatbot -->
-                <div class="chatbot-panel" id="chatbot-panel">
-                    <div class="chatbot-header">
-                        <div class="chatbot-header-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>
-                        </div>
-                        <div class="chatbot-header-info">
-                            <h3>FYRECOMP AI Assistant</h3>
-                            <p>Drop an email to analyse &amp; assign tasks</p>
-                        </div>
-                        <div class="chatbot-status">
-                            <span class="chatbot-status-dot"></span>
-                            Online
-                        </div>
-                    </div>
-                    <div class="chatbot-body">
-                        <div class="email-drop-zone" id="email-drop-zone">
-                            <input type="file" id="email-file-input" accept=".eml,.msg,.txt,.html,.htm" style="display:none" multiple>
-                            <div class="drop-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                            </div>
-                            <h4>Drag &amp; drop an email here</h4>
-                            <p>Or click to browse - supports Outlook emails and text files</p>
-                            <div class="drop-formats">
-                                <span class="drop-format-tag">.eml</span>
-                                <span class="drop-format-tag">.msg</span>
-                                <span class="drop-format-tag">.txt</span>
-                                <span class="drop-format-tag">.html</span>
-                            </div>
-                            <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
-                                <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();showEmailPasteArea()" style="font-size:11px">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                                    Paste Email Text
-                                </button>
-                            </div>
-                        </div>
-                        <div id="email-paste-area" style="display:none;padding:16px;flex-direction:column;gap:10px;height:100%">
-                            <div style="font-size:12px;font-weight:600;color:var(--text)">Paste your email content below:</div>
-                            <textarea id="email-paste-textarea" placeholder="Paste the full email text here including headers (From, To, Subject, Date) and body content..." style="flex:1;width:100%;border:1px solid var(--border);border-radius:var(--radius);padding:12px;font-size:12px;font-family:inherit;resize:none;background:var(--bg);color:var(--text)"></textarea>
-                            <div style="display:flex;gap:8px;justify-content:flex-end">
-                                <button class="btn btn-secondary btn-sm" onclick="hideEmailPasteArea()" style="font-size:11px">Cancel</button>
-                                <button class="btn btn-primary btn-sm" onclick="submitPastedEmail()" style="font-size:11px">Analyse Email</button>
-                            </div>
-                        </div>
-                        <div class="chat-messages" id="chat-messages" style="display:none"></div>
-                    </div>
-                    <div class="task-summary-bar" id="task-summary-bar" style="display:none">
-                        <div class="task-summary-stat">
-                            <span class="task-summary-dot total"></span>
-                            <span id="task-count-total">0</span> tasks
-                        </div>
-                        <div class="task-summary-stat">
-                            <span class="task-summary-dot pending"></span>
-                            <span id="task-count-pending">0</span> pending
-                        </div>
-                        <div class="task-summary-stat">
-                            <span class="task-summary-dot done"></span>
-                            <span id="task-count-done">0</span> done
-                        </div>
-                        <button class="btn btn-ghost btn-sm" onclick="exportChatbotTasks()" style="margin-left:auto;font-size:10px">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                            Export Tasks
-                        </button>
-                    </div>
-                    <div class="chat-input-bar">
-                        <input type="text" class="chat-input" id="chat-input" placeholder="Ask about the email or type a command..." disabled>
-                        <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" disabled>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                        </button>
-                    </div>
-                </div>
             </div>
 
             <!-- Tenants Page -->
@@ -1805,6 +1890,97 @@
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                             Report
                         </button>
+                    </div>
+                </div>
+
+                <!-- Tenancy KPIs -->
+                <div class="stats-grid" style="grid-template-columns: repeat(5, 1fr);margin-bottom:16px">
+                    <div class="stat-card primary" style="padding:12px">
+                        <div class="stat-value" style="font-size:22px" id="ten-kpi-total">0</div>
+                        <div class="stat-label">Active Tenancies</div>
+                    </div>
+                    <div class="stat-card" style="padding:12px;--card-accent:#d97706">
+                        <div class="stat-value" style="font-size:22px" id="ten-kpi-holdover">0</div>
+                        <div class="stat-label">Holdover Leases</div>
+                    </div>
+                    <div class="stat-card" style="padding:12px;--card-accent:#dc2626">
+                        <div class="stat-value" style="font-size:22px" id="ten-kpi-no-fsc">0</div>
+                        <div class="stat-label">No FSC</div>
+                    </div>
+                    <div class="stat-card" style="padding:12px;--card-accent:#059669">
+                        <div class="stat-value" style="font-size:22px" id="ten-kpi-compliant">0</div>
+                        <div class="stat-label">FSC Compliant</div>
+                    </div>
+                    <div class="stat-card" style="padding:12px;--card-accent:#6366f1">
+                        <div class="stat-value" style="font-size:22px" id="ten-kpi-defects">0</div>
+                        <div class="stat-label">Open Defects</div>
+                    </div>
+                </div>
+
+                <!-- Tenancy AI Command Centre -->
+                <div class="card" style="margin-bottom:16px;border:2px solid var(--fyre);overflow:hidden">
+                    <div class="card-header" style="background:linear-gradient(135deg,#E8762F,#d4691e);border-bottom:none;padding:10px 16px">
+                        <span class="card-title" style="color:#fff;font-size:13px">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            Tenancy AI Command Centre
+                        </span>
+                        <div style="display:flex;gap:4px">
+                            <button class="btn btn-ghost btn-sm ten-ai-tab active" data-tab="ten-ai-email" onclick="switchTenAiTab(this)" style="color:rgba(255,255,255,0.9);font-size:10px;padding:3px 8px;border-bottom:2px solid #fff">Email</button>
+                            <button class="btn btn-ghost btn-sm ten-ai-tab" data-tab="ten-ai-scanner" onclick="switchTenAiTab(this)" style="color:rgba(255,255,255,0.7);font-size:10px;padding:3px 8px;border-bottom:2px solid transparent">PDF Scanner</button>
+                            <button class="btn btn-ghost btn-sm ten-ai-tab" data-tab="ten-ai-instruct" onclick="switchTenAiTab(this)" style="color:rgba(255,255,255,0.7);font-size:10px;padding:3px 8px;border-bottom:2px solid transparent">Instructions</button>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:0">
+                        <!-- Email Tab -->
+                        <div class="ten-ai-content active" id="ten-ai-email">
+                            <div id="ten-email-drop-zone" style="margin:14px;border:2px dashed var(--border);border-radius:var(--radius-lg);padding:20px;text-align:center;cursor:pointer;transition:all 0.2s" onclick="document.getElementById('ten-email-file-input').click()">
+                                <input type="file" id="ten-email-file-input" accept=".eml,.msg,.txt,.html,.htm" style="display:none" multiple>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--fyre)" stroke-width="2" style="margin-bottom:6px"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                <h4 style="font-size:12px;font-weight:700;margin:0 0 4px">Drop tenant-related emails here</h4>
+                                <p style="font-size:11px;color:var(--text-muted);margin:0">AI will match to tenants, extract FSC status, defects, and action items</p>
+                            </div>
+                            <div id="ten-email-results" style="display:none;padding:0 14px 14px"></div>
+                        </div>
+                        <!-- Scanner Tab -->
+                        <div class="ten-ai-content" id="ten-ai-scanner" style="display:none;padding:14px">
+                            <div style="background:linear-gradient(135deg,#FFF3E8,#FFF8F0);border:2px solid var(--fyre);border-radius:var(--radius-lg);padding:16px">
+                                <p style="font-size:11px;color:var(--text-muted);margin:0 0 10px">Upload AFSS PDF to auto-detect fire safety measures and update tenancies</p>
+                                <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+                                    <div class="form-group" style="flex:1;min-width:200px;margin-bottom:0">
+                                        <input type="file" class="form-input" id="tenancy-afss-upload" accept=".pdf" style="font-size:12px">
+                                    </div>
+                                    <button class="btn btn-sm" id="tenancy-afss-scan-btn" onclick="scanAfssPdfTenancy()" style="background:var(--fyre);color:#fff;padding:8px 16px;font-weight:600;white-space:nowrap">Scan &amp; Detect</button>
+                                </div>
+                                <div id="tenancy-afss-progress" style="display:none;margin-top:12px">
+                                    <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)">
+                                        <div class="spinner" style="width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--fyre);border-radius:50%;animation:spin 0.8s linear infinite"></div>
+                                        <span id="tenancy-afss-progress-text">Reading PDF...</span>
+                                    </div>
+                                </div>
+                                <div id="tenancy-afss-results" style="display:none;margin-top:16px"></div>
+                            </div>
+                        </div>
+                        <!-- Instructions Tab -->
+                        <div class="ten-ai-content" id="ten-ai-instruct" style="display:none;padding:14px">
+                            <div style="margin-bottom:10px">
+                                <p style="font-size:11px;color:var(--text-muted);margin:0 0 8px">Give instructions to update tenancy data:</p>
+                                <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px">
+                                    <button class="btn btn-ghost btn-sm" onclick="fillTenAiInstruction(this.textContent)" style="font-size:10px;padding:3px 8px;background:var(--bg);border:1px solid var(--border);border-radius:12px">Set all Arncliffe tenants to High priority</button>
+                                    <button class="btn btn-ghost btn-sm" onclick="fillTenAiInstruction(this.textContent)" style="font-size:10px;padding:3px 8px;background:var(--bg);border:1px solid var(--border);border-radius:12px">Mark FSC received for Hurstville station</button>
+                                    <button class="btn btn-ghost btn-sm" onclick="fillTenAiInstruction(this.textContent)" style="font-size:10px;padding:3px 8px;background:var(--bg);border:1px solid var(--border);border-radius:12px">Flag holdover leases expiring before June</button>
+                                </div>
+                            </div>
+                            <div style="display:flex;gap:8px">
+                                <textarea id="ten-ai-instruction-input" placeholder="Type your instruction..." style="flex:1;min-height:60px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:12px;font-family:inherit;resize:vertical;background:var(--bg);color:var(--text)"></textarea>
+                            </div>
+                            <div style="display:flex;justify-content:flex-end;margin-top:8px">
+                                <button class="btn btn-sm" onclick="executeTenAiInstruction()" style="background:var(--fyre);color:#fff;font-weight:600;padding:6px 16px">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:3px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    Execute
+                                </button>
+                            </div>
+                            <div id="ten-ai-instruction-results" style="display:none;margin-top:12px"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -1874,38 +2050,6 @@
                     </div>
                 </div>
 
-                <!-- AI Scanner Card - Tenancy -->
-                <div class="card" style="margin-bottom:16px">
-                    <div class="card-body" style="padding:16px 20px">
-                        <div style="background:linear-gradient(135deg,#FFF3E8,#FFF8F0);border:2px solid var(--fyre);border-radius:var(--radius-lg);padding:16px">
-                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--fyre)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg>
-                                <div>
-                                    <h4 style="font-size:13px;font-weight:700;color:var(--fyre);margin:0">AFSS AI Scanner</h4>
-                                    <p style="font-size:11px;color:var(--text-muted);margin:0">Upload an AFSS PDF to auto-detect fire safety measures and update tenancies</p>
-                                </div>
-                            </div>
-                            <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
-                                <div class="form-group" style="flex:1;min-width:200px;margin-bottom:0">
-                                    <label class="form-label" style="font-size:11px">Select AFSS PDF</label>
-                                    <input type="file" class="form-input" id="tenancy-afss-upload" accept=".pdf" style="font-size:12px">
-                                </div>
-                                <button class="btn btn-sm" id="tenancy-afss-scan-btn" onclick="scanAfssPdfTenancy()" style="background:var(--fyre);color:#fff;padding:8px 16px;font-weight:600;white-space:nowrap">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                                    Scan &amp; Detect
-                                </button>
-                            </div>
-                            <div id="tenancy-afss-progress" style="display:none;margin-top:12px">
-                                <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)">
-                                    <div class="spinner" style="width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--fyre);border-radius:50%;animation:spin 0.8s linear infinite"></div>
-                                    <span id="tenancy-afss-progress-text">Reading PDF...</span>
-                                </div>
-                            </div>
-                            <div id="tenancy-afss-results" style="display:none;margin-top:16px"></div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Bulk Actions Bar -->
                 <div class="bulk-bar" id="bulk-bar">
                     <input type="checkbox" class="row-checkbox" id="select-all-tenants" title="Select all on page">
@@ -1962,6 +2106,98 @@
                         <p class="page-subtitle">Select a station to view tenancies and compliance details</p>
                     </div>
                 </div>
+
+                <!-- Station KPIs -->
+                <div class="stats-grid" style="grid-template-columns: repeat(5, 1fr);margin-bottom:16px">
+                    <div class="stat-card primary" style="padding:12px">
+                        <div class="stat-value" style="font-size:22px" id="stn-kpi-total">0</div>
+                        <div class="stat-label">Total Stations</div>
+                    </div>
+                    <div class="stat-card" style="padding:12px;--card-accent:#dc2626">
+                        <div class="stat-value" style="font-size:22px" id="stn-kpi-critical">0</div>
+                        <div class="stat-label">With Critical Tenants</div>
+                    </div>
+                    <div class="stat-card" style="padding:12px;--card-accent:#d97706">
+                        <div class="stat-value" style="font-size:22px" id="stn-kpi-no-afss">0</div>
+                        <div class="stat-label">No AFSS</div>
+                    </div>
+                    <div class="stat-card" style="padding:12px;--card-accent:#059669">
+                        <div class="stat-value" style="font-size:22px" id="stn-kpi-compliant">0</div>
+                        <div class="stat-label">Fully Compliant</div>
+                    </div>
+                    <div class="stat-card" style="padding:12px;--card-accent:#6366f1">
+                        <div class="stat-value" style="font-size:22px" id="stn-kpi-defects">0</div>
+                        <div class="stat-label">Stations With Defects</div>
+                    </div>
+                </div>
+
+                <!-- Station AI Command Centre -->
+                <div class="card" style="margin-bottom:16px;border:2px solid var(--fyre);overflow:hidden">
+                    <div class="card-header" style="background:linear-gradient(135deg,#E8762F,#d4691e);border-bottom:none;padding:10px 16px">
+                        <span class="card-title" style="color:#fff;font-size:13px">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            Station AI Command Centre
+                        </span>
+                        <div style="display:flex;gap:4px">
+                            <button class="btn btn-ghost btn-sm stn-ai-tab active" data-tab="stn-ai-email" onclick="switchStnAiTab(this)" style="color:rgba(255,255,255,0.9);font-size:10px;padding:3px 8px;border-bottom:2px solid #fff">Email</button>
+                            <button class="btn btn-ghost btn-sm stn-ai-tab" data-tab="stn-ai-scanner" onclick="switchStnAiTab(this)" style="color:rgba(255,255,255,0.7);font-size:10px;padding:3px 8px;border-bottom:2px solid transparent">PDF Scanner</button>
+                            <button class="btn btn-ghost btn-sm stn-ai-tab" data-tab="stn-ai-instruct" onclick="switchStnAiTab(this)" style="color:rgba(255,255,255,0.7);font-size:10px;padding:3px 8px;border-bottom:2px solid transparent">Instructions</button>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:0">
+                        <!-- Email Tab -->
+                        <div class="stn-ai-content active" id="stn-ai-email">
+                            <div id="stn-email-drop-zone" style="margin:14px;border:2px dashed var(--border);border-radius:var(--radius-lg);padding:20px;text-align:center;cursor:pointer;transition:all 0.2s" onclick="document.getElementById('stn-email-file-input').click()">
+                                <input type="file" id="stn-email-file-input" accept=".eml,.msg,.txt,.html,.htm" style="display:none" multiple>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--fyre)" stroke-width="2" style="margin-bottom:6px"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                <h4 style="font-size:12px;font-weight:700;margin:0 0 4px">Drop station-related emails here</h4>
+                                <p style="font-size:11px;color:var(--text-muted);margin:0">AI will match to stations, extract compliance data, inspection results and defects</p>
+                            </div>
+                            <div id="stn-email-results" style="display:none;padding:0 14px 14px"></div>
+                        </div>
+                        <!-- Scanner Tab -->
+                        <div class="stn-ai-content" id="stn-ai-scanner" style="display:none;padding:14px">
+                            <div style="background:linear-gradient(135deg,#FFF3E8,#FFF8F0);border:2px solid var(--fyre);border-radius:var(--radius-lg);padding:16px">
+                                <p style="font-size:11px;color:var(--text-muted);margin:0 0 10px">Upload AFSS PDF to auto-detect fire safety measures and update station &amp; tenancies</p>
+                                <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+                                    <div class="form-group" style="flex:1;min-width:200px;margin-bottom:0">
+                                        <input type="file" class="form-input" id="stn-page-afss-upload" accept=".pdf" multiple style="font-size:12px">
+                                    </div>
+                                    <button class="btn btn-sm" onclick="scanAfssPdfStationPage()" style="background:var(--fyre);color:#fff;padding:8px 16px;font-weight:600;white-space:nowrap">Scan &amp; Detect</button>
+                                </div>
+                                <div id="stn-page-afss-progress" style="display:none;margin-top:12px">
+                                    <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)">
+                                        <div class="spinner" style="width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--fyre);border-radius:50%;animation:spin 0.8s linear infinite"></div>
+                                        <span id="stn-page-afss-progress-text">Reading PDF...</span>
+                                    </div>
+                                </div>
+                                <div id="stn-page-afss-results" style="display:none;margin-top:16px"></div>
+                            </div>
+                        </div>
+                        <!-- Instructions Tab -->
+                        <div class="stn-ai-content" id="stn-ai-instruct" style="display:none;padding:14px">
+                            <div style="margin-bottom:10px">
+                                <p style="font-size:11px;color:var(--text-muted);margin:0 0 8px">Give instructions to update station data:</p>
+                                <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px">
+                                    <button class="btn btn-ghost btn-sm" onclick="fillStnAiInstruction(this.textContent)" style="font-size:10px;padding:3px 8px;background:var(--bg);border:1px solid var(--border);border-radius:12px">Set all Central station measures to Compliant</button>
+                                    <button class="btn btn-ghost btn-sm" onclick="fillStnAiInstruction(this.textContent)" style="font-size:10px;padding:3px 8px;background:var(--bg);border:1px solid var(--border);border-radius:12px">Flag stations with no AFSS as Critical</button>
+                                    <button class="btn btn-ghost btn-sm" onclick="fillStnAiInstruction(this.textContent)" style="font-size:10px;padding:3px 8px;background:var(--bg);border:1px solid var(--border);border-radius:12px">Add defect to Hornsby - emergency lighting fault</button>
+                                </div>
+                            </div>
+                            <div style="display:flex;gap:8px">
+                                <textarea id="stn-ai-instruction-input" placeholder="Type your instruction..." style="flex:1;min-height:60px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:12px;font-family:inherit;resize:vertical;background:var(--bg);color:var(--text)"></textarea>
+                            </div>
+                            <div style="display:flex;justify-content:flex-end;margin-top:8px">
+                                <button class="btn btn-sm" onclick="executeStnAiInstruction()" style="background:var(--fyre);color:#fff;font-weight:600;padding:6px 16px">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:3px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    Execute
+                                </button>
+                            </div>
+                            <div id="stn-ai-instruction-results" style="display:none;margin-top:12px"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="search-bar">
                     <div class="search-input-wrapper">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -3565,12 +3801,17 @@
             populateNoteSuggestions();
             updateSystemInfo();
             updateLastSaved();
+            initPageEmailDropZones();
         });
 
         function renderAll() {
             renderDashboard();
+            renderDashboardKPIs();
+            renderDashboardActivityTimeline();
             renderTenants();
+            renderTenancyKPIs();
             renderStations();
+            renderStationKPIs();
             renderContacts();
             renderAFSS();
             renderCritical();
@@ -5014,6 +5255,710 @@
             saveData();
             renderAll();
             showToast(tenantsUpdated + ' tenancies updated from AI scan' + (stationName ? ' at ' + stationName : ''), 'success');
+        }
+
+        // ============================================================
+        // TAB SWITCHING & AI COMMAND CENTRE FUNCTIONS
+        // ============================================================
+
+        function switchDashAiTab(btn) {
+            document.querySelectorAll('.dash-ai-tab').forEach(t => { t.classList.remove('active'); t.style.borderBottomColor = 'transparent'; });
+            document.querySelectorAll('.dash-ai-content').forEach(c => { c.classList.remove('active'); c.style.display = 'none'; });
+            btn.classList.add('active');
+            btn.style.borderBottomColor = 'var(--fyre)';
+            const target = document.getElementById(btn.dataset.tab);
+            if (target) { target.classList.add('active'); target.style.display = 'block'; }
+        }
+
+        function switchTenAiTab(btn) {
+            document.querySelectorAll('.ten-ai-tab').forEach(t => { t.classList.remove('active'); t.style.borderBottomColor = 'transparent'; t.style.color = 'rgba(255,255,255,0.7)'; });
+            document.querySelectorAll('.ten-ai-content').forEach(c => { c.classList.remove('active'); c.style.display = 'none'; });
+            btn.classList.add('active');
+            btn.style.borderBottomColor = '#fff';
+            btn.style.color = 'rgba(255,255,255,0.9)';
+            const target = document.getElementById(btn.dataset.tab);
+            if (target) { target.classList.add('active'); target.style.display = 'block'; }
+        }
+
+        function switchStnAiTab(btn) {
+            document.querySelectorAll('.stn-ai-tab').forEach(t => { t.classList.remove('active'); t.style.borderBottomColor = 'transparent'; t.style.color = 'rgba(255,255,255,0.7)'; });
+            document.querySelectorAll('.stn-ai-content').forEach(c => { c.classList.remove('active'); c.style.display = 'none'; });
+            btn.classList.add('active');
+            btn.style.borderBottomColor = '#fff';
+            btn.style.color = 'rgba(255,255,255,0.9)';
+            const target = document.getElementById(btn.dataset.tab);
+            if (target) { target.classList.add('active'); target.style.display = 'block'; }
+        }
+
+        function fillDashAiInstruction(text) { document.getElementById('dash-ai-instruction-input').value = text; }
+        function fillTenAiInstruction(text) { document.getElementById('ten-ai-instruction-input').value = text; }
+        function fillStnAiInstruction(text) { document.getElementById('stn-ai-instruction-input').value = text; }
+
+        // ============================================================
+        // AI INSTRUCTION EXECUTION ENGINE
+        // ============================================================
+
+        function parseAiInstruction(instruction) {
+            const lower = instruction.toLowerCase().trim();
+            const result = { action: null, target: null, station: null, field: null, value: null, filter: null };
+
+            // Detect station names
+            const stations = (state.stations || []).map(s => s.name);
+            for (const stn of stations) {
+                if (lower.includes(stn.toLowerCase())) {
+                    result.station = stn;
+                    break;
+                }
+            }
+
+            // Detect action type
+            if (lower.includes('set ') || lower.includes('mark ') || lower.includes('update ') || lower.includes('change ')) {
+                result.action = 'update';
+            } else if (lower.includes('add ') || lower.includes('create ')) {
+                result.action = 'add';
+            } else if (lower.includes('show ') || lower.includes('list ') || lower.includes('find ') || lower.includes('filter ')) {
+                result.action = 'filter';
+            } else if (lower.includes('flag ')) {
+                result.action = 'update';
+            }
+
+            // Detect field and value
+            if (lower.includes('priority')) {
+                result.field = 'priority';
+                if (lower.includes('critical')) result.value = 'Critical';
+                else if (lower.includes('high')) result.value = 'High';
+                else if (lower.includes('standard') || lower.includes('normal')) result.value = 'Standard';
+            }
+            if (lower.includes('fsc status') || lower.includes('fsc ')) {
+                result.field = 'fscStatus';
+                if (lower.includes('received')) result.value = 'Received';
+                else if (lower.includes('compliant')) result.value = 'Compliant';
+                else if (lower.includes('pending')) result.value = 'Pending';
+                else if (lower.includes('outstanding')) result.value = 'Outstanding';
+            }
+            if (lower.includes('compliance') && lower.includes('status')) {
+                result.field = 'complianceStatus';
+                if (lower.includes('in progress')) result.value = 'In Progress';
+                else if (lower.includes('complete') || lower.includes('done')) result.value = 'Complete';
+                else if (lower.includes('not started')) result.value = 'Not Started';
+            }
+            if (lower.includes('afss month')) {
+                result.field = 'afssMonth';
+                const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                for (const m of months) {
+                    if (lower.includes(m.toLowerCase())) { result.value = m; break; }
+                }
+            }
+
+            // Detect fire safety measures
+            const fsmKeywords = {
+                'fire detection': 'fireDetection', 'sprinkler': 'sprinklers', 'emergency lighting': 'emergencyLighting',
+                'exit sign': 'exitSigns', 'extinguisher': 'extinguishers', 'fire door': 'fireDoors',
+                'hydrant': 'hydrants', 'hose reel': 'hoseReels', 'passive fire': 'passiveFire'
+            };
+            for (const [kw, key] of Object.entries(fsmKeywords)) {
+                if (lower.includes(kw)) {
+                    result.field = 'fsm.' + key;
+                    if (lower.includes('compliant')) result.value = 'Compliant';
+                    else if (lower.includes('non-compliant') || lower.includes('non compliant') || lower.includes('fault')) result.value = 'Non-Compliant';
+                    else if (lower.includes('n/a') || lower.includes('not applicable')) result.value = 'Not Applicable';
+                    break;
+                }
+            }
+
+            // Detect defect creation
+            if (result.action === 'add' && lower.includes('defect')) {
+                result.field = 'defect';
+                // Extract description after common patterns
+                const descMatch = instruction.match(/defect[:\s\-]*(.+)/i);
+                result.value = descMatch ? descMatch[1].trim() : instruction;
+                // Detect risk level
+                if (lower.includes('major') || lower.includes('critical')) result.filter = 'Major';
+                else if (lower.includes('minor')) result.filter = 'Minor';
+                else result.filter = 'Medium';
+            }
+
+            // Detect holdover filter
+            if (lower.includes('holdover')) {
+                result.filter = result.filter || 'holdover';
+            }
+            if (lower.includes('overdue')) {
+                result.filter = result.filter || 'overdue';
+            }
+
+            return result;
+        }
+
+        function executeAiInstruction(instruction, scope) {
+            const parsed = parseAiInstruction(instruction);
+            const results = { updated: 0, matched: 0, details: [] };
+            const today = new Date().toISOString().split('T')[0];
+
+            if (!parsed.action && !parsed.field) {
+                return { success: false, message: 'Could not understand the instruction. Try being more specific, e.g. "Set FSC status to Received for Central station".' };
+            }
+
+            // Filter action - just navigate/filter
+            if (parsed.action === 'filter') {
+                if (parsed.station) {
+                    const matching = (state.tenants || []).filter(t => t.station === parsed.station);
+                    return { success: true, message: 'Found ' + matching.length + ' tenancies at ' + parsed.station + '.', data: matching };
+                }
+                if (parsed.filter === 'holdover') {
+                    const matching = (state.tenants || []).filter(t => t.leaseStatus === 'Holdover');
+                    return { success: true, message: 'Found ' + matching.length + ' holdover tenancies.', data: matching };
+                }
+                if (parsed.filter === 'overdue') {
+                    const currentMonth = new Date().getMonth();
+                    const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                    const matching = (state.tenants || []).filter(t => {
+                        if (!t.afssMonth) return false;
+                        const mIdx = monthNames.indexOf(t.afssMonth);
+                        return mIdx >= 0 && mIdx < currentMonth && t.fscStatus !== 'Received' && t.fscStatus !== 'Compliant';
+                    });
+                    return { success: true, message: 'Found ' + matching.length + ' tenancies with overdue AFSS.', data: matching };
+                }
+                return { success: false, message: 'Could not determine what to filter. Try "Show holdover tenants" or "Find tenants at [station]".' };
+            }
+
+            // Add defect
+            if (parsed.field === 'defect' && parsed.station) {
+                const newDefect = {
+                    id: (state.defects || []).length + 1,
+                    site_name: parsed.station,
+                    category: 'General',
+                    risk: parsed.filter || 'Medium',
+                    progress: 'Outstanding',
+                    area: parsed.station,
+                    description: parsed.value || instruction,
+                    audit_date: today,
+                    audit_type: 'AI Instruction'
+                };
+                if (!state.defects) state.defects = [];
+                state.defects.push(newDefect);
+                saveData();
+                renderAll();
+                return { success: true, message: 'Defect added to ' + parsed.station + ': "' + (parsed.value || '').substring(0, 60) + '" (' + newDefect.risk + ' risk)' };
+            }
+
+            // Update action
+            if (parsed.action === 'update' && parsed.field && parsed.value) {
+                let targets = state.tenants || [];
+
+                // Filter by station if specified
+                if (parsed.station) {
+                    targets = targets.filter(t => t.station === parsed.station);
+                }
+                // Filter by scope
+                if (scope === 'station' && parsed.station) {
+                    targets = targets.filter(t => t.station === parsed.station);
+                }
+                if (parsed.filter === 'holdover') {
+                    targets = targets.filter(t => t.leaseStatus === 'Holdover');
+                }
+
+                // Apply fire safety measure update
+                if (parsed.field.startsWith('fsm.')) {
+                    const fsmKey = parsed.field.replace('fsm.', '');
+                    targets.forEach(t => {
+                        if (!t.fireSafetyMeasures) t.fireSafetyMeasures = {};
+                        t.fireSafetyMeasures[fsmKey] = parsed.value;
+                        t.lastUpdated = today;
+                        results.updated++;
+                    });
+                    // Also update station
+                    if (parsed.station) {
+                        const stn = (state.stations || []).find(s => s.name === parsed.station);
+                        if (stn) {
+                            if (!stn.fireSafetyMeasures) stn.fireSafetyMeasures = {};
+                            stn.fireSafetyMeasures[fsmKey] = parsed.value;
+                            stn.lastUpdated = today;
+                        }
+                    }
+                } else {
+                    targets.forEach(t => {
+                        t[parsed.field] = parsed.value;
+                        t.lastUpdated = today;
+                        results.updated++;
+                    });
+                }
+
+                if (results.updated > 0) {
+                    saveData();
+                    renderAll();
+                    return { success: true, message: results.updated + ' tenancies updated: ' + parsed.field + ' set to "' + parsed.value + '"' + (parsed.station ? ' at ' + parsed.station : '') };
+                }
+                return { success: false, message: 'No matching tenancies found to update.' };
+            }
+
+            return { success: false, message: 'Could not fully parse the instruction. Try: "Set [field] to [value] for [station]"' };
+        }
+
+        function executeDashAiInstruction() {
+            const input = document.getElementById('dash-ai-instruction-input');
+            const results = document.getElementById('dash-ai-instruction-results');
+            if (!input.value.trim()) { showToast('Please enter an instruction', 'error'); return; }
+            const result = executeAiInstruction(input.value, 'dashboard');
+            displayAiResult(result, results);
+        }
+
+        function executeTenAiInstruction() {
+            const input = document.getElementById('ten-ai-instruction-input');
+            const results = document.getElementById('ten-ai-instruction-results');
+            if (!input.value.trim()) { showToast('Please enter an instruction', 'error'); return; }
+            const result = executeAiInstruction(input.value, 'tenancy');
+            displayAiResult(result, results);
+        }
+
+        function executeStnAiInstruction() {
+            const input = document.getElementById('stn-ai-instruction-input');
+            const results = document.getElementById('stn-ai-instruction-results');
+            if (!input.value.trim()) { showToast('Please enter an instruction', 'error'); return; }
+            const result = executeAiInstruction(input.value, 'station');
+            displayAiResult(result, results);
+        }
+
+        function displayAiResult(result, container) {
+            const color = result.success ? 'var(--success)' : 'var(--danger)';
+            const bg = result.success ? '#ecfdf5' : '#fef2f2';
+            const icon = result.success ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+                : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+            let html = '<div style="padding:12px;background:' + bg + ';border:1px solid ' + color + '30;border-radius:var(--radius);display:flex;align-items:flex-start;gap:10px">';
+            html += icon;
+            html += '<div style="font-size:12px;color:var(--text)">' + escapeHtml(result.message) + '</div>';
+            html += '</div>';
+
+            // Show matched data if filter result
+            if (result.data && result.data.length > 0) {
+                html += '<div style="margin-top:8px;max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius)">';
+                html += '<table style="width:100%;font-size:11px"><thead><tr style="background:var(--bg)">';
+                html += '<th style="padding:6px 10px;text-align:left">Tenant</th><th style="padding:6px 10px;text-align:left">Station</th><th style="padding:6px 10px;text-align:left">FSC Status</th><th style="padding:6px 10px;text-align:left">Priority</th></tr></thead><tbody>';
+                result.data.slice(0, 20).forEach(t => {
+                    html += '<tr style="border-top:1px solid var(--border-light)">';
+                    html += '<td style="padding:5px 10px">' + escapeHtml(t.tenantName || '-') + '</td>';
+                    html += '<td style="padding:5px 10px">' + escapeHtml(t.station || '-') + '</td>';
+                    html += '<td style="padding:5px 10px"><span class="badge badge-' + getBadgeClass(t.fscStatus) + '">' + escapeHtml(t.fscStatus || '-') + '</span></td>';
+                    html += '<td style="padding:5px 10px"><span class="badge badge-' + (t.priority || 'standard').toLowerCase() + '">' + escapeHtml(t.priority || 'Standard') + '</span></td>';
+                    html += '</tr>';
+                });
+                if (result.data.length > 20) html += '<tr><td colspan="4" style="padding:5px 10px;color:var(--text-muted)">... and ' + (result.data.length - 20) + ' more</td></tr>';
+                html += '</tbody></table></div>';
+            }
+
+            container.innerHTML = html;
+            container.style.display = 'block';
+        }
+
+        // ============================================================
+        // TENANCY & STATION EMAIL DROP HANDLERS
+        // ============================================================
+
+        function initPageEmailDropZones() {
+            // Tenancy email drop zone
+            const tenDropZone = document.getElementById('ten-email-drop-zone');
+            const tenFileInput = document.getElementById('ten-email-file-input');
+            if (tenDropZone && tenFileInput) {
+                tenDropZone.addEventListener('dragover', e => { e.preventDefault(); tenDropZone.style.borderColor = 'var(--fyre)'; tenDropZone.style.background = '#FFF3E8'; });
+                tenDropZone.addEventListener('dragleave', () => { tenDropZone.style.borderColor = 'var(--border)'; tenDropZone.style.background = 'transparent'; });
+                tenDropZone.addEventListener('drop', e => {
+                    e.preventDefault();
+                    tenDropZone.style.borderColor = 'var(--border)';
+                    tenDropZone.style.background = 'transparent';
+                    if (e.dataTransfer.files.length) processPageEmail(e.dataTransfer.files[0], 'ten-email-results', 'tenancy');
+                });
+                tenFileInput.addEventListener('change', () => {
+                    if (tenFileInput.files.length) processPageEmail(tenFileInput.files[0], 'ten-email-results', 'tenancy');
+                });
+            }
+
+            // Station email drop zone
+            const stnDropZone = document.getElementById('stn-email-drop-zone');
+            const stnFileInput = document.getElementById('stn-email-file-input');
+            if (stnDropZone && stnFileInput) {
+                stnDropZone.addEventListener('dragover', e => { e.preventDefault(); stnDropZone.style.borderColor = 'var(--fyre)'; stnDropZone.style.background = '#FFF3E8'; });
+                stnDropZone.addEventListener('dragleave', () => { stnDropZone.style.borderColor = 'var(--border)'; stnDropZone.style.background = 'transparent'; });
+                stnDropZone.addEventListener('drop', e => {
+                    e.preventDefault();
+                    stnDropZone.style.borderColor = 'var(--border)';
+                    stnDropZone.style.background = 'transparent';
+                    if (e.dataTransfer.files.length) processPageEmail(e.dataTransfer.files[0], 'stn-email-results', 'station');
+                });
+                stnFileInput.addEventListener('change', () => {
+                    if (stnFileInput.files.length) processPageEmail(stnFileInput.files[0], 'stn-email-results', 'station');
+                });
+            }
+        }
+
+        async function processPageEmail(file, resultsId, scope) {
+            const resultsEl = document.getElementById(resultsId);
+            if (!resultsEl) return;
+            resultsEl.style.display = 'block';
+            resultsEl.innerHTML = '<div style="display:flex;align-items:center;gap:8px;padding:12px;font-size:12px;color:var(--text-muted)"><div class="spinner" style="width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--fyre);border-radius:50%;animation:spin 0.8s linear infinite"></div>Reading email...</div>';
+
+            try {
+                const text = await file.text();
+                const parsed = typeof parseEmailContent === 'function' ? parseEmailContent(text) : { subject: file.name, body: text, from: '', to: '', date: '' };
+
+                // Match to tenants/stations
+                const matchedTenants = [];
+                const matchedStations = [];
+                const bodyLower = (parsed.body || '').toLowerCase() + ' ' + (parsed.subject || '').toLowerCase();
+
+                (state.stations || []).forEach(s => {
+                    if (bodyLower.includes(s.name.toLowerCase())) matchedStations.push(s.name);
+                });
+                (state.tenants || []).forEach(t => {
+                    if (t.tenantName && bodyLower.includes(t.tenantName.toLowerCase())) matchedTenants.push(t);
+                    else if (t.tradingName && bodyLower.includes(t.tradingName.toLowerCase())) matchedTenants.push(t);
+                });
+
+                // Detect compliance keywords
+                const detections = [];
+                if (bodyLower.includes('fsc') || bodyLower.includes('fire safety certificate')) detections.push('FSC reference detected');
+                if (bodyLower.includes('afss') || bodyLower.includes('annual fire safety')) detections.push('AFSS reference detected');
+                if (bodyLower.includes('defect') || bodyLower.includes('non-compliant') || bodyLower.includes('fault')) detections.push('Defect/non-compliance language detected');
+                if (bodyLower.includes('inspection') || bodyLower.includes('audit')) detections.push('Inspection/audit reference detected');
+                if (bodyLower.includes('urgent') || bodyLower.includes('critical') || bodyLower.includes('immediate')) detections.push('Urgency indicators detected');
+                if (bodyLower.includes('overdue') || bodyLower.includes('expired') || bodyLower.includes('outstanding')) detections.push('Overdue/outstanding items detected');
+
+                let html = '<div style="border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">';
+                html += '<div style="background:var(--bg);padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">';
+                html += '<div><strong style="font-size:12px">Email Analysis</strong><span style="font-size:11px;color:var(--text-muted);margin-left:8px">' + escapeHtml(parsed.subject || file.name) + '</span></div>';
+                html += '<button class="btn btn-ghost btn-sm" onclick="this.closest(\'[id$=email-results]\').style.display=\'none\'" style="font-size:10px;padding:2px 6px">Close</button>';
+                html += '</div>';
+
+                // Summary
+                html += '<div style="padding:12px 14px">';
+                if (parsed.from) html += '<div style="font-size:11px;margin-bottom:4px"><strong>From:</strong> ' + escapeHtml(parsed.from) + '</div>';
+                if (parsed.date) html += '<div style="font-size:11px;margin-bottom:8px"><strong>Date:</strong> ' + escapeHtml(parsed.date) + '</div>';
+
+                // Detections
+                if (detections.length) {
+                    html += '<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:600;margin-bottom:4px">AI Detections:</div>';
+                    html += '<div style="display:flex;flex-wrap:wrap;gap:4px">';
+                    detections.forEach(d => {
+                        html += '<span style="font-size:10px;padding:2px 8px;border-radius:4px;background:#FFF3E8;color:var(--fyre);border:1px solid var(--fyre)">' + escapeHtml(d) + '</span>';
+                    });
+                    html += '</div></div>';
+                }
+
+                // Matched stations
+                if (matchedStations.length) {
+                    html += '<div style="margin-bottom:8px"><span style="font-size:11px;font-weight:600">Matched Stations:</span> ';
+                    matchedStations.forEach(s => { html += '<span class="badge badge-info" style="font-size:10px;margin-left:4px">' + escapeHtml(s) + '</span>'; });
+                    html += '</div>';
+                }
+                // Matched tenants
+                if (matchedTenants.length) {
+                    html += '<div style="margin-bottom:8px"><span style="font-size:11px;font-weight:600">Matched Tenants:</span> ';
+                    matchedTenants.slice(0, 5).forEach(t => { html += '<span class="badge badge-pending" style="font-size:10px;margin-left:4px">' + escapeHtml(t.tenantName) + '</span>'; });
+                    if (matchedTenants.length > 5) html += '<span style="font-size:10px;color:var(--text-muted);margin-left:4px">+' + (matchedTenants.length - 5) + ' more</span>';
+                    html += '</div>';
+                }
+
+                // Action buttons
+                html += '<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">';
+                if (matchedStations.length || matchedTenants.length) {
+                    html += '<button class="btn btn-sm" style="background:var(--fyre);color:#fff;font-size:11px;padding:4px 12px" onclick="autoProcessPageEmail(\'' + scope + '\')">Auto-process &amp; Update</button>';
+                }
+                html += '<button class="btn btn-secondary btn-sm" style="font-size:11px;padding:4px 12px" onclick="addEmailAsNote(\'' + escapeHtml(parsed.subject || '') + '\',\'' + (matchedStations[0] || '') + '\')">Save as Note</button>';
+                html += '</div></div></div>';
+
+                resultsEl.innerHTML = html;
+
+                // Store for auto-process
+                window._lastPageEmail = { parsed, matchedTenants, matchedStations, detections, scope };
+
+            } catch (err) {
+                resultsEl.innerHTML = '<div style="padding:12px;background:#FEE;border:1px solid #FCC;border-radius:var(--radius);color:var(--danger);font-size:12px">Error reading email: ' + escapeHtml(err.message) + '</div>';
+            }
+        }
+
+        function autoProcessPageEmail(scope) {
+            const data = window._lastPageEmail;
+            if (!data) return;
+            const today = new Date().toISOString().split('T')[0];
+            let updates = 0;
+
+            // Auto-add note
+            if (data.parsed.subject || data.parsed.body) {
+                if (!state.notes) state.notes = [];
+                state.notes.push({
+                    id: Date.now(),
+                    content: 'Email: ' + (data.parsed.subject || 'No subject') + ' - ' + (data.parsed.body || '').substring(0, 200),
+                    type: 'communication',
+                    date: new Date().toISOString(),
+                    related: data.matchedStations[0] || (data.matchedTenants[0] ? data.matchedTenants[0].station : ''),
+                    source: 'AI Email Import'
+                });
+            }
+
+            // Auto-detect and apply FSC updates
+            const bodyLower = ((data.parsed.body || '') + ' ' + (data.parsed.subject || '')).toLowerCase();
+            if (bodyLower.includes('fsc received') || bodyLower.includes('fire safety certificate received')) {
+                data.matchedTenants.forEach(t => {
+                    const tenant = (state.tenants || []).find(x => x.id === t.id);
+                    if (tenant) {
+                        tenant.fscStatus = 'Received';
+                        tenant.fscReceivedDate = today;
+                        tenant.lastUpdated = today;
+                        updates++;
+                    }
+                });
+            }
+            if (bodyLower.includes('compliant') && !bodyLower.includes('non-compliant')) {
+                data.matchedTenants.forEach(t => {
+                    const tenant = (state.tenants || []).find(x => x.id === t.id);
+                    if (tenant) {
+                        tenant.complianceStatus = 'Compliant';
+                        tenant.lastUpdated = today;
+                        updates++;
+                    }
+                });
+            }
+
+            saveData();
+            renderAll();
+            showToast('Email processed: note saved' + (updates > 0 ? ', ' + updates + ' tenancies updated' : ''), 'success');
+        }
+
+        function addEmailAsNote(subject, station) {
+            if (!state.notes) state.notes = [];
+            state.notes.push({
+                id: Date.now(),
+                content: 'Email: ' + subject,
+                type: 'communication',
+                date: new Date().toISOString(),
+                related: station,
+                source: 'Manual Save'
+            });
+            saveData();
+            showToast('Email saved as note', 'success');
+        }
+
+        // Station page PDF scanner (reuses dashboard bulk scanner logic)
+        async function scanAfssPdfStationPage() {
+            const fileInput = document.getElementById('stn-page-afss-upload');
+            if (!fileInput || !fileInput.files.length) { showToast('Please select AFSS PDF(s)', 'error'); return; }
+            const progressEl = document.getElementById('stn-page-afss-progress');
+            const progressText = document.getElementById('stn-page-afss-progress-text');
+            const resultsEl = document.getElementById('stn-page-afss-results');
+
+            progressEl.style.display = 'block';
+            resultsEl.style.display = 'none';
+
+            try {
+                const allResults = [];
+                for (let f = 0; f < fileInput.files.length; f++) {
+                    const file = fileInput.files[f];
+                    if (!file.name.toLowerCase().endsWith('.pdf')) continue;
+                    progressText.textContent = 'Reading ' + file.name + '...';
+                    const arrayBuffer = await file.arrayBuffer();
+                    if (typeof pdfjsLib === 'undefined') throw new Error('PDF.js not loaded');
+                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    let fullText = '';
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        progressText.textContent = 'Page ' + i + '/' + pdf.numPages + '...';
+                        const page = await pdf.getPage(i);
+                        const tc = await page.getTextContent();
+                        fullText += tc.items.map(item => item.str).join(' ') + '\n';
+                    }
+                    const detected = parseAfssFireMeasures(fullText);
+                    const matchedStation = matchStationFromText(fullText);
+                    allResults.push({ fileName: file.name, detected, matchedStation, fullText });
+                }
+                progressEl.style.display = 'none';
+                displayDashboardAfssResults(allResults, resultsEl);
+            } catch (err) {
+                progressEl.style.display = 'none';
+                resultsEl.style.display = 'block';
+                resultsEl.innerHTML = '<div style="padding:12px;background:#FEE;border:1px solid #FCC;border-radius:var(--radius);color:var(--danger);font-size:12px">Error: ' + escapeHtml(err.message) + '</div>';
+            }
+        }
+
+        // ============================================================
+        // DASHBOARD KPI RENDERING & ACTIVITY TIMELINE
+        // ============================================================
+
+        function renderDashboardKPIs() {
+            const tenants = state.tenants || [];
+            const defects = state.defects || [];
+
+            // Fire safety KPIs
+            const afssReceived = tenants.filter(t => t.fscStatus === 'Received' || t.fscStatus === 'Compliant').length;
+            document.getElementById('kpi-afss-received').textContent = afssReceived;
+
+            // Overdue AFSS
+            const currentMonth = new Date().getMonth();
+            const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            const overdue = tenants.filter(t => {
+                if (!t.afssMonth) return false;
+                const mIdx = monthNames.indexOf(t.afssMonth);
+                return mIdx >= 0 && mIdx < currentMonth && t.fscStatus !== 'Received' && t.fscStatus !== 'Compliant';
+            }).length;
+            document.getElementById('kpi-afss-overdue').textContent = overdue;
+
+            // Major defects
+            const majorDefects = defects.filter(d => d.risk === 'Major' && d.progress !== 'Completed').length
+                + tenants.reduce((s, t) => s + (t.defectsMajor || 0), 0);
+            document.getElementById('kpi-major-defects').textContent = majorDefects;
+
+            // FSS Coverage (tenants with fire safety schedule)
+            const withFSS = tenants.filter(t => {
+                const fsm = t.fireSafetyMeasures || {};
+                return Object.values(fsm).some(v => v && v !== '' && v !== null);
+            }).length;
+            const fssCoverage = tenants.length > 0 ? Math.round((withFSS / tenants.length) * 100) : 0;
+            document.getElementById('kpi-fss-coverage').textContent = fssCoverage + '%';
+
+            // Average defect age
+            const openDefects = defects.filter(d => d.progress !== 'Completed' && d.audit_date);
+            if (openDefects.length > 0) {
+                const now = new Date();
+                const totalDays = openDefects.reduce((sum, d) => {
+                    const created = new Date(d.audit_date);
+                    return sum + Math.max(0, Math.floor((now - created) / 86400000));
+                }, 0);
+                document.getElementById('kpi-avg-close-days').textContent = Math.round(totalDays / openDefects.length);
+            } else {
+                document.getElementById('kpi-avg-close-days').textContent = '-';
+            }
+        }
+
+        function renderDashboardActivityTimeline() {
+            const container = document.getElementById('dashboard-activity-timeline');
+            if (!container) return;
+
+            const events = [];
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today.getTime() - 30 * 86400000);
+
+            // Gather recent tenant updates
+            (state.tenants || []).forEach(t => {
+                if (t.lastUpdated) {
+                    const d = new Date(t.lastUpdated);
+                    if (d >= thirtyDaysAgo) {
+                        events.push({ date: d, type: 'update', icon: 'edit', color: 'var(--primary)',
+                            text: (t.tenantName || 'Unknown') + ' at ' + (t.station || '-') + ' updated',
+                            detail: 'FSC: ' + (t.fscStatus || '-') + ' | Priority: ' + (t.priority || '-') });
+                    }
+                }
+                if (t.fscReceivedDate) {
+                    const d = new Date(t.fscReceivedDate);
+                    if (d >= thirtyDaysAgo) {
+                        events.push({ date: d, type: 'fsc', icon: 'check', color: 'var(--success)',
+                            text: 'FSC received for ' + (t.tenantName || 'Unknown'),
+                            detail: t.station || '' });
+                    }
+                }
+            });
+
+            // Gather recent defects
+            (state.defects || []).forEach(d => {
+                if (d.audit_date) {
+                    const dt = new Date(d.audit_date);
+                    if (dt >= thirtyDaysAgo) {
+                        events.push({ date: dt, type: 'defect', icon: 'alert', color: d.risk === 'Major' ? 'var(--danger)' : 'var(--warning)',
+                            text: (d.risk || 'Medium') + ' defect at ' + (d.site_name || '-'),
+                            detail: (d.description || '').substring(0, 80) });
+                    }
+                }
+            });
+
+            // Gather recent notes
+            (state.notes || []).forEach(n => {
+                if (n.date) {
+                    const d = new Date(n.date);
+                    if (d >= thirtyDaysAgo) {
+                        events.push({ date: d, type: 'note', icon: 'note', color: 'var(--info)',
+                            text: (n.type || 'Note') + ': ' + (n.content || '').substring(0, 60),
+                            detail: n.related || '' });
+                    }
+                }
+            });
+
+            // Gather defect audit log
+            (state.defectAuditLog || []).slice(-20).forEach(log => {
+                if (log.timestamp) {
+                    const d = new Date(log.timestamp);
+                    if (d >= thirtyDaysAgo) {
+                        events.push({ date: d, type: 'audit', icon: 'history', color: '#7c3aed',
+                            text: 'Defect #' + (log.defectId || '?') + ' ' + (log.action || 'modified'),
+                            detail: (log.changes || '').substring(0, 60) });
+                    }
+                }
+            });
+
+            // Sort by date descending
+            events.sort((a, b) => b.date - a.date);
+
+            if (events.length === 0) {
+                container.innerHTML = '<p style="font-size:12px;color:var(--text-muted);text-align:center;padding:20px">No recent activity in the last 30 days. Updates, defects and notes will appear here.</p>';
+                return;
+            }
+
+            const iconSvgs = {
+                edit: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>',
+                check: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>',
+                alert: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>',
+                note: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+                history: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+            };
+
+            let html = '';
+            events.slice(0, 25).forEach(e => {
+                const timeStr = e.date.toLocaleDateString('en-AU', { day: '2-digit', month: 'short' }) + ' ' + e.date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
+                html += '<div style="display:flex;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:1px solid var(--border-light)">';
+                html += '<div style="width:32px;height:32px;border-radius:50%;background:' + e.color + '15;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:' + e.color + '">' + (iconSvgs[e.icon] || iconSvgs.edit) + '</div>';
+                html += '<div style="flex:1;min-width:0">';
+                html += '<div style="font-size:12px;font-weight:500;color:var(--text)">' + escapeHtml(e.text) + '</div>';
+                if (e.detail) html += '<div style="font-size:11px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(e.detail) + '</div>';
+                html += '</div>';
+                html += '<div style="font-size:10px;color:var(--text-muted);white-space:nowrap;flex-shrink:0">' + timeStr + '</div>';
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderTenancyKPIs() {
+            const tenants = state.tenants || [];
+            const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+            const active = tenants.filter(t => t.leaseStatus && !t.leaseStatus.toLowerCase().startsWith('vacant'));
+            el('ten-kpi-total', active.length);
+            el('ten-kpi-holdover', tenants.filter(t => t.leaseStatus === 'Holdover').length);
+            el('ten-kpi-no-fsc', tenants.filter(t => t.fscStatus === 'Outstanding' || !t.fscStatus).length);
+            el('ten-kpi-compliant', tenants.filter(t => t.fscStatus === 'Compliant' || t.fscStatus === 'Received').length);
+            el('ten-kpi-defects', tenants.reduce((s, t) => s + (t.defectsOpen || 0), 0));
+        }
+
+        function renderStationKPIs() {
+            const stations = state.stations || [];
+            const tenants = state.tenants || [];
+            const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+            el('stn-kpi-total', stations.length);
+
+            const stationsWithCritical = new Set();
+            const stationsWithDefects = new Set();
+            const stationsNoAfss = new Set();
+            const stationsCompliant = new Set();
+
+            tenants.forEach(t => {
+                if (t.priority === 'Critical') stationsWithCritical.add(t.station);
+                if (t.defectsOpen > 0) stationsWithDefects.add(t.station);
+                if (!t.afssMonth) stationsNoAfss.add(t.station);
+            });
+            stations.forEach(s => {
+                const stationTenants = tenants.filter(t => t.station === s.name);
+                if (stationTenants.length > 0 && stationTenants.every(t => t.fscStatus === 'Compliant' || t.fscStatus === 'Received')) {
+                    stationsCompliant.add(s.name);
+                }
+            });
+
+            el('stn-kpi-critical', stationsWithCritical.size);
+            el('stn-kpi-no-afss', stationsNoAfss.size);
+            el('stn-kpi-compliant', stationsCompliant.size);
+            el('stn-kpi-defects', stationsWithDefects.size);
         }
 
         // Station Timeline
