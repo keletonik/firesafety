@@ -338,7 +338,9 @@ function onInspStationChange() {
 
     const tenants = (state.tenants || []).filter(t => t.station === station);
     tenants.forEach(t => {
-        tenancySel.innerHTML += '<option value="' + escapeHtml(t.company) + '">' + escapeHtml(t.company) + ' — ' + escapeHtml(t.leaseArea || 'N/A') + '</option>';
+        const displayName = t.tradingName || t.tenantName || t.company || 'Unknown';
+        const area = t.areaM2 || t.leaseArea || 'N/A';
+        tenancySel.innerHTML += '<option value="' + escapeHtml(displayName) + '">' + escapeHtml(displayName) + ' — ' + escapeHtml(area) + '</option>';
     });
 }
 
@@ -352,7 +354,7 @@ function onInspTenancyChange() {
         return;
     }
 
-    const tenant = (state.tenants || []).find(t => t.company === tenancy);
+    const tenant = (state.tenants || []).find(t => (t.tradingName || t.tenantName || t.company) === tenancy);
     if (!tenant) {
         prefillDiv.style.display = 'none';
         return;
@@ -360,9 +362,9 @@ function onInspTenancyChange() {
 
     prefillDiv.style.display = 'block';
     detailsDiv.innerHTML =
-        '<div><strong>Company:</strong> ' + escapeHtml(tenant.company) + '</div>' +
-        '<div><strong>Contact:</strong> ' + escapeHtml(tenant.contact || 'N/A') + '</div>' +
-        '<div><strong>Lease Area:</strong> ' + escapeHtml(tenant.leaseArea || 'N/A') + '</div>' +
+        '<div><strong>Company:</strong> ' + escapeHtml(tenant.tradingName || tenant.tenantName || tenant.company || 'N/A') + '</div>' +
+        '<div><strong>Contact:</strong> ' + escapeHtml(tenant.contactName || tenant.contact || 'N/A') + '</div>' +
+        '<div><strong>Lease Area:</strong> ' + escapeHtml(tenant.areaM2 ? tenant.areaM2 + ' m²' : (tenant.leaseArea || 'N/A')) + '</div>' +
         '<div><strong>FSC Status:</strong> ' + escapeHtml(tenant.fscStatus || 'N/A') + '</div>' +
         '<div><strong>Priority:</strong> ' + escapeHtml(tenant.priority || 'N/A') + '</div>' +
         '<div><strong>Open Defects:</strong> ' + (tenant.defectsOpen || 0) + '</div>';
@@ -1439,7 +1441,7 @@ function debugCreateSampleInspection() {
     debugLog('info', '--- Creating Sample Inspection ---');
 
     const sampleStation = (state.stations && state.stations.length > 0) ? state.stations[0].name : 'Sample Station';
-    const sampleTenancy = (state.tenants && state.tenants.length > 0) ? state.tenants[0].company : '';
+    const sampleTenancy = (state.tenants && state.tenants.length > 0) ? (state.tenants[0].tradingName || state.tenants[0].tenantName || state.tenants[0].company || '') : '';
 
     const sampleItems = [];
     INSPECTION_SECTIONS.slice(0, 3).forEach(s => {
