@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+    <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
     <style>
         :root {
             --fyre: #E8762F;
@@ -751,6 +752,211 @@
         .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         .grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
 
+        /* ============================================================ */
+        /* INSPECTION MODULE - Mobile-First Styles                       */
+        /* ============================================================ */
+        .insp-wizard { display: none; }
+        .insp-wizard.active { display: block; }
+        .insp-step { display: none; animation: fadeIn 0.25s ease; }
+        .insp-step.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .insp-step-indicator {
+            display: flex; gap: 4px; margin-bottom: 20px; padding: 0 4px;
+        }
+        .insp-step-dot {
+            flex: 1; height: 4px; border-radius: 2px; background: var(--border);
+            transition: background 0.3s;
+        }
+        .insp-step-dot.done { background: var(--success); }
+        .insp-step-dot.current { background: var(--primary); }
+
+        .insp-section-card {
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+            margin-bottom: 12px; overflow: hidden;
+        }
+        .insp-section-header {
+            padding: 14px 16px; cursor: pointer; display: flex; align-items: center;
+            justify-content: space-between; font-weight: 600; font-size: 14px;
+            transition: background 0.2s;
+        }
+        .insp-section-header:hover { background: var(--bg); }
+        .insp-section-header .badge-count {
+            font-size: 11px; padding: 2px 8px; border-radius: 10px;
+            background: var(--border); color: var(--text-muted); font-weight: 500;
+        }
+        .insp-section-header .badge-count.has-nc { background: #fef2f2; color: #dc2626; }
+        .insp-section-body { display: none; border-top: 1px solid var(--border); }
+        .insp-section-card.open .insp-section-body { display: block; }
+        .insp-section-card.open .insp-section-header { background: var(--bg); }
+
+        .checklist-item {
+            padding: 12px 16px; border-bottom: 1px solid var(--border-light);
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .checklist-item:last-child { border-bottom: none; }
+        .checklist-item-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+        .checklist-item-label { font-size: 13px; font-weight: 500; flex: 1; line-height: 1.4; }
+        .checklist-item-status {
+            min-width: 140px;
+        }
+        .checklist-item-status select {
+            width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid var(--border);
+            border-radius: 6px; background: var(--card-bg); color: var(--text);
+        }
+        .checklist-item-status select.status-compliant { border-color: #059669; background: #ecfdf5; color: #059669; }
+        .checklist-item-status select.status-non-compliant { border-color: #dc2626; background: #fef2f2; color: #dc2626; }
+        .checklist-item-status select.status-na { border-color: var(--border); background: var(--bg); color: var(--text-muted); }
+        .checklist-item-extras { display: none; flex-direction: column; gap: 8px; padding-top: 4px; }
+        .checklist-item-extras.show { display: flex; }
+        .checklist-item-extras textarea {
+            width: 100%; padding: 8px 10px; font-size: 12px; border: 1px solid var(--border);
+            border-radius: 6px; resize: vertical; min-height: 50px; font-family: inherit;
+            background: var(--card-bg); color: var(--text);
+        }
+        .checklist-item-photos {
+            display: flex; gap: 8px; flex-wrap: wrap;
+        }
+        .checklist-photo-thumb {
+            width: 60px; height: 60px; border-radius: 6px; object-fit: cover;
+            border: 1px solid var(--border); cursor: pointer;
+        }
+        .checklist-photo-add {
+            width: 60px; height: 60px; border-radius: 6px; border: 2px dashed var(--border);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            font-size: 20px; color: var(--text-muted); transition: all 0.2s;
+        }
+        .checklist-photo-add:hover { border-color: var(--primary); color: var(--primary); }
+
+        .nc-defect-prompt {
+            background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
+            padding: 12px; margin-top: 4px;
+        }
+        .nc-defect-prompt .form-row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+        .nc-defect-prompt .form-row > * { flex: 1; min-width: 120px; }
+        .nc-defect-prompt select, .nc-defect-prompt textarea, .nc-defect-prompt input {
+            width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid var(--border);
+            border-radius: 6px; font-family: inherit; background: #fff; color: var(--text);
+        }
+
+        /* Signature Pad */
+        .sig-pad-container {
+            border: 2px solid var(--border); border-radius: var(--radius); background: #fff;
+            position: relative; touch-action: none;
+        }
+        .sig-pad-container canvas { display: block; width: 100%; border-radius: var(--radius); }
+        .sig-pad-clear {
+            position: absolute; top: 8px; right: 8px; background: var(--danger);
+            color: #fff; border: none; padding: 4px 10px; border-radius: 4px;
+            font-size: 11px; cursor: pointer;
+        }
+
+        /* Inspection list cards (mobile-friendly) */
+        .insp-list-card {
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 14px 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s;
+        }
+        .insp-list-card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); }
+        .insp-list-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .insp-list-card-title { font-weight: 600; font-size: 14px; }
+        .insp-list-card-date { font-size: 11px; color: var(--text-muted); }
+        .insp-list-card-meta { display: flex; gap: 8px; flex-wrap: wrap; font-size: 11px; color: var(--text-muted); }
+        .insp-list-card-meta span { display: flex; align-items: center; gap: 3px; }
+        .insp-status-badge {
+            display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px;
+            font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;
+        }
+        .insp-status-badge.draft { background: var(--border); color: var(--text-muted); }
+        .insp-status-badge.in-progress { background: #fef3ec; color: #E8762F; }
+        .insp-status-badge.completed { background: #ecfdf5; color: #059669; }
+        .insp-status-badge.submitted { background: #eff6ff; color: #2563eb; }
+
+        /* FSM Grid */
+        .fsm-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 8px; margin-top: 8px;
+        }
+        .fsm-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 12px; background: var(--bg); border-radius: 6px;
+            font-size: 12px; border: 1px solid var(--border-light);
+        }
+        .fsm-item select {
+            padding: 4px 8px; font-size: 11px; border: 1px solid var(--border);
+            border-radius: 4px; background: var(--card-bg); color: var(--text);
+        }
+
+        /* Debug Panel */
+        .debug-panel {
+            background: #1a1a2e; color: #e0e0e0; border-radius: var(--radius);
+            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace; font-size: 12px;
+            overflow: hidden; margin-top: 20px;
+        }
+        .debug-panel-header {
+            background: #16213e; padding: 12px 16px; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid #0f3460;
+        }
+        .debug-panel-header h4 { color: #E8762F; font-size: 13px; margin: 0; font-weight: 700; }
+        .debug-panel-body { padding: 16px; max-height: 500px; overflow-y: auto; }
+        .debug-log { margin-bottom: 4px; line-height: 1.5; }
+        .debug-log .ts { color: #5BB8A6; }
+        .debug-log .pass { color: #22c55e; }
+        .debug-log .fail { color: #ef4444; }
+        .debug-log .warn { color: #f59e0b; }
+        .debug-log .info { color: #60a5fa; }
+        .debug-btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+
+        /* Mobile Bottom Action Bar */
+        .mobile-bottom-bar {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--card-bg); border-top: 1px solid var(--border);
+            padding: 8px 12px; z-index: 200; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        .mobile-bottom-bar .btn { flex: 1; justify-content: center; }
+
+        /* Photo lightbox */
+        .photo-lightbox {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 1500; display: none;
+            align-items: center; justify-content: center; cursor: pointer;
+        }
+        .photo-lightbox.show { display: flex; }
+        .photo-lightbox img { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 8px; }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; }
+            .topbar { padding: 10px 14px; }
+            .page-header { flex-direction: column; gap: 12px; }
+            .page-actions { width: 100%; }
+            .page-actions .btn { flex: 1; justify-content: center; }
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .mobile-bottom-bar { display: flex; gap: 8px; }
+            .checklist-item-top { flex-direction: column; }
+            .checklist-item-status { min-width: 100%; }
+            .fsm-grid { grid-template-columns: 1fr; }
+            .nc-defect-prompt .form-row { flex-direction: column; }
+            .insp-wizard { padding-bottom: 70px; }
+
+            /* Mobile hamburger */
+            .mobile-menu-btn { display: flex !important; }
+            .sidebar.mobile-open { display: flex; position: fixed; width: 280px; z-index: 500; }
+            .mobile-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 499; }
+            .mobile-overlay.show { display: block; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .insp-list-card-meta { flex-direction: column; }
+        }
+
+        .mobile-menu-btn {
+            display: none; background: none; border: none; cursor: pointer;
+            color: var(--text); padding: 8px;
+        }
+
         /* Defect Edit Modal */
         .defect-edit-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -1472,6 +1678,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
             <span>Defects</span>
         </div>
+        <div class="nav-item" data-page="inspections" role="button" tabindex="0" aria-label="Inspections">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            <span>Inspections</span>
+            <span class="nav-badge" id="nav-badge-inspections">0</span>
+        </div>
         <div class="nav-section">Reporting</div>
         <div class="nav-item" data-page="reports" role="button" tabindex="0" aria-label="Reports">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
@@ -1506,6 +1717,9 @@
         <!-- Top Bar -->
         <div class="topbar">
             <div class="topbar-left">
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
                 <div class="breadcrumb">
                     <span>FYRECOMP</span>
                     <span>/</span>
@@ -2557,6 +2771,303 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ============================================================ -->
+            <!-- INSPECTIONS PAGE                                            -->
+            <!-- ============================================================ -->
+            <div class="page" id="page-inspections">
+                <!-- LIST VIEW -->
+                <div id="insp-list-view">
+                    <div class="page-header">
+                        <div>
+                            <h2 class="page-title">Site Inspections</h2>
+                            <p class="page-subtitle">Create, manage and export fire safety inspections &amp; audits</p>
+                        </div>
+                        <div class="page-actions">
+                            <button class="btn btn-primary btn-sm" onclick="startNewInspection()">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                New Inspection
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="runInspectionDebug()">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                                Debug &amp; Audit
+                            </button>
+                        </div>
+                    </div>
+                    <div class="stats-grid" style="margin-bottom:16px">
+                        <div class="stat-card primary"><div class="stat-value" id="insp-stat-total">0</div><div class="stat-label">Total Inspections</div></div>
+                        <div class="stat-card success"><div class="stat-value" id="insp-stat-completed">0</div><div class="stat-label">Completed</div></div>
+                        <div class="stat-card high"><div class="stat-value" id="insp-stat-draft">0</div><div class="stat-label">Drafts</div></div>
+                        <div class="stat-card critical"><div class="stat-value" id="insp-stat-defects">0</div><div class="stat-label">Defects Found</div></div>
+                    </div>
+                    <div class="search-bar" style="margin-bottom:16px">
+                        <div class="search-input-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" class="search-input" id="insp-search" placeholder="Search inspections..." oninput="renderInspectionList()">
+                        </div>
+                        <select class="form-select" id="insp-status-filter" style="width:auto;min-width:140px;padding:8px 12px;font-size:13px" onchange="renderInspectionList()">
+                            <option value="">All Statuses</option>
+                            <option value="Draft">Drafts</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Submitted">Submitted</option>
+                        </select>
+                    </div>
+                    <div id="insp-list-container">
+                        <div class="empty-state"><h4>No inspections yet</h4><p>Tap "New Inspection" to begin a site inspection</p></div>
+                    </div>
+
+                    <!-- Debug/Audit Panel -->
+                    <div class="debug-panel" id="insp-debug-panel" style="display:none">
+                        <div class="debug-panel-header">
+                            <h4>FYRECOMP Inspection Module — Debug &amp; Audit Console</h4>
+                            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('insp-debug-panel').style.display='none'" style="color:#fff;font-size:11px">Close</button>
+                        </div>
+                        <div class="debug-panel-body">
+                            <div class="debug-btn-row">
+                                <button class="btn btn-sm" style="background:#E8762F;color:#fff" onclick="runInspectionDebug()">Run All Tests</button>
+                                <button class="btn btn-sm" style="background:#5BB8A6;color:#fff" onclick="debugTestDataIntegrity()">Data Integrity</button>
+                                <button class="btn btn-sm" style="background:#2563eb;color:#fff" onclick="debugTestUIComponents()">UI Components</button>
+                                <button class="btn btn-sm" style="background:#7c3aed;color:#fff" onclick="debugTestExport()">Test Export</button>
+                                <button class="btn btn-sm" style="background:#059669;color:#fff" onclick="debugCreateSampleInspection()">Create Sample</button>
+                            </div>
+                            <div id="debug-log-output"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WIZARD VIEW (New/Edit Inspection) -->
+                <div id="insp-wizard-view" class="insp-wizard">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+                        <button class="btn btn-ghost btn-sm" onclick="cancelInspection()" style="padding:6px">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                        </button>
+                        <h2 class="page-title" style="margin:0" id="insp-wizard-title">New Inspection</h2>
+                        <span class="insp-status-badge draft" id="insp-wizard-status">Draft</span>
+                    </div>
+                    <div class="insp-step-indicator" id="insp-step-indicator"></div>
+
+                    <!-- Step 1: Setup -->
+                    <div class="insp-step" id="insp-step-1">
+                        <div class="card"><div class="card-body">
+                            <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Inspection Setup</h3>
+                            <div style="display:flex;flex-direction:column;gap:14px">
+                                <div>
+                                    <label class="form-label">Inspection Type *</label>
+                                    <select class="form-select" id="insp-type" style="width:100%">
+                                        <option value="">Select type...</option>
+                                        <option>SSRA</option>
+                                        <option>SSRA-Tenant</option>
+                                        <option>Safety Inspection Commercial</option>
+                                        <option>Site Attendance</option>
+                                        <option>Site Inspection (Car Park)</option>
+                                        <option>Site Inspection - Tenant (Land Lease)</option>
+                                        <option>Tenant Site Compliance Inspection</option>
+                                        <option>Fire Safety Audit</option>
+                                        <option>Annual Fire Safety Statement Review</option>
+                                        <option>Essential Services Inspection</option>
+                                        <option>Routine Compliance Check</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">Station / Site *</label>
+                                    <select class="form-select" id="insp-station" style="width:100%" onchange="onInspStationChange()">
+                                        <option value="">Select station...</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">Tenancy (optional — auto-fills details)</label>
+                                    <select class="form-select" id="insp-tenancy" style="width:100%" onchange="onInspTenancyChange()">
+                                        <option value="">No tenancy (station-level inspection)</option>
+                                    </select>
+                                </div>
+                                <div id="insp-tenancy-prefill" style="display:none">
+                                    <div class="card" style="background:var(--primary-bg);border-color:var(--primary-light)">
+                                        <div class="card-body" style="padding:12px">
+                                            <div style="font-size:11px;font-weight:600;color:var(--primary);margin-bottom:8px">AUTO-FILLED FROM TENANCY</div>
+                                            <div id="insp-prefill-details" style="font-size:12px;display:grid;grid-template-columns:1fr 1fr;gap:6px"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                                    <div>
+                                        <label class="form-label">Date *</label>
+                                        <input type="date" class="form-input" id="insp-date" style="width:100%">
+                                    </div>
+                                    <div>
+                                        <label class="form-label">Time</label>
+                                        <input type="time" class="form-input" id="insp-time" style="width:100%">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="form-label">Weather Conditions</label>
+                                    <select class="form-select" id="insp-weather" style="width:100%">
+                                        <option value="">Select...</option>
+                                        <option>Fine</option><option>Overcast</option><option>Rain</option>
+                                        <option>Windy</option><option>Hot</option><option>Cold</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div></div>
+
+                        <div class="card" style="margin-top:16px"><div class="card-body">
+                            <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Inspector Details</h3>
+                            <div style="display:flex;flex-direction:column;gap:14px">
+                                <div>
+                                    <label class="form-label">Inspector Name *</label>
+                                    <input type="text" class="form-input" id="insp-inspector-name" placeholder="Full name" style="width:100%">
+                                </div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                                    <div>
+                                        <label class="form-label">Company</label>
+                                        <input type="text" class="form-input" id="insp-inspector-company" placeholder="Company name" style="width:100%">
+                                    </div>
+                                    <div>
+                                        <label class="form-label">Licence No.</label>
+                                        <input type="text" class="form-input" id="insp-inspector-licence" placeholder="Licence number" style="width:100%">
+                                    </div>
+                                </div>
+                                <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer">
+                                    <input type="checkbox" id="insp-save-inspector" checked> Save as default inspector
+                                </label>
+                            </div>
+                        </div></div>
+                    </div>
+
+                    <!-- Step 2: Select Sections -->
+                    <div class="insp-step" id="insp-step-2">
+                        <div class="card"><div class="card-body">
+                            <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">Select Inspection Sections</h3>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Choose which areas to inspect. Each section contains specific checklist items.</p>
+                            <div id="insp-section-select" style="display:flex;flex-direction:column;gap:8px"></div>
+                            <div style="margin-top:12px;display:flex;gap:8px">
+                                <button class="btn btn-ghost btn-sm" onclick="inspSelectAllSections(true)">Select All</button>
+                                <button class="btn btn-ghost btn-sm" onclick="inspSelectAllSections(false)">Deselect All</button>
+                            </div>
+                        </div></div>
+                    </div>
+
+                    <!-- Step 3: Checklist Walk-through -->
+                    <div class="insp-step" id="insp-step-3">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                            <h3 style="font-size:15px;font-weight:700;margin:0">Inspection Checklist</h3>
+                            <span style="font-size:12px;color:var(--text-muted)" id="insp-checklist-progress">0/0 items</span>
+                        </div>
+                        <div id="insp-checklist-container"></div>
+                    </div>
+
+                    <!-- Step 4: Fire Safety Measures (if tenant selected) -->
+                    <div class="insp-step" id="insp-step-4">
+                        <div class="card"><div class="card-body">
+                            <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">Fire Safety Measures Assessment</h3>
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Assess the status of each essential fire safety measure.</p>
+                            <div class="fsm-grid" id="insp-fsm-grid"></div>
+                        </div></div>
+                        <div class="card" style="margin-top:16px"><div class="card-body">
+                            <h3 style="font-size:15px;font-weight:700;margin-bottom:12px">General Inspection Photos</h3>
+                            <div class="checklist-item-photos" id="insp-general-photos">
+                                <label class="checklist-photo-add">
+                                    <input type="file" accept="image/*" capture="environment" multiple style="display:none" onchange="addGeneralPhotos(this)">
+                                    +
+                                </label>
+                            </div>
+                        </div></div>
+                    </div>
+
+                    <!-- Step 5: Summary & Sign-off -->
+                    <div class="insp-step" id="insp-step-5">
+                        <div class="card"><div class="card-body">
+                            <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Summary &amp; Sign-Off</h3>
+                            <div style="display:flex;flex-direction:column;gap:14px">
+                                <div>
+                                    <label class="form-label">Overall Rating *</label>
+                                    <select class="form-select" id="insp-overall-rating" style="width:100%">
+                                        <option value="">Select rating...</option>
+                                        <option>Compliant</option>
+                                        <option>Minor Non-Compliance</option>
+                                        <option>Major Non-Compliance</option>
+                                        <option>Critical</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">General Comments</label>
+                                    <textarea class="form-input" id="insp-comments" rows="4" style="width:100%;resize:vertical" placeholder="Overall findings, recommendations, follow-up actions..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="form-label">Summary</label>
+                                    <div id="insp-summary-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px"></div>
+                                </div>
+                            </div>
+                        </div></div>
+
+                        <div class="card" style="margin-top:16px"><div class="card-body">
+                            <h3 style="font-size:15px;font-weight:700;margin-bottom:12px">Signature</h3>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+                                <div>
+                                    <label class="form-label">Signed By</label>
+                                    <input type="text" class="form-input" id="insp-signed-name" style="width:100%" placeholder="Full name">
+                                </div>
+                                <div>
+                                    <label class="form-label">Role / Title</label>
+                                    <input type="text" class="form-input" id="insp-signed-role" style="width:100%" placeholder="e.g. Fire Safety Auditor">
+                                </div>
+                            </div>
+                            <div class="sig-pad-container" id="sig-pad-container">
+                                <canvas id="sig-canvas" width="600" height="200"></canvas>
+                                <button class="sig-pad-clear" onclick="clearSignature()">Clear</button>
+                            </div>
+                            <p style="font-size:11px;color:var(--text-muted);margin-top:6px">Draw signature above using finger or stylus</p>
+                        </div></div>
+                    </div>
+
+                    <!-- Wizard Nav Buttons -->
+                    <div style="display:flex;gap:10px;margin-top:20px;padding-bottom:20px" id="insp-wizard-nav">
+                        <button class="btn btn-secondary" id="insp-prev-btn" onclick="inspPrevStep()" style="display:none">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                            Previous
+                        </button>
+                        <button class="btn btn-secondary" id="insp-save-draft-btn" onclick="saveInspectionDraft()">Save Draft</button>
+                        <button class="btn btn-primary" id="insp-next-btn" onclick="inspNextStep()" style="margin-left:auto">
+                            Next
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </button>
+                        <button class="btn btn-primary" id="insp-complete-btn" onclick="completeInspection()" style="display:none;margin-left:auto;background:#059669">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            Complete &amp; Submit
+                        </button>
+                    </div>
+                </div>
+
+                <!-- DETAIL VIEW (View completed inspection) -->
+                <div id="insp-detail-view" style="display:none">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+                        <button class="btn btn-ghost btn-sm" onclick="showInspectionList()" style="padding:6px">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                        </button>
+                        <h2 class="page-title" style="margin:0" id="insp-detail-title">Inspection Detail</h2>
+                    </div>
+                    <div class="page-actions" style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap">
+                        <button class="btn btn-primary btn-sm" onclick="exportInspectionPDF()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            Export PDF
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="exportInspectionWord()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            Export Word
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="editInspection(currentInspectionId)">Edit</button>
+                        <button class="btn btn-sm" style="background:var(--danger);color:#fff" onclick="deleteInspection(currentInspectionId)">Delete</button>
+                    </div>
+                    <div id="insp-detail-content"></div>
+                </div>
+            </div>
+
+            <!-- Photo Lightbox -->
+            <div class="photo-lightbox" id="photo-lightbox" onclick="this.classList.remove('show')">
+                <img id="lightbox-img" src="">
+            </div>
+            <!-- Mobile Overlay -->
+            <div class="mobile-overlay" id="mobile-overlay" onclick="toggleMobileMenu()"></div>
 
             <!-- Reports Page -->
             <div class="page" id="page-reports">
@@ -10409,5 +10920,6 @@ Fire Safety Compliance Team`
         }
 
     </script>
+    <script src="inspection-module.js"></script>
 </body>
 </html>
