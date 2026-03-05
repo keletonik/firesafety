@@ -1184,6 +1184,74 @@
             height: 520px;
         }
 
+        /* Calendar Grid */
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+        .cal-grid .cal-header {
+            padding: 8px 4px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+        .cal-grid .cal-day {
+            min-height: 80px;
+            padding: 4px 6px;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.15s;
+            position: relative;
+        }
+        .cal-grid .cal-day:nth-child(7n) { border-right: none; }
+        .cal-grid .cal-day:hover { background: var(--bg); }
+        .cal-grid .cal-day.today { background: rgba(37,99,235,0.06); }
+        .cal-grid .cal-day.today .cal-day-num { color: #2563eb; font-weight: 700; }
+        .cal-grid .cal-day.other-month { opacity: 0.35; }
+        .cal-grid .cal-day-num { font-weight: 600; margin-bottom: 2px; color: var(--text); }
+        .cal-event-dot {
+            display: block;
+            padding: 1px 4px;
+            margin-bottom: 1px;
+            border-radius: 2px;
+            font-size: 9px;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            line-height: 1.4;
+        }
+        .cal-event-dot.inspection { background: #dcfce7; color: #166534; }
+        .cal-event-dot.afss { background: #dbeafe; color: #1e40af; }
+        .cal-event-dot.audit { background: #fef3c7; color: #92400e; }
+        .cal-event-dot.maintenance { background: #f3e8ff; color: #6b21a8; }
+        .cal-event-dot.fsc { background: #ffe4e6; color: #9f1239; }
+        .cal-event-dot.other { background: var(--bg); color: var(--text-muted); }
+        .cal-event-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            transition: background 0.15s;
+        }
+        .cal-event-item:hover { background: var(--bg); }
+        .cal-event-item:last-child { border-bottom: none; }
+        .cal-event-type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
         /* Drop Zone */
         .email-drop-zone {
             margin: 16px;
@@ -1518,6 +1586,11 @@
         <div class="nav-item" data-page="defects" role="button" tabindex="0" aria-label="Defects">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
             <span>Defects</span>
+        </div>
+        <div class="nav-item" data-page="calendar" role="button" tabindex="0" aria-label="Calendar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="14" r="1" fill="currentColor"/><circle cx="12" cy="14" r="1" fill="currentColor"/><circle cx="16" cy="14" r="1" fill="currentColor"/></svg>
+            <span>Calendar</span>
+            <span class="nav-badge" id="nav-badge-calendar">0</span>
         </div>
         <div class="nav-section">Reporting</div>
         <div class="nav-item" data-page="reports" role="button" tabindex="0" aria-label="Reports">
@@ -1961,6 +2034,50 @@
                     <div class="stat-card" style="padding:12px;--card-accent:#6366f1">
                         <div class="stat-value" style="font-size:22px" id="ten-kpi-defects">0</div>
                         <div class="stat-label">Open Defects</div>
+                    </div>
+                </div>
+
+                <!-- Quick Add Site Inspection -->
+                <div class="card" style="margin-bottom:16px;border:1px solid var(--border);overflow:hidden">
+                    <div class="card-header" style="padding:10px 16px;background:linear-gradient(135deg,#059669,#047857);border-bottom:none">
+                        <span class="card-title" style="color:#fff;font-size:13px">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            Quick Add Site Inspection
+                        </span>
+                        <span style="font-size:10px;color:rgba(255,255,255,0.8)">Auto-assigns to Calendar</span>
+                    </div>
+                    <div class="card-body" style="padding:14px">
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end">
+                            <div class="form-group" style="margin-bottom:0">
+                                <label class="form-label" style="font-size:11px">Station</label>
+                                <select class="form-select" id="quick-insp-station" style="font-size:12px;padding:6px 8px">
+                                    <option value="">-- Select Station --</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0">
+                                <label class="form-label" style="font-size:11px">Date</label>
+                                <input type="date" class="form-input" id="quick-insp-date" style="font-size:12px;padding:6px 8px">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0">
+                                <label class="form-label" style="font-size:11px">Time</label>
+                                <input type="time" class="form-input" id="quick-insp-time" value="09:00" style="font-size:12px;padding:6px 8px">
+                            </div>
+                            <button class="btn btn-sm" onclick="quickAddInspection()" style="background:#059669;color:#fff;padding:7px 16px;font-size:12px;font-weight:600;white-space:nowrap;height:fit-content">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-1px;margin-right:4px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                Schedule
+                            </button>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+                            <div class="form-group" style="margin-bottom:0">
+                                <label class="form-label" style="font-size:11px">Assigned To</label>
+                                <input type="text" class="form-input" id="quick-insp-assigned" placeholder="Inspector name" style="font-size:12px;padding:6px 8px">
+                            </div>
+                            <div class="form-group" style="margin-bottom:0">
+                                <label class="form-label" style="font-size:11px">Notes (optional)</label>
+                                <input type="text" class="form-input" id="quick-insp-notes" placeholder="Additional details..." style="font-size:12px;padding:6px 8px">
+                            </div>
+                        </div>
+                        <div id="quick-insp-upcoming" style="margin-top:12px;display:none"></div>
                     </div>
                 </div>
 
@@ -3057,6 +3174,131 @@
                 </div>
             </div>
 
+            <!-- Calendar Page -->
+            <div class="page" id="page-calendar">
+                <div class="page-header">
+                    <div>
+                        <h2 class="page-title">Fire Safety Calendar</h2>
+                        <p class="page-subtitle" id="calendar-subtitle">Inspections, audits, and compliance deadlines</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="calendarPrevMonth()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span id="calendar-month-label" style="font-size:14px;font-weight:700;min-width:140px;text-align:center;display:inline-block"></span>
+                        <button class="btn btn-secondary btn-sm" onclick="calendarNextMonth()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="calendarToday()" style="margin-left:8px">Today</button>
+                        <button class="btn btn-primary btn-sm" onclick="openAddCalendarEvent()" style="margin-left:8px">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Add Event
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Calendar KPIs -->
+                <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);margin-bottom:16px">
+                    <div class="stat-card primary" style="padding:12px">
+                        <div class="stat-value" style="font-size:22px" id="cal-kpi-total">0</div>
+                        <div class="stat-label">Total Events</div>
+                    </div>
+                    <div class="stat-card" style="padding:12px;--card-accent:#d97706">
+                        <div class="stat-value" style="font-size:22px" id="cal-kpi-upcoming">0</div>
+                        <div class="stat-label">Upcoming (7 days)</div>
+                    </div>
+                    <div class="stat-card" style="padding:12px;--card-accent:#dc2626">
+                        <div class="stat-value" style="font-size:22px" id="cal-kpi-overdue">0</div>
+                        <div class="stat-label">Overdue</div>
+                    </div>
+                    <div class="stat-card" style="padding:12px;--card-accent:#059669">
+                        <div class="stat-value" style="font-size:22px" id="cal-kpi-completed">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                </div>
+
+                <!-- Calendar Grid -->
+                <div class="card" style="margin-bottom:16px">
+                    <div class="card-body" style="padding:0">
+                        <div id="calendar-grid" class="cal-grid"></div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Events List -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Upcoming Inspections &amp; Events</span>
+                        <select class="form-select" id="cal-filter" onchange="renderCalendar()" style="width:auto;font-size:11px;padding:4px 8px">
+                            <option value="all">All Events</option>
+                            <option value="Fire Safety Inspection">Fire Safety Inspections</option>
+                            <option value="AFSS Due">AFSS Due Dates</option>
+                            <option value="Audit">Audits</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="card-body" style="padding:0">
+                        <div id="calendar-event-list" style="max-height:400px;overflow-y:auto"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add/Edit Calendar Event Modal -->
+            <div id="calendar-event-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px)">
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;width:480px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                        <h3 style="font-size:16px;font-weight:700;margin:0" id="cal-modal-title">Add Event</h3>
+                        <button class="btn btn-ghost btn-sm" onclick="closeCalendarModal()" style="padding:4px 8px">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+                    <div class="form-group" style="margin-bottom:12px">
+                        <label class="form-label">Event Type</label>
+                        <select class="form-select" id="cal-event-type">
+                            <option value="Fire Safety Inspection" selected>Fire Safety Inspection</option>
+                            <option value="AFSS Due">AFSS Due Date</option>
+                            <option value="Audit">Fire Safety Audit</option>
+                            <option value="Maintenance">Essential Services Maintenance</option>
+                            <option value="FSC Review">FSC Review</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:12px">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-input" id="cal-event-title" placeholder="e.g. Annual Fire Safety Inspection - Central Station">
+                    </div>
+                    <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+                        <div class="form-group" style="margin-bottom:0">
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-input" id="cal-event-date">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0">
+                            <label class="form-label">Time</label>
+                            <input type="time" class="form-input" id="cal-event-time" value="09:00">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:12px">
+                        <label class="form-label">Station / Location</label>
+                        <select class="form-select" id="cal-event-station">
+                            <option value="">-- Select Station --</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:12px">
+                        <label class="form-label">Assigned To</label>
+                        <input type="text" class="form-input" id="cal-event-assigned" placeholder="Inspector name or team">
+                    </div>
+                    <div class="form-group" style="margin-bottom:16px">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-input" id="cal-event-notes" rows="2" placeholder="Additional details..." style="resize:vertical"></textarea>
+                    </div>
+                    <input type="hidden" id="cal-event-edit-id" value="">
+                    <div style="display:flex;gap:8px;justify-content:flex-end">
+                        <button class="btn btn-secondary btn-sm" onclick="closeCalendarModal()">Cancel</button>
+                        <button class="btn btn-primary btn-sm" onclick="saveCalendarEvent()" style="padding:8px 20px">Save Event</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Tenant Detail Page -->
             <div class="page" id="page-tenant-detail">
                 <div class="page-header">
@@ -3837,7 +4079,8 @@
             defectAuditLog: [],
             monthlySnapshots: {},
             eomReportData: {},
-            eomSelectedMonth: null
+            eomSelectedMonth: null,
+            calendarEvents: []
         };
 
         // Charts
@@ -3871,6 +4114,9 @@
             renderCharts();
             renderNotes();
             renderEomReport();
+            renderCalendar();
+            populateQuickInspStations();
+            renderQuickInspUpcoming();
             updateNavBadges();
         }
 
@@ -9917,6 +10163,320 @@ Fire Safety Compliance Team`
             document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
             const slide = document.getElementById('eom-slide-' + idx);
             if (slide) slide.classList.add('active');
+        }
+
+        // ============================================================
+        // CALENDAR
+        // ============================================================
+        let calendarMonth = new Date().getMonth();
+        let calendarYear = new Date().getFullYear();
+
+        function getEventTypeClass(type) {
+            const map = { 'Fire Safety Inspection': 'inspection', 'AFSS Due': 'afss', 'Audit': 'audit', 'Maintenance': 'maintenance', 'FSC Review': 'fsc' };
+            return map[type] || 'other';
+        }
+        function getEventTypeBadgeStyle(type) {
+            const styles = {
+                'Fire Safety Inspection': 'background:#dcfce7;color:#166534',
+                'AFSS Due': 'background:#dbeafe;color:#1e40af',
+                'Audit': 'background:#fef3c7;color:#92400e',
+                'Maintenance': 'background:#f3e8ff;color:#6b21a8',
+                'FSC Review': 'background:#ffe4e6;color:#9f1239'
+            };
+            return styles[type] || 'background:var(--bg);color:var(--text-muted)';
+        }
+
+        function calendarPrevMonth() { calendarMonth--; if (calendarMonth < 0) { calendarMonth = 11; calendarYear--; } renderCalendar(); }
+        function calendarNextMonth() { calendarMonth++; if (calendarMonth > 11) { calendarMonth = 0; calendarYear++; } renderCalendar(); }
+        function calendarToday() { const d = new Date(); calendarMonth = d.getMonth(); calendarYear = d.getFullYear(); renderCalendar(); }
+
+        function renderCalendar() {
+            const events = state.calendarEvents || [];
+            const filter = document.getElementById('cal-filter')?.value || 'all';
+            const filteredEvents = filter === 'all' ? events : events.filter(e => e.type === filter);
+
+            // Update month label
+            const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            const labelEl = document.getElementById('calendar-month-label');
+            if (labelEl) labelEl.textContent = months[calendarMonth] + ' ' + calendarYear;
+
+            // KPIs
+            const today = new Date(); today.setHours(0,0,0,0);
+            const weekAhead = new Date(today); weekAhead.setDate(weekAhead.getDate() + 7);
+            const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+            el('cal-kpi-total', events.length);
+            el('cal-kpi-upcoming', events.filter(e => { const d = new Date(e.date); return d >= today && d <= weekAhead && e.status !== 'completed'; }).length);
+            el('cal-kpi-overdue', events.filter(e => new Date(e.date) < today && e.status !== 'completed').length);
+            el('cal-kpi-completed', events.filter(e => e.status === 'completed').length);
+
+            // Nav badge
+            const badge = document.getElementById('nav-badge-calendar');
+            if (badge) {
+                const upcoming = events.filter(e => { const d = new Date(e.date); return d >= today && d <= weekAhead && e.status !== 'completed'; }).length;
+                badge.textContent = upcoming;
+                badge.style.display = upcoming > 0 ? '' : 'none';
+            }
+
+            // Render calendar grid
+            const gridEl = document.getElementById('calendar-grid');
+            if (gridEl) {
+                const firstDay = new Date(calendarYear, calendarMonth, 1).getDay(); // 0=Sun
+                const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+                const daysInPrev = new Date(calendarYear, calendarMonth, 0).getDate();
+                const todayStr = new Date().toISOString().split('T')[0];
+
+                let html = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="cal-header">${d}</div>`).join('');
+
+                // Previous month fill
+                for (let i = firstDay - 1; i >= 0; i--) {
+                    const day = daysInPrev - i;
+                    html += `<div class="cal-day other-month"><div class="cal-day-num">${day}</div></div>`;
+                }
+
+                // Current month
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const dateStr = `${calendarYear}-${String(calendarMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                    const isToday = dateStr === todayStr;
+                    const dayEvents = filteredEvents.filter(e => e.date === dateStr);
+                    html += `<div class="cal-day${isToday ? ' today' : ''}" onclick="calendarDayClick('${dateStr}')">`;
+                    html += `<div class="cal-day-num">${d}</div>`;
+                    dayEvents.slice(0, 3).forEach(e => {
+                        html += `<div class="cal-event-dot ${getEventTypeClass(e.type)}" title="${escapeHtml(e.title)}">${escapeHtml(e.title)}</div>`;
+                    });
+                    if (dayEvents.length > 3) html += `<div style="font-size:9px;color:var(--text-muted)">+${dayEvents.length - 3} more</div>`;
+                    html += '</div>';
+                }
+
+                // Next month fill
+                const totalCells = firstDay + daysInMonth;
+                const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+                for (let d = 1; d <= remaining; d++) {
+                    html += `<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
+                }
+
+                gridEl.innerHTML = html;
+            }
+
+            // Render event list
+            const listEl = document.getElementById('calendar-event-list');
+            if (listEl) {
+                const sortedEvents = [...filteredEvents].sort((a, b) => a.date.localeCompare(b.date));
+                const upcomingEvents = sortedEvents.filter(e => new Date(e.date) >= new Date(new Date().toISOString().split('T')[0]));
+                const pastEvents = sortedEvents.filter(e => new Date(e.date) < new Date(new Date().toISOString().split('T')[0]));
+                const displayEvents = [...upcomingEvents, ...pastEvents];
+
+                if (displayEvents.length === 0) {
+                    listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:12px">No events scheduled. Use "Add Event" or the Quick Add on the Tenancy page.</div>';
+                } else {
+                    listEl.innerHTML = displayEvents.map(e => {
+                        const d = new Date(e.date);
+                        const isPast = d < today && e.status !== 'completed';
+                        const isComplete = e.status === 'completed';
+                        return `<div class="cal-event-item" style="${isPast ? 'background:#fef2f2' : ''}${isComplete ? 'opacity:0.6' : ''}">
+                            <div style="min-width:60px;text-align:center">
+                                <div style="font-size:18px;font-weight:800;color:${isPast ? '#dc2626' : 'var(--text)'}">${d.getDate()}</div>
+                                <div style="font-size:10px;color:var(--text-muted)">${months[d.getMonth()].substring(0,3)} ${d.getFullYear()}</div>
+                            </div>
+                            <div style="flex:1">
+                                <div style="font-weight:600;margin-bottom:2px${isComplete ? ';text-decoration:line-through' : ''}">${escapeHtml(e.title)}</div>
+                                <div style="font-size:11px;color:var(--text-muted)">
+                                    ${e.station ? '<span style="margin-right:8px">&#128205; ' + escapeHtml(e.station) + '</span>' : ''}
+                                    ${e.time ? '<span style="margin-right:8px">&#128337; ' + e.time + '</span>' : ''}
+                                    ${e.assignedTo ? '<span>&#128100; ' + escapeHtml(e.assignedTo) + '</span>' : ''}
+                                </div>
+                            </div>
+                            <span class="cal-event-type-badge" style="${getEventTypeBadgeStyle(e.type)}">${escapeHtml(e.type)}</span>
+                            <div style="display:flex;gap:4px">
+                                ${!isComplete ? `<button class="btn btn-ghost btn-sm" onclick="completeCalendarEvent(${e.id})" title="Mark complete" style="padding:3px 6px;color:#059669">&#10003;</button>` : ''}
+                                <button class="btn btn-ghost btn-sm" onclick="editCalendarEvent(${e.id})" title="Edit" style="padding:3px 6px">&#9998;</button>
+                                <button class="btn btn-ghost btn-sm" onclick="deleteCalendarEvent(${e.id})" title="Delete" style="padding:3px 6px;color:var(--danger)">&#10005;</button>
+                            </div>
+                        </div>`;
+                    }).join('');
+                }
+            }
+
+            // Update subtitle
+            const subEl = document.getElementById('calendar-subtitle');
+            if (subEl) subEl.textContent = `${events.length} event${events.length !== 1 ? 's' : ''} scheduled`;
+        }
+
+        function calendarDayClick(dateStr) {
+            document.getElementById('cal-event-date').value = dateStr;
+            openAddCalendarEvent();
+        }
+
+        function openAddCalendarEvent() {
+            document.getElementById('cal-modal-title').textContent = 'Add Event';
+            document.getElementById('cal-event-edit-id').value = '';
+            document.getElementById('cal-event-type').value = 'Fire Safety Inspection';
+            document.getElementById('cal-event-title').value = '';
+            if (!document.getElementById('cal-event-date').value) {
+                document.getElementById('cal-event-date').value = new Date().toISOString().split('T')[0];
+            }
+            document.getElementById('cal-event-time').value = '09:00';
+            document.getElementById('cal-event-assigned').value = '';
+            document.getElementById('cal-event-notes').value = '';
+            populateCalendarStations();
+            document.getElementById('calendar-event-modal').style.display = '';
+        }
+
+        function closeCalendarModal() {
+            document.getElementById('calendar-event-modal').style.display = 'none';
+            document.getElementById('cal-event-date').value = '';
+        }
+
+        function populateCalendarStations() {
+            const sel = document.getElementById('cal-event-station');
+            if (!sel) return;
+            const stations = (state.stations || []).map(s => s.name).sort();
+            sel.innerHTML = '<option value="">-- Select Station --</option>' + stations.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+        }
+
+        function saveCalendarEvent() {
+            const type = document.getElementById('cal-event-type').value;
+            const title = document.getElementById('cal-event-title').value.trim();
+            const date = document.getElementById('cal-event-date').value;
+            const time = document.getElementById('cal-event-time').value;
+            const station = document.getElementById('cal-event-station').value;
+            const assignedTo = document.getElementById('cal-event-assigned').value.trim();
+            const notes = document.getElementById('cal-event-notes').value.trim();
+            const editId = document.getElementById('cal-event-edit-id').value;
+
+            if (!title) { showToast('Please enter an event title', 'error'); return; }
+            if (!date) { showToast('Please select a date', 'error'); return; }
+
+            if (!state.calendarEvents) state.calendarEvents = [];
+
+            if (editId) {
+                const idx = state.calendarEvents.findIndex(e => e.id === parseInt(editId));
+                if (idx !== -1) {
+                    state.calendarEvents[idx] = { ...state.calendarEvents[idx], type, title, date, time, station, assignedTo, notes };
+                }
+            } else {
+                state.calendarEvents.push({
+                    id: Date.now(),
+                    type, title, date, time, station, assignedTo, notes,
+                    status: 'scheduled',
+                    createdAt: new Date().toISOString()
+                });
+            }
+
+            saveData();
+            closeCalendarModal();
+            renderCalendar();
+            renderQuickInspUpcoming();
+            showToast(editId ? 'Event updated' : 'Event added to calendar', 'success');
+        }
+
+        function editCalendarEvent(id) {
+            const evt = (state.calendarEvents || []).find(e => e.id === id);
+            if (!evt) return;
+            document.getElementById('cal-modal-title').textContent = 'Edit Event';
+            document.getElementById('cal-event-edit-id').value = id;
+            document.getElementById('cal-event-type').value = evt.type;
+            document.getElementById('cal-event-title').value = evt.title;
+            document.getElementById('cal-event-date').value = evt.date;
+            document.getElementById('cal-event-time').value = evt.time || '09:00';
+            document.getElementById('cal-event-assigned').value = evt.assignedTo || '';
+            document.getElementById('cal-event-notes').value = evt.notes || '';
+            populateCalendarStations();
+            document.getElementById('cal-event-station').value = evt.station || '';
+            document.getElementById('calendar-event-modal').style.display = '';
+        }
+
+        function deleteCalendarEvent(id) {
+            if (!confirm('Delete this calendar event?')) return;
+            state.calendarEvents = (state.calendarEvents || []).filter(e => e.id !== id);
+            saveData();
+            renderCalendar();
+            renderQuickInspUpcoming();
+            showToast('Event deleted', 'success');
+        }
+
+        function completeCalendarEvent(id) {
+            const evt = (state.calendarEvents || []).find(e => e.id === id);
+            if (evt) {
+                evt.status = 'completed';
+                evt.completedAt = new Date().toISOString();
+                saveData();
+                renderCalendar();
+                renderQuickInspUpcoming();
+                showToast('Inspection marked as completed', 'success');
+            }
+        }
+
+        // Quick Add Inspection from Tenancy page
+        function populateQuickInspStations() {
+            const sel = document.getElementById('quick-insp-station');
+            if (!sel) return;
+            const stations = (state.stations || []).map(s => s.name).sort();
+            sel.innerHTML = '<option value="">-- Select Station --</option>' + stations.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+        }
+
+        function quickAddInspection() {
+            const station = document.getElementById('quick-insp-station').value;
+            const date = document.getElementById('quick-insp-date').value;
+            const time = document.getElementById('quick-insp-time').value || '09:00';
+            const assigned = document.getElementById('quick-insp-assigned').value.trim();
+            const notes = document.getElementById('quick-insp-notes').value.trim();
+
+            if (!station) { showToast('Please select a station', 'error'); return; }
+            if (!date) { showToast('Please select a date', 'error'); return; }
+
+            if (!state.calendarEvents) state.calendarEvents = [];
+
+            const title = 'Fire Safety Inspection - ' + station;
+            state.calendarEvents.push({
+                id: Date.now(),
+                type: 'Fire Safety Inspection',
+                title: title,
+                date: date,
+                time: time,
+                station: station,
+                assignedTo: assigned,
+                notes: notes,
+                status: 'scheduled',
+                createdAt: new Date().toISOString()
+            });
+
+            saveData();
+            renderCalendar();
+
+            // Reset form
+            document.getElementById('quick-insp-station').value = '';
+            document.getElementById('quick-insp-date').value = '';
+            document.getElementById('quick-insp-time').value = '09:00';
+            document.getElementById('quick-insp-assigned').value = '';
+            document.getElementById('quick-insp-notes').value = '';
+
+            renderQuickInspUpcoming();
+            showToast('Fire Safety Inspection scheduled for ' + station + ' on ' + date + ' and added to Calendar', 'success');
+        }
+
+        function renderQuickInspUpcoming() {
+            const container = document.getElementById('quick-insp-upcoming');
+            if (!container) return;
+            const events = (state.calendarEvents || [])
+                .filter(e => e.type === 'Fire Safety Inspection' && e.status !== 'completed' && new Date(e.date) >= new Date(new Date().toISOString().split('T')[0]))
+                .sort((a, b) => a.date.localeCompare(b.date))
+                .slice(0, 5);
+
+            if (events.length === 0) { container.style.display = 'none'; return; }
+
+            container.style.display = 'block';
+            container.innerHTML = '<div style="font-size:11px;font-weight:600;margin-bottom:6px;color:var(--text-muted)">Upcoming Inspections:</div>' +
+                events.map(e => {
+                    const d = new Date(e.date);
+                    const daysDiff = Math.ceil((d - new Date(new Date().toISOString().split('T')[0])) / 86400000);
+                    const urgency = daysDiff <= 3 ? 'color:#dc2626;font-weight:700' : daysDiff <= 7 ? 'color:#d97706' : 'color:var(--text-muted)';
+                    return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:11px;border-bottom:1px solid var(--border)">
+                        <span style="min-width:70px;${urgency}">${d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}${e.time ? ' ' + e.time : ''}</span>
+                        <span style="flex:1;font-weight:600">${escapeHtml(e.station || e.title)}</span>
+                        ${e.assignedTo ? `<span style="color:var(--text-muted);font-size:10px">${escapeHtml(e.assignedTo)}</span>` : ''}
+                        <button class="btn btn-ghost btn-sm" onclick="navigateTo('calendar')" style="padding:2px 6px;font-size:10px;color:var(--fyre)">View</button>
+                    </div>`;
+                }).join('');
         }
 
         function renderEomReport() {
